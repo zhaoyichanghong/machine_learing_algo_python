@@ -1,2 +1,2 @@
-pla.py: Perceptron Learning Algorithm
+pla.py: Perceptron Learning Algorithm<br>
 metrics.py: scores including accuracy
