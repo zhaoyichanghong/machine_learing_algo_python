@@ -18,5 +18,15 @@ def f_score(y_true, y_pred, beta):
     r = recall(y_true, y_pred)
     return (1 + beta ** 2) * p * r / (beta ** 2 * p + r)
 
+def confusion_matrix(y_true, y_pred, labels=[]):
+    class_number = len(labels)
+
+    matrix = np.zeros((class_number, class_number))
+    for r in range(class_number):
+        for c in range(class_number):
+            matrix[r, c] = np.sum(y_pred[np.where(y_true == r)[0]] == c)
+
+    return matrix
+
 def r2_score(y_true, y_pred):
     return 1 - np.sum((y_true - y_pred) ** 2) / np.sum((y_true - np.mean(y_true)) ** 2)
