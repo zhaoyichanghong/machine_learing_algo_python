@@ -1,3 +1,6 @@
+X: data_number * feature_number matrix<br>
+y: data_number * 1 vector<br>
+
 pla.py: Perceptron Learning Algorithm<br>
 pocket.py: pocket algorithm<br>
 linear_regression.py: linear regression algorithm including gradient descent, newton, equation<br>
