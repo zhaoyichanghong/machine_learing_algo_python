@@ -30,4 +30,7 @@ class logistic_regression:
         plt.show()
 
     def predict(self, X):
-        return self.__sigmoid(X.dot(self.__W) + self.__b) > 0.5
+        return self.probability(X) > 0.5
+
+    def probability(self, X):
+        return self.__sigmoid(X.dot(self.__W) + self.__b)
