@@ -20,13 +20,14 @@ class standard_scaler:
     def transform(self, X):
         return (X - self.mean) / self.std
 
-def one_hot(X):
-    data_number = X.shape[0]
-    classes = list(set(X[:, 0]))
-    class_number = len(classes)
+class one_hot:
+    def fit_transform(self, X):
+        data_number = X.shape[0]
+        self.classes = list(set(X[:, 0]))
+        class_number = len(self.classes)
 
-    X_transformed = np.zeros((data_number, class_number))
-    for i in range(class_number):
-        X_transformed[:, i] = (X == classes[i]).flatten()
+        X_transformed = np.zeros((data_number, class_number))
+        for i in range(class_number):
+            X_transformed[:, i] = (X == self.classes[i]).flatten()
 
-    return X_transformed + 0
+        return X_transformed + 0

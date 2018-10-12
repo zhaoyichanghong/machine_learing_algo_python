@@ -35,7 +35,7 @@ def confusion_matrix(y_true, y_pred, labels=[]):
     matrix = np.zeros((class_number, class_number))
     for r in range(class_number):
         for c in range(class_number):
-            matrix[r, c] = np.sum(y_pred[np.where(y_true == r)[0]] == c)
+            matrix[r, c] = np.sum(y_pred[np.where(y_true == labels[r])[0]] == labels[c])
 
     return matrix
 
