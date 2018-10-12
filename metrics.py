@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 TP = lambda y_true, y_pred: np.sum(y_pred[np.where(y_true == 1)[0]] == 1)
+TN = lambda y_true, y_pred: np.sum(y_pred[np.where(y_true == 0)[0]] == 0)
 FP = lambda y_true, y_pred: np.sum(y_pred[np.where(y_true == 0)[0]] == 1)
 FN = lambda y_true, y_pred: np.sum(y_pred[np.where(y_true == 1)[0]] == 0)
 
@@ -9,14 +10,23 @@ def accuracy(y_true, y_pred):
     return np.mean(y_true == y_pred)
 
 def precision(y_true, y_pred):
+    if TP(y_true, y_pred) == 0:
+        return 0
+
     return TP(y_true, y_pred) / (TP(y_true, y_pred) + FP(y_true, y_pred))
 
 def recall(y_true, y_pred):
+    if TP(y_true, y_pred) == 0:
+        return 0
+
     return TP(y_true, y_pred) / (TP(y_true, y_pred) + FN(y_true, y_pred))
 
 def f_score(y_true, y_pred, beta):
     p = precision(y_true, y_pred)
     r = recall(y_true, y_pred)
+    if p * r == 0:
+        return 0
+
     return (1 + beta ** 2) * p * r / (beta ** 2 * p + r)
 
 def confusion_matrix(y_true, y_pred, labels=[]):
@@ -37,8 +47,15 @@ def roc_curve(y_true, y_prob):
     for prob in probs:
         y_pred = y_prob > prob
 
-        TPR.append(TP(y_true, y_pred) / np.sum(y_true == 1))
-        FPR.append(FP(y_true, y_pred) / np.sum(y_true == 0))
+        if TP(y_true, y_pred) == 0:
+            TPR.append(0)
+        else:
+            TPR.append(TP(y_true, y_pred) / (TP(y_true, y_pred) + FN(y_true, y_pred)))
+
+        if FP(y_true, y_pred) == 0:
+            FPR.append(0)
+        else:
+            FPR.append(FP(y_true, y_pred) / (FP(y_true, y_pred) + TN(y_true, y_pred)))
 
     plt.plot(FPR, TPR)
     plt.show()
