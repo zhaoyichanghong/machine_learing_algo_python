@@ -7,6 +7,7 @@ linear_regression.py: linear regression algorithm including gradient descent, ne
 linear_regression_locally_weight.py: locally weight linear regression algorithm<br>
 logistic_regression.py: logistic regression algorithm<br>
 softmax_regression.py: softmax regression algorithm<br>
+knn.py: k-NearestNeighbor algorithm<br>
 preprocess.py: including min-max scaler, z-score scaler, one-hot encoder<br>
 pca.py: principal Component Analysis algorithm<br>
 metrics.py: scores including accuracy, precision, recall, f_score, R2, confusion matrix, roc curve, auc
