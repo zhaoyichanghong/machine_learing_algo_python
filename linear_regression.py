@@ -14,8 +14,8 @@ class linear_regression_gradient_descent:
             self.__W -= learning_rate * X.T.dot(h - y) / data_number
             self.__b -= learning_rate * np.mean(h - y)
 
-            h = X.dot(self.__W) + self.__b
-            loss.append(np.mean((h - y) ** 2))
+            y_hat = X.dot(self.__W) + self.__b
+            loss.append(np.mean((y_hat - y) ** 2))
 
         plt.plot(loss)
         plt.show()
@@ -42,8 +42,8 @@ class linear_regression_newton:
             b_H = data_number
             self.__b -= b_g / b_H
 
-            h = X.dot(self.__W) + self.__b
-            loss.append(np.mean((h - y) ** 2))
+            y_hat = X.dot(self.__W) + self.__b
+            loss.append(np.mean((y_hat - y) ** 2))
 
         plt.plot(loss)
         plt.show()

@@ -19,9 +19,9 @@ class logistic_regression:
             self.__W -= learning_rate * X.T.dot(h - y) / data_number
             self.__b -= learning_rate * np.mean(h - y)
 
-            h = self.__sigmoid(X.dot(self.__W) + self.__b)
-            loss.append(np.mean((h - y) ** 2))
-            accuracy.append(metrics.accuracy(y, h > 0.5))
+            y_hat = self.__sigmoid(X.dot(self.__W) + self.__b)
+            loss.append(np.mean(-y * np.log(y_hat) - (1 - y) * np.log(1 - y_hat)))
+            accuracy.append(metrics.accuracy(y, y_hat > 0.5))
 
         _, ax_loss = plt.subplots()
         ax_loss.plot(loss, 'b')
