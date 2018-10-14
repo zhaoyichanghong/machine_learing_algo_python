@@ -1,7 +1,7 @@
 import numpy as np
 
 def pca(X, component_number, method=''):
-    X = X - np.mean(X, axis=0)
+    X -= np.mean(X, axis=0)
 
     if method == 'svd':
         u, s, vh = np.linalg.svd(X)
