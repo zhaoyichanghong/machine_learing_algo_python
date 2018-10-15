@@ -1,9 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import optimizer
+import regularizer
 
 class linear_regression_gradient_descent:
-    def fit(self, X, y, epochs, optimizer):
+    def fit(self, X, y, epochs, optimizer, regularizer=None):
         data_number, feature_number = X.shape
 
         self.__W = np.zeros((feature_number, 1))
@@ -12,7 +13,10 @@ class linear_regression_gradient_descent:
         loss = []
         for _ in range(epochs):
             h = X.dot(self.__W) + self.__b
-            g_w, g_b = optimizer.optimize(X.T.dot(h - y) / data_number, np.mean(h - y))
+
+            g_w = X.T.dot(h - y) / data_number + (regularizer != None and regularizer.regularize(self.__W))
+            g_b = np.mean(h - y)
+            g_w, g_b = optimizer.optimize(g_w, g_b)
             self.__W -= g_w
             self.__b -= g_b
 
