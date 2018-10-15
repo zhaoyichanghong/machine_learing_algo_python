@@ -1,12 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import metrics
+import regularizer
 
 class logistic_regression_gradient_descent:
     def __sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
 
-    def fit(self, X, y, epochs, optimizer, regularizer=None):
+    def fit(self, X, y, epochs, optimizer, regularizer=regularizer.regularizer(0)):
         data_number, feature_number = X.shape
 
         self.__W = np.zeros((feature_number, 1))
@@ -17,7 +18,7 @@ class logistic_regression_gradient_descent:
         for _ in range(epochs):
             h = self.__sigmoid(X.dot(self.__W) + self.__b)
 
-            g_w = X.T.dot(h - y) / data_number + (regularizer != None and regularizer.regularize(self.__W))
+            g_w = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
             g_b = np.mean(h - y)
             g_w, g_b = optimizer.optimize(g_w, g_b)
             self.__W -= g_w

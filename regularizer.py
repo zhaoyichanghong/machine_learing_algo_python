@@ -5,7 +5,7 @@ class regularizer:
         self.param = param
 
     def regularize(self, W):
-        pass
+        return 0
 
 class l1_regularizer(regularizer):
     def __init__(self, param):
