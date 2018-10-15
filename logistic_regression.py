@@ -6,7 +6,7 @@ class logistic_regression_gradient_descent:
     def __sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
 
-    def fit(self, X, y, learning_rate, epochs):
+    def fit(self, X, y, epochs, optimizer):
         data_number, feature_number = X.shape
 
         self.__W = np.zeros((feature_number, 1))
@@ -16,8 +16,9 @@ class logistic_regression_gradient_descent:
         loss = []
         for _ in range(epochs):
             h = self.__sigmoid(X.dot(self.__W) + self.__b)
-            self.__W -= learning_rate * X.T.dot(h - y) / data_number
-            self.__b -= learning_rate * np.mean(h - y)
+            g_w, g_b = optimizer.optimize(X.T.dot(h - y) / data_number, np.mean(h - y))
+            self.__W -= g_w
+            self.__b -= g_b
 
             y_hat = self.__sigmoid(X.dot(self.__W) + self.__b)
             loss.append(np.mean(-y * np.log(y_hat) - (1 - y) * np.log(1 - y_hat)))

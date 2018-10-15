@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import optimizer
 
 class linear_regression_gradient_descent:
-    def fit(self, X, y, learning_rate, epochs):
+    def fit(self, X, y, epochs, optimizer):
         data_number, feature_number = X.shape
 
         self.__W = np.zeros((feature_number, 1))
@@ -11,8 +12,9 @@ class linear_regression_gradient_descent:
         loss = []
         for _ in range(epochs):
             h = X.dot(self.__W) + self.__b
-            self.__W -= learning_rate * X.T.dot(h - y) / data_number
-            self.__b -= learning_rate * np.mean(h - y)
+            g_w, g_b = optimizer.optimize(X.T.dot(h - y) / data_number, np.mean(h - y))
+            self.__W -= g_w
+            self.__b -= g_b
 
             y_hat = X.dot(self.__W) + self.__b
             loss.append(np.mean((y_hat - y) ** 2))
