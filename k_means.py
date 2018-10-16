@@ -9,11 +9,11 @@ class k_means:
 
         self.__means = X[np.random.choice(data_number, cluster_number)]
 
-        clusters = []
-        for _ in range(cluster_number):
-            clusters.append([])
-
         for _ in range(epochs):
+            clusters = []
+            for _ in range(cluster_number):
+                clusters.append([])
+                
             for i in range(data_number):
                 distances = self.__distance(X[i], self.__means)
                 clusters[np.argmin(distances)].append(X[i])

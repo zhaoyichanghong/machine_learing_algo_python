@@ -72,3 +72,10 @@ def auc(y_true, y_prob):
 
 def r2_score(y_true, y_pred):
     return 1 - np.sum((y_true - y_pred) ** 2) / np.sum((y_true - np.mean(y_true)) ** 2)
+
+def silhouette_coefficient(clusters):
+    tmp = len(clusters)
+    for i in range(len(clusters)):
+        for j in range(len(clusters[i])):
+            tmp1 = len(clusters[i])
+            pass
