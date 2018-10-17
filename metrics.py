@@ -73,9 +73,21 @@ def auc(y_true, y_prob):
 def r2_score(y_true, y_pred):
     return 1 - np.sum((y_true - y_pred) ** 2) / np.sum((y_true - np.mean(y_true)) ** 2)
 
-def silhouette_coefficient(clusters):
-    tmp = len(clusters)
-    for i in range(len(clusters)):
-        for j in range(len(clusters[i])):
-            tmp1 = len(clusters[i])
-            pass
+def silhouette_coefficient(X, y):
+    data_number = X.shape[0]
+
+    s = []
+    for i in range(data_number):
+        distances = np.linalg.norm(X[i] - X, axis=1)
+        
+        bs = []
+        for cluster in np.unique(y):
+            if y[i] == cluster:
+                a = np.sum(distances[np.where(y == cluster)[0]]) / (len(np.where(y == cluster)[0]) - 1)
+            else:
+                bs.append(np.mean(distances[np.where(y == cluster)[0]]))
+        b = np.min(bs)
+
+        s.append((b - a) / max(a, b))
+    
+    return np.mean(s)

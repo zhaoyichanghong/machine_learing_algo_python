@@ -23,7 +23,7 @@ class standard_scaler:
 class one_hot:
     def fit_transform(self, X):
         data_number = X.shape[0]
-        self.classes = list(set(X[:, 0]))
+        self.classes = np.unique(X)
         class_number = len(self.classes)
 
         X_transformed = np.zeros((data_number, class_number))
