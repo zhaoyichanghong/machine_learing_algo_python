@@ -10,6 +10,7 @@ softmax_regression.py: softmax regression algorithm<br>
 gaussian_discriminant_analysis.py: gaussian discriminant analysis algorithm<br>
 knn.py: k-NearestNeighbor algorithm<br>
 k_means.py: k-means algorithm<br>
+gaussian_mixed_model.py: gaussian mixed model algorithm<br>
 preprocess.py: including min-max scaler, z-score scaler, one-hot encoder<br>
 pca.py: principal Component Analysis algorithm<br>
 metrics.py: scores including accuracy, precision, recall, f_score, R2, confusion matrix, roc curve, auc, silhouette coefficient<br>
