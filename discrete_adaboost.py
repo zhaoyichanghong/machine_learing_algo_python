@@ -35,3 +35,13 @@ class discrete_adaboost:
         y_pred[np.where(h < 0)] = -1
 
         return y_pred
+
+    def score(self, X):
+        data_number = X.shape[0]
+        classifier_number = len(self.__classifiers)
+
+        h = np.zeros((data_number, 1))
+        for i in range(classifier_number):
+            h += self.__alpha[i] * self.__classifiers[i].predict(X)
+
+        return h
