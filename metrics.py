@@ -39,13 +39,13 @@ def confusion_matrix(y_true, y_pred, labels=[]):
 
     return matrix
 
-def roc_curve(y_true, y_prob):
+def roc_curve(y_true, y_score):
     TPR = []
     FPR = []
 
-    probs = np.sort(y_prob.flatten())
-    for prob in probs:
-        y_pred = y_prob > prob
+    scores = np.sort(y_score.flatten())
+    for score in scores:
+        y_pred = y_score > score
 
         if TP(y_true, y_pred) == 0:
             TPR.append(0)
@@ -60,8 +60,8 @@ def roc_curve(y_true, y_prob):
     plt.plot(FPR, TPR)
     plt.show()
 
-def auc(y_true, y_prob):
-    rank = y_prob[:, 0].argsort()
+def auc(y_true, y_score):
+    rank = y_score[:, 0].argsort()
     positives = np.where(y_true == 1)[0]
     rank_sum = np.sum([np.argwhere(rank == positive)[0][0] + 1 for positive in positives])
 
