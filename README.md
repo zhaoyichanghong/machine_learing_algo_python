@@ -9,6 +9,7 @@ logistic_regression.py: logistic regression algorithm including gradient descent
 softmax_regression.py: softmax regression algorithm<br>
 gaussian_discriminant_analysis.py: gaussian discriminant analysis algorithm<br>
 knn.py: k-NearestNeighbor algorithm<br>
+discrete_adaboost.py: discrete adaboost algorithm<br>
 k_means.py: k-means algorithm<br>
 gaussian_mixed_model.py: gaussian mixed model algorithm<br>
 preprocess.py: including min-max scaler, z-score scaler, one-hot encoder<br>
