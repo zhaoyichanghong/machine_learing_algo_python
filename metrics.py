@@ -1,29 +1,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-TP = lambda y_true, y_pred: np.sum(y_pred[np.where(y_true == 1)[0]] == 1)
-TN = lambda y_true, y_pred: np.sum(y_pred[np.where(y_true == 0)[0]] == 0)
-FP = lambda y_true, y_pred: np.sum(y_pred[np.where(y_true == 0)[0]] == 1)
-FN = lambda y_true, y_pred: np.sum(y_pred[np.where(y_true == 1)[0]] == 0)
+TP = lambda y_true, y_pred, label_positive: np.sum(y_pred[np.where(y_true == label_positive)[0]] == label_positive)
+TN = lambda y_true, y_pred, label_negative: np.sum(y_pred[np.where(y_true == label_negative)[0]] == label_negative)
+FP = lambda y_true, y_pred, label_positive, label_negative: np.sum(y_pred[np.where(y_true == label_negative)[0]] == label_positive)
+FN = lambda y_true, y_pred, label_positive, label_negative: np.sum(y_pred[np.where(y_true == label_positive)[0]] == label_negative)
 
 def accuracy(y_true, y_pred):
     return np.mean(y_true == y_pred)
 
-def precision(y_true, y_pred):
-    if TP(y_true, y_pred) == 0:
+def precision(y_true, y_pred, label_positive=1, label_negative=0):
+    if TP(y_true, y_pred, label_positive) == 0:
         return 0
 
-    return TP(y_true, y_pred) / (TP(y_true, y_pred) + FP(y_true, y_pred))
+    return TP(y_true, y_pred, label_positive) / (TP(y_true, y_pred, label_positive) + FP(y_true, y_pred, label_positive, label_negative))
 
-def recall(y_true, y_pred):
-    if TP(y_true, y_pred) == 0:
+def recall(y_true, y_pred, label_positive=1, label_negative=0):
+    if TP(y_true, y_pred, label_positive) == 0:
         return 0
 
-    return TP(y_true, y_pred) / (TP(y_true, y_pred) + FN(y_true, y_pred))
+    return TP(y_true, y_pred, label_positive) / (TP(y_true, y_pred, label_positive) + FN(y_true, y_pred, label_positive, label_negative))
 
-def f_score(y_true, y_pred, beta):
-    p = precision(y_true, y_pred)
-    r = recall(y_true, y_pred)
+def f_score(y_true, y_pred, beta, label_positive=1, label_negative=0):
+    p = precision(y_true, y_pred, label_positive, label_negative)
+    r = recall(y_true, y_pred, label_positive, label_negative)
     if p * r == 0:
         return 0
 
@@ -39,7 +39,7 @@ def confusion_matrix(y_true, y_pred, labels=[]):
 
     return matrix
 
-def roc_curve(y_true, y_score):
+def roc_curve(y_true, y_score, label_positive=1, label_negative=0):
     TPR = []
     FPR = []
 
@@ -47,15 +47,15 @@ def roc_curve(y_true, y_score):
     for score in scores:
         y_pred = y_score > score
 
-        if TP(y_true, y_pred) == 0:
+        if TP(y_true, y_pred, label_positive) == 0:
             TPR.append(0)
         else:
-            TPR.append(TP(y_true, y_pred) / (TP(y_true, y_pred) + FN(y_true, y_pred)))
+            TPR.append(TP(y_true, y_pred, label_positive) / (TP(y_true, y_pred, label_positive) + FN(y_true, y_pred, label_positive, label_negative)))
 
-        if FP(y_true, y_pred) == 0:
+        if FP(y_true, y_pred, label_positive, label_negative) == 0:
             FPR.append(0)
         else:
-            FPR.append(FP(y_true, y_pred) / (FP(y_true, y_pred) + TN(y_true, y_pred)))
+            FPR.append(FP(y_true, y_pred, label_positive, label_negative) / (FP(y_true, y_pred, label_positive, label_negative) + TN(y_true, y_pred, label_negative)))
 
     plt.plot(FPR, TPR)
     plt.show()
