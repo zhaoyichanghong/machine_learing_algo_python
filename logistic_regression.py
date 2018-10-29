@@ -35,9 +35,9 @@ class logistic_regression_gradient_descent:
         plt.show()
 
     def predict(self, X):
-        return self.probability(X) > 0.5
+        return np.around(self.score(X))
 
-    def probability(self, X):
+    def score(self, X):
         return self.__sigmoid(X.dot(self.__W) + self.__b)
 
 class logistic_regression_newton:
@@ -75,7 +75,7 @@ class logistic_regression_newton:
         plt.show()
 
     def predict(self, X):
-        return self.probability(X) > 0.5
+        return np.around(self.score(X))
 
-    def probability(self, X):
+    def score(self, X):
         return self.__sigmoid(X.dot(self.__W) + self.__b)
