@@ -59,8 +59,7 @@ class relu(layer):
         return (self.__X > 0) * residual
 
 class selu(layer):
-    def init(self, optimizer, learning_rate, input_number=0):
-        super().init(optimizer, learning_rate, input_number)
+    def __init__(self):
         self.__alpha = 1.6732632423543772848170429916717
         self.__scale = 1.0507009873554804934193349852946
 
@@ -81,15 +80,13 @@ class tanh(layer):
 
 class sigmoid(layer):
     def forward(self, X):
-        self.__output = 1 / (1 + np.exp(-X))
-        return self.__output
+        return 1 / (1 + np.exp(-X))
 
 class softmax(layer):
     def forward(self, X):
         X_max = np.max(X, axis=1, keepdims=True)
         X_exp = np.exp(X - X_max)
-        self.__output = X_exp / np.sum(X_exp, axis=1, keepdims=True)
-        return self.__output
+        return X_exp / np.sum(X_exp, axis=1, keepdims=True)
 
 class nnet:
     def __init__(self, loss, optimizer, learning_rate):
