@@ -59,9 +59,9 @@ class linear_regression_newton:
 
 class linear_regression_equation:
     def fit(self, X, y):
-        X = np.insert(X, 0, 1, axis=1)
-        self.__W = np.linalg.pinv(X.T.dot(X)).dot(X.T).dot(y)
+        X_with_b = np.insert(X, 0, 1, axis=1)
+        self.__W = np.linalg.pinv(X_with_b.T.dot(X_with_b)).dot(X_with_b.T).dot(y)
 
     def predict(self, X):
-        X = np.insert(X, 0, 1, axis=1)
-        return X.dot(self.__W)
+        X_with_b = np.insert(X, 0, 1, axis=1)
+        return X_with_b.dot(self.__W)
