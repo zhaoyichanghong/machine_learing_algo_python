@@ -91,3 +91,16 @@ def silhouette_coefficient(X, y):
         s.append((b - a) / max(a, b))
     
     return np.mean(s)
+
+def scatter_feature(X, y=None):
+    if y is None:
+        plt.scatter(X[:, 0], X[:, 1])
+    else:
+        color = ['r', 'b', 'g']
+        classes = np.unique(y)
+        class_number = len(classes)
+        for i in range(class_number):
+            class_data = X[np.where(y == classes[i])[0]]
+            plt.scatter(class_data[:, 0], class_data[:, 1], c=color[i])
+
+    plt.show()

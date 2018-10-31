@@ -1,6 +1,7 @@
 import numpy as np
+import metrics
 
-def pca(X, component_number, whiten=False, method=''):
+def pca(data, component_number, whiten=False, method=''):
     data_number = data.shape[0]
     X = data - np.mean(data, axis=0)
 
@@ -19,6 +20,9 @@ def pca(X, component_number, whiten=False, method=''):
 
     if whiten:
         pc /= np.sqrt(eig_values[:component_number].reshape((1, -1)) / (data_number - 1))
+
+    if component_number == 2:
+        metrics.scatter_feature(pc)
 
     return pc
 

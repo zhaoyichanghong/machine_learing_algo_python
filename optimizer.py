@@ -17,16 +17,11 @@ class gradient_descent(optimizer):
 class momentum(optimizer):
     def __init__(self, learning_rate):
         super().__init__(learning_rate)
-
         self.__alpha = 0.9
-        self.__first_run = True
+        self.__v_w = 0
+        self.__v_b = 0
 
     def optimize(self, g_w, g_b):
-        if self.__first_run:
-            self.__first_run = False
-            self.__v_w = np.zeros_like(g_w)
-            self.__v_b = np.zeros_like(g_b)
-
         self.__v_w = (1 - self.__alpha) * g_w + self.__alpha * self.__v_w
         self.__v_b = (1 - self.__alpha) * g_b + self.__alpha * self.__v_b
 
@@ -35,15 +30,10 @@ class momentum(optimizer):
 class adagrad(optimizer):
     def __init__(self, learning_rate):
         super().__init__(learning_rate)
-
-        self.__first_run = True
+        self.__r_w = 0
+        self.__r_b = 0
 
     def optimize(self, g_w, g_b):
-        if self.__first_run:
-            self.__first_run = False
-            self.__r_w = np.zeros_like(g_w)
-            self.__r_b = np.zeros_like(g_b)
-
         self.__r_w += g_w ** 2
         self.__r_b += g_b ** 2
 
@@ -52,16 +42,11 @@ class adagrad(optimizer):
 class rmsprop(optimizer):
     def __init__(self, learning_rate):
         super().__init__(learning_rate)
-
         self.__alpha = 0.9
-        self.__first_run = True
+        self.__r_w = 0
+        self.__r_b = 0
 
     def optimize(self, g_w, g_b):
-        if self.__first_run:
-            self.__first_run = False
-            self.__r_w = np.zeros_like(g_w)
-            self.__r_b = np.zeros_like(g_b)
-
         self.__r_w = self.__alpha * self.__r_w + (1 - self.__alpha) * g_w ** 2
         self.__r_b = self.__alpha * self.__r_b + (1 - self.__alpha) * g_b ** 2
 
@@ -70,20 +55,15 @@ class rmsprop(optimizer):
 class adam(optimizer):
     def __init__(self, learning_rate):
         super().__init__(learning_rate)
-
         self.__t = 0
         self.__alpha = 0.9
         self.__alpha2 = 0.999
         self.__s_w = 0
         self.__s_b = 0
-        self.__first_run = True
+        self.__r_w = 0
+        self.__r_b = 0
 
     def optimize(self, g_w, g_b):
-        if self.__first_run:
-            self.__first_run = False
-            self.__r_w = np.zeros_like(g_w)
-            self.__r_b = np.zeros_like(g_b)
-
         self.__t += 1
 
         self.__s_w = self.__alpha * self.__s_w + (1 - self.__alpha) * g_w
