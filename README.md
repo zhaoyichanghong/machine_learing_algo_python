@@ -14,7 +14,7 @@ k_means.py: k-means algorithm<br>
 gaussian_mixed_model.py: gaussian mixed model algorithm<br>
 nnet.py: neural network algorithm including dense layer, relu, selu, tanh, binary crossentropy loss, categorical crossentropy loss, mse loss, categorical hinge loss<br>
 preprocess.py: including min-max scaler, z-score scaler, one-hot encoder<br>
-pca.py: principal Component Analysis algorithm<br>
+pca.py: principal Component Analysis algorithm including whiten and Zero-phase Component Analysis whiten<br>
 metrics.py: scores including accuracy, precision, recall, f_score, R2, confusion matrix, roc curve, auc, silhouette coefficient<br>
 optimizer.py: including gradient descent, momentum，adagrad，rmsprop，adam<br>
 regularizer.py: including L1, L2 regularizer
