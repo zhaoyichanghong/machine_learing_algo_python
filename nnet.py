@@ -5,6 +5,7 @@ import metrics
 import optimizer
 import preprocess
 import threading
+from sklearn.utils import shuffle
 
 class layer:
     def init(self, optimizer, learning_rate, input_number=0):
@@ -193,10 +194,7 @@ class nnet:
         for _ in range(epochs):
             start_time = timeit.default_timer()
 
-            permutation = np.random.permutation(data_number)
-            X_epoch = X[permutation]
-            y_epoch = y[permutation]
-
+            X_epoch, y_epoch = shuffle(X, y)
             for i in range(epoch):
                 X_batch = X_epoch[batch_size*i : min(batch_size*(i+1), data_number)]
                 y_batch = y_epoch[batch_size*i : min(batch_size*(i+1), data_number)]

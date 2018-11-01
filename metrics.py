@@ -21,7 +21,7 @@ def recall(y_true, y_pred, label_negative=0):
 
     return TP(y_true, y_pred) / (TP(y_true, y_pred) + FN(y_true, y_pred, label_negative))
 
-def f_score(y_true, y_pred, beta, label_negative=0):
+def f_score(y_true, y_pred, beta=1, label_negative=0):
     p = precision(y_true, y_pred, label_negative)
     r = recall(y_true, y_pred, label_negative)
     if p * r == 0:
