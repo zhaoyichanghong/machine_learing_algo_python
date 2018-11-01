@@ -10,6 +10,7 @@ softmax_regression.py: softmax regression algorithm<br>
 gaussian_discriminant_analysis.py: gaussian discriminant analysis algorithm<br>
 knn.py: k-NearestNeighbor algorithm<br>
 discrete_adaboost.py: discrete adaboost algorithm<br>
+svm.py: support vector machine algorithm including "linear", "rbf" kernel<br>
 k_means.py: k-means algorithm<br>
 gaussian_mixed_model.py: gaussian mixed model algorithm<br>
 nnet.py: neural network algorithm including dense layer, relu, selu, tanh, binary crossentropy loss, categorical crossentropy loss, mse loss, categorical hinge loss<br>
