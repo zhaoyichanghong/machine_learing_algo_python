@@ -2,7 +2,7 @@ import numpy as np
 import metrics
 
 def lda(X, y, component_number):
-    data_number, feature_number = X.shape
+    feature_number = X.shape[1]
     classes = np.unique(y)
     class_number = len(classes)
 
@@ -17,8 +17,14 @@ def lda(X, y, component_number):
         
         s_b += number * (means[i] - mean).reshape((-1, 1)).dot((means[i] - mean).reshape((1, -1)))
 
+        diff1 = (X[items] - means[i])[:,:,np.newaxis]
+        diff2 = np.transpose(diff1, axes=(0, 2, 1))
+        s_w += np.tensordot(diff1, diff2, axes=(0, 0)).reshape((feature_number, feature_number))
+
+        '''
         for item in items:
             s_w += (X[item] - means[i]).reshape((-1, 1)).dot((X[item] - means[i]).reshape((1, -1)))
+        '''
     
     eig_values, eig_vectors = np.linalg.eig(np.linalg.inv(s_w).dot(s_b))
     eig_vectors = eig_vectors[:, np.argsort(-eig_values)]

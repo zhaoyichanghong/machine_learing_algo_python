@@ -33,10 +33,16 @@ class gaussian_mixed_model:
             for i in range(cluster_number):
                 self.__means[i] = np.sum(y_probs[:, i].reshape((-1, 1)) * X, axis=0) / number_classes[:, i]
 
+                diff1 = (X - self.__means[i])[:,:,np.newaxis]
+                diff2 = np.transpose(diff1, axes=(0, 2, 1)) * y_probs[:, i].reshape(-1, 1, 1)
+                self.__sigma[i] = np.tensordot(diff1, diff2, axes=(0, 0)).reshape((feature_number, feature_number)) / number_classes[:, i]
+                
+                '''
                 for j in range(data_number):
                     diff = (X[j] - self.__means[i]).reshape(-1, 1)
                     self.__sigma[i] += y_probs[j, i] * diff.dot(diff.T)
                 self.__sigma[i] /= number_classes[:, i]
+                '''
 
             self.__pis = number_classes / data_number
 
