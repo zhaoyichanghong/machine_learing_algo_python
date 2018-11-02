@@ -1,5 +1,5 @@
-X: data_number * feature_number matrix<br>
-y: data_number * 1 vector<br>
+**X:** data_number * feature_number matrix<br>
+**y:** data_number * 1 vector<br>
 
 # pla.py
     perceptron learning algorithm

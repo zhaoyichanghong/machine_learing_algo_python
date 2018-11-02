@@ -39,6 +39,21 @@ def confusion_matrix(y_true, y_pred, labels=[]):
 
     return matrix
 
+def pr_curve(y_true, y_score, label_negative=0):
+    p = []
+    r = []
+
+    scores = np.sort(y_score.flatten())
+    for score in scores:
+        y_pred = (y_score > score) + 0
+
+        tmp = precision(y_true, y_pred, label_negative)
+        p.append(precision(y_true, y_pred, label_negative))
+        r.append(recall(y_true, y_pred, label_negative))
+
+    plt.plot(r, p)
+    plt.show()
+
 def roc_curve(y_true, y_score, label_negative=0):
     TPR = []
     FPR = []
