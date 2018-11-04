@@ -6,12 +6,13 @@ import optimizer
 import preprocess
 import threading
 from sklearn.utils import shuffle
+import random
 
 class layer:
     def init(self, optimizer, learning_rate, input_number=0):
         self.unit_number = input_number
 
-    def forward(self, X):
+    def forward(self, X, mode):
         pass
 
     def backward(self, y, residual):
@@ -19,6 +20,24 @@ class layer:
 
     def optimize (self, y, residual):
         pass
+
+class dropout(layer):
+    def __init__(self, p=0):
+        self.__p = p
+    
+    def forward(self, X, mode):
+        if self.__p > 0 and mode == 'fit':
+            self.__dropout_index = random.sample(range(self.unit_number), int(self.unit_number * self.__p))
+            X[:, self.__dropout_index] = 0
+            return X / (1 - self.__p)
+        else:
+            return X
+
+    def backward(self, y, residual):
+        if self.__p > 0:
+            residual[:, self.__dropout_index] = 0
+
+        return residual / (1 - self.__p)
 
 class dense(layer):
     def __init__(self, unit_number, input_number=0):
@@ -34,7 +53,7 @@ class dense(layer):
 
         self.__optimizer = optimizer(learning_rate)
 
-    def forward(self, X):
+    def forward(self, X, mode):
         self.__X = X
         return self.__X.dot(self.__W) + self.__b
 
@@ -52,7 +71,7 @@ class dense(layer):
         self.__b -= g_b
 
 class relu(layer):
-    def forward(self, X):
+    def forward(self, X, mode):
         self.__X = X
         return np.maximum(self.__X, 0)
 
@@ -64,7 +83,7 @@ class selu(layer):
         self.__alpha = 1.6732632423543772848170429916717
         self.__scale = 1.0507009873554804934193349852946
 
-    def forward(self, X):
+    def forward(self, X, mode):
         self.__X = X
         return self.__scale * np.where(self.__X > 0.0, self.__X, self.__alpha * (np.exp(self.__X) - 1))
 
@@ -72,7 +91,7 @@ class selu(layer):
         return self.__scale * np.where(self.__X > 0.0, 1, self.__alpha * (np.exp(self.__X) - 1)) * residual
 
 class tanh(layer):
-    def forward(self, X):
+    def forward(self, X, mode):
         self.__output = np.tanh(X)
         return self.__output
 
@@ -80,11 +99,11 @@ class tanh(layer):
         return (1 - np.power(self.__output, 2)) * residual
 
 class sigmoid(layer):
-    def forward(self, X):
+    def forward(self, X, mode):
         return 1 / (1 + np.exp(-X))
 
 class softmax(layer):
-    def forward(self, X):
+    def forward(self, X, mode):
         X_max = np.max(X, axis=1, keepdims=True)
         X_exp = np.exp(X - X_max)
         return X_exp / np.sum(X_exp, axis=1, keepdims=True)
@@ -131,7 +150,7 @@ class nnet:
         elif self.__loss == 'mse':
             loss = np.mean((h - y) ** 2)
         elif self.__loss == 'categorical_crossentropy':
-            loss = -np.mean(np.sum(y * np.log(h), axis=1))
+            loss = -np.mean(np.sum(y * np.log(h + 1e-8), axis=1))
         elif self.__loss == 'categorical_hinge':
             batch_size, class_number = y.shape
 
@@ -158,9 +177,9 @@ class nnet:
 
         plt.show()
 
-    def __foreward(self, X):
+    def __foreward(self, X, mode='fit'):
         for layer in self.layers:
-            X = layer.forward(X)
+            X = layer.forward(X, mode)
 
         return X
 
@@ -219,4 +238,5 @@ class nnet:
             return self.score(X).reshape(-1, 1)
 
     def score(self, X):
-        return self.__foreward(X)
+        self.__mode = 'predict'
+        return self.__foreward(X, 'predict')
