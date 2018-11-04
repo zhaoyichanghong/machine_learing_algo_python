@@ -36,7 +36,7 @@
 # distance.py
     distance algorithms including euclidean distance, manhattan distance, chebyshev distance, mahalanobis distance, cosine distance
 # metrics.py
-    scores including accuracy, precision, recall, f_score, R2, confusion matrix, roc curve, auc, silhouette coefficient, 2d feature scatter
+    scores including accuracy, precision, recall, f_score, R2, confusion matrix, pr curve, roc curve, auc, silhouette coefficient, 2d feature scatter
 # optimizer.py
     optimizer algorithm including gradient descent, momentum，adagrad，rmsprop，adam
 # regularizer.py
