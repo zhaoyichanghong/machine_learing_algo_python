@@ -26,7 +26,9 @@
 # gaussian_mixed_model.py
     gaussian mixed model algorithm
 # nnet.py
-    neural network algorithm including dense layer, relu, selu, tanh, binary crossentropy loss, categorical crossentropy loss, mse loss, categorical hinge loss
+    neural network algorithm including following components
+    layers: dense, dropout, relu, selu, tanh
+    loss: binary crossentropy, categorical crossentropy, mse, categorical hinge
 # preprocess.py
     preprocess including min-max scaler, z-score scaler, one-hot encoder
 # pca.py
