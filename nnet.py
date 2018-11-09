@@ -7,6 +7,8 @@ import preprocess
 import threading
 from sklearn.utils import shuffle
 import random
+import math
+from functools import reduce
 
 class layer:
     def init(self, optimizer, learning_rate, input_number=0):
@@ -20,6 +22,192 @@ class layer:
 
     def optimize (self, y, residual):
         pass
+
+class conv2d(layer):
+    def __init__(self, filter_number, kernel_shape, stride_size=(1, 1), padding='same',  input_number=0):
+        self.__filter_number = filter_number
+        self.__input_number = input_number
+        self.__kernel_h, self.__kernel_w = kernel_shape
+        self.__stride_h, self.__stride_w = stride_size
+        self.__padding = padding
+
+    def init(self, optimizer, learning_rate, input_number=0):
+        if self.__input_number == 0:
+            self.__input_number = input_number
+
+        self.__input_channels, self.__input_h, self.__input_w = self.__input_number
+
+        if self.__padding == 'same':
+            self.__padding_h = (math.ceil(self.__input_h / self.__stride_h) - 1) * self.__stride_h + self.__kernel_h - self.__input_h
+            self.__padding_w = (math.ceil(self.__input_w / self.__stride_w) - 1) * self.__stride_w + self.__kernel_w - self.__input_w
+            self.__padding_h_up = self.__padding_h // 2
+            self.__padding_h_down = self.__padding_h - self.__padding_h_up
+            self.__padding_w_left = self.__padding_w // 2
+            self.__padding_w_right = self.__padding_w - self.__padding_w_left
+            
+            self.__input_h += self.__padding_h
+            self.__input_w += self.__padding_w
+
+        self.__kernel_size = self.__kernel_h * self.__kernel_w
+        self.__output_h = (self.__input_h - self.__kernel_h) // self.__stride_h + 1
+        self.__output_w = (self.__input_w - self.__kernel_w) // self.__stride_w + 1
+        self.__output_size = self.__output_h * self.__output_w
+
+        self.unit_number = (self.__filter_number, self.__output_h, self.__output_w)
+
+        self.__W = np.random.normal(scale=np.sqrt(4 / (self.__kernel_size + self.__filter_number)), size=(self.__filter_number, self.__input_channels, self.__kernel_h, self.__kernel_w))
+        self.__b = np.zeros((self.__filter_number))
+        self.__optimizer = optimizer(learning_rate)
+
+    def __img2col(self, img, input_channels):
+        col = np.zeros((self.__batch_size, self.__output_size, self.__kernel_size * input_channels))
+        for h in range(0, self.__output_h):
+            for w in range(0, self.__output_w):
+                col[:, self.__output_w*h+w, :] = img[:, :, h*self.__stride_h:h*self.__stride_h+self.__kernel_h, w*self.__stride_w:w*self.__stride_w+self.__kernel_w].reshape(self.__batch_size, -1)
+        
+        return col
+
+    def forward(self, X, mode):
+        self.__batch_size = X.shape[0]
+        self.__input_shape = X.shape
+
+        if self.__padding == 'same':
+            X = np.pad(X[:, :], ((0, 0), (0, 0), (self.__padding_h_up, self.__padding_h_down), (self.__padding_w_left, self.__padding_w_right)), 'constant')
+
+        self.__col = self.__img2col(X, self.__input_channels)
+        output = self.__col.dot(self.__W.reshape(self.__filter_number, -1).T)
+
+        return np.transpose(output, axes=(0, 2, 1)).reshape((self.__batch_size, self.__filter_number, self.__output_h, self.__output_w)) + self.__b[None, :, None, None]
+
+    def optimize(self, y, residual):
+        '''
+        g_W = np.zeros_like(self.__W)
+        for k in range(self.__filter_number):
+            tmp = self.__col * residual.reshape(self.__batch_size, self.__filter_number, -1)[:, k, :][:, :, None]
+            g_W[k, :, :, :] = np.sum(tmp, axis=(0, 1)).reshape(self.__input_channels, self.__kernel_h, self.__kernel_w) / self.__batch_size
+        '''
+        g_W = (np.tensordot(residual.reshape(self.__batch_size, self.__filter_number, -1), self.__col, axes=[[0,2], [0, 1]]) / self.__batch_size).reshape(self.__W.shape)
+        g_b = np.mean(np.sum(residual, axis=(2, 3)), axis=0)
+        
+        g_W, g_b = self.__optimizer.optimize(g_W, g_b)
+        
+        self.__W -= g_W
+        self.__b -= g_b
+
+    def backward(self, y, residual):
+        if self.__padding == 'same':
+            residual = np.pad(residual[:, :], ((0, 0), (0, 0), (self.__padding_h_up, self.__padding_h_down), (self.__padding_w_left, self.__padding_w_right)), 'constant')
+
+        W = np.transpose(self.__W, axes=(1, 0, 2, 3))
+        W = np.rot90(W, k=2, axes=(2, 3))
+
+        col = self.__img2col(residual, self.__filter_number)
+        residual = col.dot(W.reshape(self.__input_channels, -1).T)
+
+        return np.transpose(residual, axes=(0, 2, 1)).reshape(self.__input_shape)
+
+class max_pool(layer):
+    def __init__(self, pool_shape, stride_size=None):
+        self.__pool_h, self.__pool_w = pool_shape
+
+        if stride_size == None:
+            self.__stride_h, self.__stride_w = pool_shape
+        else:
+            self.__stride_h, self.__stride_w = stride_size
+
+    def init(self, optimizer, learning_rate, input_number=0):
+        self.__input_channels, self.__input_h, self.__input_w = input_number
+        self.__output_h = (self.__input_h - self.__pool_h) // self.__stride_h + 1
+        self.__output_w = (self.__input_w - self.__pool_w) // self.__stride_w + 1
+        self.unit_number = (self.__input_channels, self.__output_h, self.__output_w)
+
+    def forward(self, X, mode):
+        self.__batch_size = X.shape[0]
+
+        output = np.zeros((self.__batch_size, self.__input_channels, self.__output_h, self.__output_w))
+        self.__output_index = np.zeros_like(X)
+        for h in range(0, self.__output_h):
+            for w in range(0, self.__output_w):
+                output_index = np.argmax(X[:, :, h*self.__stride_h:h*self.__stride_h+self.__pool_h, w*self.__stride_w:w*self.__stride_w+self.__pool_w].reshape((self.__batch_size, self.__input_channels, -1)), axis=2)
+                output_index_h, output_index_w = divmod(output_index, self.__pool_w)
+                for i in range(self.__batch_size):
+                    for j in range(self.__input_channels):
+                        self.__output_index[i, j, h*self.__stride_h+output_index_h[i, j], w*self.__stride_w+output_index_w[i, j]] = 1
+                output[:, :, h, w] = np.max(X[:, :, h*self.__stride_h:h*self.__stride_h+self.__pool_h, w*self.__stride_w:w*self.__stride_w+self.__pool_w], axis=(2, 3))
+
+        return output
+
+    def backward(self, y, residual):
+        if self.__stride_h == self.__pool_h and self.__stride_w == self.__pool_w:
+            layer_residual = np.repeat(residual, repeats=self.__pool_h, axis=2)
+            layer_residual = np.repeat(layer_residual, repeats=self.__pool_w, axis=3)
+        else:
+            layer_residual = np.zeros((self.__batch_size, self.__input_channels, self.__input_h, self.__input_w))
+            for h in range(0, self.__output_h):
+                for w in range(0, self.__output_w):
+                    layer_residual[:, :, h*self.__stride_h:h*self.__stride_h+self.__pool_h, w*self.__stride_w:w*self.__stride_w+self.__pool_w] += residual[:, :, h, w][:, :, None, None]
+
+        return layer_residual * self.__output_index
+
+class mean_pool(layer):
+    def __init__(self, pool_shape, stride_size=None):
+        self.__pool_h, self.__pool_w = pool_shape
+
+        if stride_size == None:
+            self.__stride_h, self.__stride_w = pool_shape
+        else:
+            self.__stride_h, self.__stride_w = stride_size
+
+    def init(self, optimizer, learning_rate, input_number=0):
+        self.__input_channels, self.__input_h, self.__input_w = input_number
+        self.__output_h = (self.__input_h - self.__pool_h) // self.__stride_h + 1
+        self.__output_w = (self.__input_w - self.__pool_w) // self.__stride_w + 1
+        self.unit_number = (self.__input_channels, self.__output_h, self.__output_w)
+
+    def forward(self, X, mode):
+        self.__batch_size = X.shape[0]
+        
+        M, N = X.shape[2], X.shape[3]
+        K = self.__pool_h
+        L = self.__pool_w
+
+        MK = M // K
+        NL = N // L
+
+        return X[:, :, :MK*K, :NL*L].reshape(X.shape[0], X.shape[1], MK, K, NL, L).mean(axis=(3, 5))
+        '''
+        output = np.zeros((self.__batch_size, self.__input_channels, self.__output_h, self.__output_w))
+        for h in range(0, self.__output_h):
+            for w in range(0, self.__output_w):
+                output[:, :, h, w] = np.mean(X[:, :, h*self.__stride_h:h*self.__stride_h+self.__pool_h, w*self.__stride_w:w*self.__stride_w+self.__pool_w], axis=(2, 3))
+
+        return output
+        '''
+
+    def backward(self, y, residual):
+        residual /= self.__pool_h * self.__pool_w
+
+        if self.__stride_h == self.__pool_h and self.__stride_w == self.__pool_w:
+            layer_residual = np.repeat(residual, repeats=self.__pool_h, axis=2)
+            layer_residual = np.repeat(layer_residual, repeats=self.__pool_w, axis=3)
+        else:
+            layer_residual = np.zeros((self.__batch_size, self.__input_channels, self.__input_h, self.__input_w))
+            for h in range(0, self.__output_h):
+                for w in range(0, self.__output_w):
+                    layer_residual[:, :, h*self.__stride_h:h*self.__stride_h+self.__pool_h, w*self.__stride_w:w*self.__stride_w+self.__pool_w] += residual[:, :, h, w][:, :, None, None]
+
+        return layer_residual
+
+class flatten(layer):
+    def init(self, optimizer, learning_rate, input_number=0):
+        self.unit_number = reduce(lambda i, j : i * j, input_number)
+
+    def forward(self, X, mode):
+        self.__input_shape = X.shape
+        return X.reshape(self.__input_shape[0], -1)
+
+    def backward(self, y, residual):
+        return residual.reshape(self.__input_shape)
 
 class dropout(layer):
     def __init__(self, p=0):
