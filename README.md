@@ -20,7 +20,9 @@
 # discrete_adaboost.py
     discrete adaboost algorithm
 # svm.py
-    support vector machine algorithm including "linear", "rbf" kernel
+    support vector machine algorithm including following components
+    kernel: linear, rbf
+    solver: smo, quadratic programming
 # k_means.py
     k-means algorithm
 # gaussian_mixed_model.py
