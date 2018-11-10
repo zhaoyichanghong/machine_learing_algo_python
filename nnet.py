@@ -227,6 +227,39 @@ class dropout(layer):
 
         return residual / (1 - self.__p)
 
+class batch_normalization(layer):
+    def init(self, optimizer, learning_rate, input_number=0):
+        self.unit_number = input_number
+        self.__gamma = np.ones(self.unit_number)
+        self.__beta = np.zeros(self.unit_number)
+        self.__optimizer = optimizer(learning_rate)
+
+    def forward(self, X, mode):
+        self.__X = X
+        self.__mean = np.mean(self.__X, axis=0)
+        self.__std = np.std(self.__X, axis=0)
+        self.__X_hat = (self.__X - self.__mean) / (self.__std + 1e-8)
+        return self.__gamma * self.__X_hat + self.__beta
+
+    def backward(self, y, residual):
+        d_X_hat = residual * self.__gamma
+        
+        d_var =  np.sum(-d_X_hat * (self.__X - self.__mean) * ((self.__std + 1e-8) ** -3) / 2, axis=0)
+
+        d_mean = np.sum(-d_X_hat / (self.__std + 1e-8), axis=0) - 2 * d_var * np.mean(self.__X - self.__mean)
+
+        batch_size = self.__X.shape[0]
+        return d_X_hat / (self.__std + 1e-8) + d_var * 2 * (self.__X - self.__mean) / batch_size + d_mean / batch_size
+
+    def optimize(self, y, residual):
+        g_W = np.mean(residual * self.__X_hat, axis=0)
+        g_b = np.mean(residual, axis=0)
+
+        g_W, g_b = self.__optimizer.optimize(g_W, g_b)
+
+        self.__gamma -= g_W
+        self.__beta -= g_b
+
 class dense(layer):
     def __init__(self, unit_number, input_number=0):
         self.unit_number = unit_number
