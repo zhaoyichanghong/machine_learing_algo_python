@@ -4,6 +4,9 @@ import metrics
 import regularizer
 
 class logistic_regression_gradient_descent:
+    def __init__(self, debug=True):
+        self.__debug = debug
+
     def __sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
 
@@ -13,8 +16,10 @@ class logistic_regression_gradient_descent:
         self.__W = np.zeros((feature_number, 1))
         self.__b = 0
 
-        accuracy = []
-        loss = []
+        if self.__debug:
+            accuracy = []
+            loss = []
+
         for _ in range(epochs):
             h = self.__sigmoid(X.dot(self.__W) + self.__b)
 
@@ -24,15 +29,17 @@ class logistic_regression_gradient_descent:
             self.__W -= g_w
             self.__b -= g_b
 
-            y_hat = self.__sigmoid(X.dot(self.__W) + self.__b)
-            loss.append(np.mean(-y * np.log(y_hat) - (1 - y) * np.log(1 - y_hat)))
-            accuracy.append(metrics.accuracy(y, y_hat > 0.5))
+            if self.__debug:
+                y_hat = self.__sigmoid(X.dot(self.__W) + self.__b)
+                loss.append(np.mean(-y * np.log(y_hat) - (1 - y) * np.log(1 - y_hat)))
+                accuracy.append(metrics.accuracy(y, y_hat > 0.5))
 
-        _, ax_loss = plt.subplots()
-        ax_loss.plot(loss, 'b')
-        ax_accuracy = ax_loss.twinx()
-        ax_accuracy.plot(accuracy, 'r')
-        plt.show()
+        if self.__debug:
+            _, ax_loss = plt.subplots()
+            ax_loss.plot(loss, 'b')
+            ax_accuracy = ax_loss.twinx()
+            ax_accuracy.plot(accuracy, 'r')
+            plt.show()
 
     def predict(self, X):
         return np.around(self.score(X))
@@ -41,6 +48,9 @@ class logistic_regression_gradient_descent:
         return self.__sigmoid(X.dot(self.__W) + self.__b)
 
 class logistic_regression_newton:
+    def __init__(self, debug=True):
+        self.__debug = debug
+
     def __sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
 
@@ -50,8 +60,10 @@ class logistic_regression_newton:
         self.__W = np.zeros((feature_number, 1))
         self.__b = 0
 
-        accuracy = []
-        loss = []
+        if self.__debug:
+            accuracy = []
+            loss = []
+
         for _ in range(epochs):
             h = self.__sigmoid(X.dot(self.__W) + self.__b)
 
@@ -64,15 +76,17 @@ class logistic_regression_newton:
             b_H = np.sum(h * (1 - h))
             self.__b -= b_g / b_H
             
-            y_hat = self.__sigmoid(X.dot(self.__W) + self.__b)
-            loss.append(np.mean(-y * np.log(y_hat) - (1 - y) * np.log(1 - y_hat)))
-            accuracy.append(metrics.accuracy(y, y_hat > 0.5))
+            if self.__debug:
+                y_hat = self.__sigmoid(X.dot(self.__W) + self.__b)
+                loss.append(np.mean(-y * np.log(y_hat) - (1 - y) * np.log(1 - y_hat)))
+                accuracy.append(metrics.accuracy(y, y_hat > 0.5))
 
-        _, ax_loss = plt.subplots()
-        ax_loss.plot(loss, 'b')
-        ax_accuracy = ax_loss.twinx()
-        ax_accuracy.plot(accuracy, 'r')
-        plt.show()
+        if self.__debug:
+            _, ax_loss = plt.subplots()
+            ax_loss.plot(loss, 'b')
+            ax_accuracy = ax_loss.twinx()
+            ax_accuracy.plot(accuracy, 'r')
+            plt.show()
 
     def predict(self, X):
         return np.around(self.score(X))

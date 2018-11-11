@@ -330,7 +330,8 @@ class softmax(layer):
         return X_exp / np.sum(X_exp, axis=1, keepdims=True)
 
 class nnet:
-    def __init__(self, loss, optimizer, learning_rate):
+    def __init__(self, loss, optimizer, learning_rate, debug=True):
+        self.__debug = debug
         self.layers = []
         self.__loss = loss
         self.__optimizer = optimizer
@@ -421,11 +422,6 @@ class nnet:
         self.layers.append(layer)
 
     def fit(self, X, y, batch_size, epochs):
-        if self.__loss == 'categorical_crossentropy' or self.__loss == 'categorical_hinge':
-            encoder = preprocess.one_hot()
-            y = encoder.fit_transform(y)
-            self.__classes = np.array(encoder.classes)
-
         data_number = X.shape[0]
         epoch = (data_number + batch_size - 1) // batch_size
 
@@ -448,11 +444,12 @@ class nnet:
                     
             threading.Thread(target=self.__log, args=(_, loss[-1], timeit.default_timer() - start_time, np.mean(accuracy))).start()
 
-        self.__draw_figure(loss, accuracy)
+        if self.__debug:
+            self.__draw_figure(loss, accuracy)
 
-    def predict(self, X):
+    def predict(self, X, classes=None):
         if self.__loss == 'categorical_crossentropy' or self.__loss == 'categorical_hinge':
-            return self.__classes[np.argmax(self.score(X), axis=1)].reshape(-1, 1)
+            return classes[np.argmax(self.score(X), axis=1)].reshape(-1, 1)
         elif self.__loss == 'binary_crossentropy':
             return np.around(self.score(X)).reshape(-1, 1)
         elif self.__loss == 'mse':

@@ -4,13 +4,18 @@ import optimizer
 import regularizer
 
 class linear_regression_gradient_descent:
+    def __init__(self, debug=True):
+        self.__debug = debug
+
     def fit(self, X, y, epochs, optimizer, regularizer=regularizer.regularizer(0)):
         data_number, feature_number = X.shape
 
         self.__W = np.zeros((feature_number, 1))
         self.__b = 0
 
-        loss = []
+        if self.__debug:
+            loss = []
+
         for _ in range(epochs):
             h = X.dot(self.__W) + self.__b
 
@@ -20,23 +25,30 @@ class linear_regression_gradient_descent:
             self.__W -= g_w
             self.__b -= g_b
 
-            y_hat = X.dot(self.__W) + self.__b
-            loss.append(np.mean((y_hat - y) ** 2))
+            if self.__debug:
+                y_hat = X.dot(self.__W) + self.__b
+                loss.append(np.mean((y_hat - y) ** 2))
 
-        plt.plot(loss)
-        plt.show()
+        if self.__debug:
+            plt.plot(loss)
+            plt.show()
 
     def predict(self, X):
         return X.dot(self.__W) + self.__b
 
 class linear_regression_newton:
+    def __init__(self, debug=True):
+        self.__debug = debug
+
     def fit(self, X, y, epochs):
         data_number, feature_number = X.shape
 
         self.__W = np.zeros((feature_number, 1))
         self.__b = 0
 
-        loss = []
+        if self.__debug: 
+            loss = []
+
         for _ in range(epochs):
             h = X.dot(self.__W) + self.__b
 
@@ -48,11 +60,13 @@ class linear_regression_newton:
             b_H = data_number
             self.__b -= b_g / b_H
 
-            y_hat = X.dot(self.__W) + self.__b
-            loss.append(np.mean((y_hat - y) ** 2))
+            if self.__debug:
+                y_hat = X.dot(self.__W) + self.__b
+                loss.append(np.mean((y_hat - y) ** 2))
 
-        plt.plot(loss)
-        plt.show()
+        if self.__debug:
+            plt.plot(loss)
+            plt.show()
 
     def predict(self, X):
         return X.dot(self.__W) + self.__b

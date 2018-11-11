@@ -5,22 +5,22 @@ import preprocess
 import regularizer
 
 class softmax_regression:
+    def __init__(self, debug=True):
+        self.__debug = debug
+
     def __softmax(self, x):
         return np.exp(x) / np.sum(np.exp(x), axis=1).reshape(-1, 1)
 
     def fit(self, X, y, epochs, optimizer, regularizer=regularizer.regularizer(0)):
         data_number, feature_number = X.shape
-
-        encoder = preprocess.one_hot()
-        y = encoder.fit_transform(y)
         class_number = y.shape[1]
-        self.__classes = np.array(encoder.classes)
 
         self.__W = np.zeros((feature_number, class_number))
         self.__b = np.zeros((1, class_number))
 
-        accuracy = []
-        loss = []
+        if self.__debug:
+            accuracy = []
+            loss = []
         for _ in range(epochs):
             h = self.__softmax(X.dot(self.__W) + self.__b)
 
@@ -30,18 +30,20 @@ class softmax_regression:
             self.__W -= g_w
             self.__b -= g_b
 
-            y_hat = self.__softmax(X.dot(self.__W) + self.__b)
-            loss.append(np.mean(-np.sum(y * np.log(y_hat), axis=1)))
-            accuracy.append(metrics.accuracy(np.argmax(y, axis=1), np.argmax(y_hat, axis=1)))
+            if self.__debug:
+                y_hat = self.__softmax(X.dot(self.__W) + self.__b)
+                loss.append(np.mean(-np.sum(y * np.log(y_hat), axis=1)))
+                accuracy.append(metrics.accuracy(np.argmax(y, axis=1), np.argmax(y_hat, axis=1)))
 
-        _, ax_loss = plt.subplots()
-        ax_loss.plot(loss, 'b')
-        ax_accuracy = ax_loss.twinx()
-        ax_accuracy.plot(accuracy, 'r')
-        plt.show()
+        if self.__debug:
+            _, ax_loss = plt.subplots()
+            ax_loss.plot(loss, 'b')
+            ax_accuracy = ax_loss.twinx()
+            ax_accuracy.plot(accuracy, 'r')
+            plt.show()
 
-    def predict(self, X):
-        return self.__classes[np.argmax(self.probability(X), axis=1)]
+    def predict(self, X, classes):
+        return classes[np.argmax(self.probability(X), axis=1)]
 
     def probability(self, X):
         return self.__softmax(X.dot(self.__W) + self.__b)

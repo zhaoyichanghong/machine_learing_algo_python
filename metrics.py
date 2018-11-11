@@ -119,3 +119,17 @@ def scatter_feature(X, y=None):
             plt.scatter(class_data[:, 0], class_data[:, 1], c=color[i])
 
     plt.show()
+
+def learning_curve(train_X, train_y, test_X, test_y, fit, predict):
+    train_data_number = train_X.shape[0]
+
+    accuracy_train = []
+    accuracy_test = []
+    for i in range(1, train_data_number):
+        fit(train_X[:i], train_y[:i])
+        accuracy_train.append(accuracy(train_y[:i], predict(train_X[:i])))
+        accuracy_test.append(accuracy(test_y, predict(test_X[:i])))
+
+    plt.plot(accuracy_train, 'r')
+    plt.plot(accuracy_test, 'b')
+    plt.show()
