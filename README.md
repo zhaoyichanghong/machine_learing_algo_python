@@ -32,7 +32,7 @@
     layers: cnn, max pool, mean pool, flatten, dense, dropout, batch normalization, relu, selu, tanh
     loss: binary crossentropy, categorical crossentropy, mse, categorical hinge
 # preprocess.py
-    preprocess including min-max scaler, z-score scaler, one-hot encoder
+    preprocess including min-max scaler, z-score scaler, one-hot encoder, bagging
 # pca.py
     principal Component Analysis algorithm including whiten and zero-phase component analysis whiten
 # linear_discriminant_analysis.py
