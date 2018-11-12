@@ -44,6 +44,6 @@
 # optimizer.py
     optimizer algorithm including following components
     gradient descent: momentum，adagrad，rmsprop，adam
-    conjugate gradient: prp
+    conjugate gradient: prp, fr
 # regularizer.py
     regularizer algorithm including L1, L2
