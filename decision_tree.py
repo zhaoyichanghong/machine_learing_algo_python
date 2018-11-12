@@ -25,12 +25,16 @@ class decision_tree():
             labels = y.flatten().tolist()
             return None, int(max(set(labels), key=labels.count))
 
+        if np.allclose(np.mean(X, axis=0), X[0]):
+            labels = y.flatten().tolist()
+            return None, int(max(set(labels), key=labels.count))
+
         entropy = self.get_entropy(y)
 
         score_max = -np.inf
         for i in range(feature_number):
-            feature_sort = sorted(X[:, i])
-            for n in range(data_number - 1):
+            feature_sort = np.unique(sorted(X[:, i]))
+            for n in range(len(feature_sort) - 1):
                 threshold = (feature_sort[n] + feature_sort[n + 1]) / 2
 
                 left_items = np.where(X[:, i] < threshold)[0]
