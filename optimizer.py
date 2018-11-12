@@ -14,6 +14,30 @@ class gradient_descent(optimizer):
     def optimize(self, g_w, g_b):
         return self.learning_rate * g_w, self.learning_rate * g_b
 
+class cg_prp(optimizer):
+    def __init__(self, learning_rate):
+        super().__init__(learning_rate)
+        self.__g_w = np.zeros((1, 1))
+        self.__d_w = np.zeros((1, 1))
+        self.__g_b = np.zeros((1, 1))
+        self.__d_b = np.zeros((1, 1))
+
+    def optimize(self, g_w, g_b):
+        beta = np.linalg.norm(g_w, axis=0) ** 2 / (np.linalg.norm(self.__g_w, axis=0) ** 2 + 1e-8)
+        d_w = g_w - beta * self.__d_w
+        self.__d_w = -d_w
+        self.__g_w = g_w
+
+        if not hasattr(g_b, "__len__"):
+            g_b = np.full((1, 1), g_b)
+
+        beta = np.linalg.norm(g_b, axis=0) ** 2 / (np.linalg.norm(self.__g_b, axis=0) ** 2 + 1e-8)
+        d_b = g_b - beta * self.__d_b
+        self.__d_b = -d_b
+        self.__g_b = g_b
+
+        return self.learning_rate * d_w.reshape(g_w.shape), self.learning_rate * d_b.reshape(g_b.shape)
+
 class momentum(optimizer):
     def __init__(self, learning_rate):
         super().__init__(learning_rate)

@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import metrics
-import preprocess
 import regularizer
 
 class softmax_regression:
@@ -25,7 +24,7 @@ class softmax_regression:
             h = self.__softmax(X.dot(self.__W) + self.__b)
 
             g_w = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
-            g_b = np.mean(h - y)
+            g_b = np.mean(h - y, axis=0)
             g_w, g_b = optimizer.optimize(g_w, g_b)
             self.__W -= g_w
             self.__b -= g_b

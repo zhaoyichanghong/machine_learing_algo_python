@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import timeit
 import metrics
 import optimizer
-import preprocess
 import threading
 from sklearn.utils import shuffle
 import random
@@ -252,13 +251,13 @@ class batch_normalization(layer):
         return d_X_hat / (self.__std + 1e-8) + d_var * 2 * (self.__X - self.__mean) / batch_size + d_mean / batch_size
 
     def optimize(self, y, residual):
-        g_W = np.mean(residual * self.__X_hat, axis=0)
-        g_b = np.mean(residual, axis=0)
+        g_gamma = np.mean(residual * self.__X_hat, axis=0)
+        g_beta = np.mean(residual, axis=0)
 
-        g_W, g_b = self.__optimizer.optimize(g_W, g_b)
+        g_gamma, g_beta = self.__optimizer.optimize(g_gamma, g_beta)
 
-        self.__gamma -= g_W
-        self.__beta -= g_b
+        self.__gamma -= g_gamma
+        self.__beta -= g_beta
 
 class dense(layer):
     def __init__(self, unit_number, input_number=0):
