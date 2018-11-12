@@ -27,7 +27,7 @@ class decision_tree():
 
         entropy = self.get_entropy(y)
 
-        score_max = 0
+        score_max = -np.inf
         for i in range(feature_number):
             feature_sort = sorted(X[:, i])
             for n in range(data_number - 1):
@@ -100,7 +100,22 @@ class c4_5(decision_tree):
         else:
             info_value = -y_left_number / data_number * np.log2(y_left_number / data_number) - y_right_number / data_number * np.log2(y_right_number / data_number)
 
-        if info_value == 0:
-            return 0
-        else:
-            return info_gain / info_value
+        return info_gain / info_value
+
+class cart(decision_tree):
+    def __get_gini(self, y):
+        data_number = y.shape[0]
+
+        items_number = []
+        for key, value in collections.Counter(y.flatten()).items():
+            items_number.append(value)
+        items_number = np.array(items_number)
+
+        return 1 - np.sum((items_number / data_number) ** 2)
+
+    def get_score(self, y_left, y_right, entropy):
+        y_left_number = y_left.shape[0]
+        y_right_number = y_right.shape[0]
+        data_number = y_left_number + y_right_number
+
+        return -(y_left_number / data_number * self.__get_gini(y_left) + y_right_number / data_number * self.__get_gini(y_right))
