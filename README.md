@@ -28,7 +28,7 @@
 # gaussian_mixed_model.py
     gaussian mixed model algorithm
 # decision_tree.py
-    decision tree algorithm including ID3, C4.5
+    decision tree algorithm including ID3, C4.5, CART
 # nnet.py
     neural network algorithm including following components
     layers: cnn, max pool, mean pool, flatten, dense, dropout, batch normalization, relu, selu, tanh

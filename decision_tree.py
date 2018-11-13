@@ -21,13 +21,12 @@ class decision_tree():
         if data_number == 0:
             return None, None
 
-        if len(np.unique(y)) == 1:
-            labels = y.flatten().tolist()
-            return None, int(max(set(labels), key=labels.count))
-
-        if np.allclose(np.mean(X, axis=0), X[0]):
-            labels = y.flatten().tolist()
-            return None, int(max(set(labels), key=labels.count))
+        if len(np.unique(y)) == 1 or np.allclose(np.mean(X, axis=0), X[0]):
+            if hasattr(self, 'mode') and self.mode == 'regression':
+                return None, np.mean(y)
+            else:
+                labels = y.flatten().tolist()
+                return None, int(max(set(labels), key=labels.count))
 
         entropy = self.get_entropy(y)
 
@@ -52,8 +51,8 @@ class decision_tree():
         root = self.__tree()
         root['feature'] = feature_boundary
         root['threshold'] = threshold_boundary
-        root['left']['node'], root['left']['label'] = self.__create_tree(X[left_items_boundary], y[left_items_boundary])
-        root['right']['node'], root['right']['label'] = self.__create_tree(X[right_items_boundary], y[right_items_boundary])
+        root['left']['node'], root['left']['result'] = self.__create_tree(X[left_items_boundary], y[left_items_boundary])
+        root['right']['node'], root['right']['result'] = self.__create_tree(X[right_items_boundary], y[right_items_boundary])
 
         return root, None
 
@@ -63,12 +62,12 @@ class decision_tree():
     def __query(self, root, x):
         if x[root['feature']] < root['threshold']:
             if root['left']['node'] == None:
-                return root['left']['label']
+                return root['left']['result']
             else:
                 return self.__query(root['left']['node'], x)
         else:
             if root['right']['node'] == None:
-                return root['right']['label']
+                return root['right']['result']
             else:
                 return self.__query(root['right']['node'], x)
 
@@ -107,6 +106,9 @@ class c4_5(decision_tree):
         return info_gain / info_value
 
 class cart(decision_tree):
+    def __init__(self, mode='classification'):
+        self.mode = mode
+
     def __get_gini(self, y):
         data_number = y.shape[0]
 
@@ -122,4 +124,7 @@ class cart(decision_tree):
         y_right_number = y_right.shape[0]
         data_number = y_left_number + y_right_number
 
-        return -(y_left_number / data_number * self.__get_gini(y_left) + y_right_number / data_number * self.__get_gini(y_right))
+        if self.mode == 'regression':
+            return -(np.std(y_left) + np.std(y_right))
+        else:
+            return -(y_left_number / data_number * self.__get_gini(y_left) + y_right_number / data_number * self.__get_gini(y_right))
