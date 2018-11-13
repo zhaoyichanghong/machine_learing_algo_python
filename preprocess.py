@@ -32,7 +32,7 @@ class one_hot:
 
         return X_transformed + 0
 
-def bagging(X, bags_number):
+def bagging(X, y, bags_number):
     data_number = X.shape[0]
 
     bags = []
@@ -41,7 +41,7 @@ def bagging(X, bags_number):
         bags_index = np.random.choice(range(data_number), data_number)
         bags_oob_index = list(set(range(data_number)).difference(set(bags_index)))
 
-        bags.append(X[bags_index])
-        bags_oob.append(X[bags_oob_index])
+        bags.append({'X':X[bags_index], 'y':y[bags_index]})
+        bags_oob.append({'X':X[bags_oob_index], 'y':y[bags_oob_index]})
 
     return bags, bags_oob
