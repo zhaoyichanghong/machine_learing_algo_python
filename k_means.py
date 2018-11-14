@@ -8,10 +8,7 @@ class k_means:
         self.__means = X[np.random.choice(data_number, cluster_number)]
 
         for _ in range(epochs):
-            distances = np.zeros((data_number, cluster_number))
-            for i in range(cluster_number):
-                distances[:, i] = self.__distance(X, self.__means[i].reshape((1, -1)))
-
+            distances = np.apply_along_axis(self.__distance, 1, self.__means, X).T
             labels = np.argmin(distances, axis=1)
 
             for i in range(cluster_number):
@@ -20,11 +17,5 @@ class k_means:
         return labels
 
     def predict(self, X):
-        data_number = X.shape[0]
-        cluster_number = self.__means.shape[0]
-
-        distances = np.zeros((data_number, cluster_number))
-        for i in range(cluster_number):
-            distances[:, i] = self.__distance(X, self.__means[i].reshape((1, -1)))
-
+        distances = np.apply_along_axis(self.__distance, 1, self.__means, X).T
         return np.argmin(distances, axis=1)

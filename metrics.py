@@ -47,7 +47,6 @@ def pr_curve(y_true, y_score, label_negative=0):
     for score in scores:
         y_pred = (y_score > score) + 0
 
-        tmp = precision(y_true, y_pred, label_negative)
         p.append(precision(y_true, y_pred, label_negative))
         r.append(recall(y_true, y_pred, label_negative))
 
