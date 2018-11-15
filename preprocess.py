@@ -37,6 +37,6 @@ def bagging(data_number, bags_number):
     indexs_oob = []
     for _ in range(bags_number):
         indexs.append(np.random.choice(range(data_number), data_number))
-        indexs_oob.appendnp.setdiff1d(range(data_number), indexs[-1]))
+        indexs_oob.appendnp.setdiff1d(range(data_number), indexs[-1])
 
     return indexs, indexs_oob
