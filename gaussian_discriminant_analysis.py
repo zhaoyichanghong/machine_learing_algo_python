@@ -17,11 +17,7 @@ class gaussian_discriminant_analysis:
         self.__sigma /= data_number
 
     def predict(self, X):
-        data_number = X.shape[0]
+        pdf = lambda mean: multivariate_normal.pdf(X, mean=mean, cov=self.__sigma)
+        y_probs = np.apply_along_axis(pdf, 1, self.__means) * self.__phi
 
-        y_probs = np.zeros((data_number, self.__class_number))
-        for i in range(self.__class_number):
-            x_probs = multivariate_normal.pdf(X, mean=self.__means[i], cov=self.__sigma)
-            y_probs[:, i] = x_probs * self.__phi[i]
-
-        return self.__classes[np.argmax(y_probs, axis=1)].reshape((-1, 1))
+        return self.__classes[np.argmax(y_probs, axis=0)].reshape((-1, 1))
