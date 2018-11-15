@@ -59,26 +59,20 @@ class decision_tree():
     def fit(self, X, y):
         self.__root, _ = self.__create_tree(X, y)
 
-    def __query(self, root, x):
+    def __query(self, x, root):
         if x[root['feature']] < root['threshold']:
             if root['left']['node'] == None:
                 return root['left']['result']
             else:
-                return self.__query(root['left']['node'], x)
+                return self.__query(x, root['left']['node'])
         else:
             if root['right']['node'] == None:
                 return root['right']['result']
             else:
-                return self.__query(root['right']['node'], x)
+                return self.__query(x, root['right']['node'])
 
     def predict(self, X):
-        data_number = X.shape[0]
-        
-        y_predict = []
-        for n in range(data_number):
-            y_predict.append(self.__query(self.__root, X[n]))
-
-        return np.array(y_predict).reshape((-1, 1))
+        return np.apply_along_axis(self.__query, 1, X, self.__root).reshape((-1, 1))
 
 class id3(decision_tree):
     def get_score(self, y_left, y_right, entropy):

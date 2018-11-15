@@ -32,7 +32,6 @@ class discrete_adaboost:
         return y_pred
 
     def score(self, X):
-        data_number = X.shape[0]
         classifier_number = len(self.__classifiers)
 
         h = 0
