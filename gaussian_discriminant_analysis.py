@@ -11,9 +11,16 @@ class gaussian_discriminant_analysis:
         self.__means = np.zeros((self.__class_number, feature_number))
         self.__sigma = 0
         for i in range(self.__class_number):
-            self.__phi[i] = len(np.where(y == self.__classes[i])[0]) / data_number
-            self.__means[i] = np.mean(X[np.where(y == self.__classes[i])[0]], axis=0)
-            self.__sigma += (X[np.where(y == self.__classes[i])[0]] - self.__means[i]).T.dot(X[np.where(y == self.__classes[i])[0]] - self.__means[i])
+            self.__phi[i] = np.sum(y == self.__classes[i]) / data_number
+
+            indexes = np.where(y == self.__classes[i])[0]
+
+            self.__means[i] = np.mean(X[indexes], axis=0)
+
+            diff1 = (X[indexes] - self.__means[i])[:,:,np.newaxis]
+            diff2 = np.transpose(diff1, axes=(0, 2, 1))
+            self.__sigma += np.tensordot(diff1, diff2, axes=(0, 0)).reshape((feature_number, feature_number))
+
         self.__sigma /= data_number
 
     def predict(self, X):

@@ -87,12 +87,12 @@ def auc(y_true, y_score, label_negative=0):
 def r2_score(y_true, y_pred):
     return 1 - np.sum((y_true - y_pred) ** 2) / np.sum((y_true - np.mean(y_true)) ** 2)
 
-def silhouette_coefficient(X, y):
+def silhouette_coefficient(X, y, distance):
     data_number = X.shape[0]
 
     s = []
     for i in range(data_number):
-        distances = np.linalg.norm(X[i] - X, axis=1)
+        distances = distance(X[i], X)
         
         bs = []
         for cluster in np.unique(y):

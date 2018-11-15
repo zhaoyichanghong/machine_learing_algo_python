@@ -17,9 +17,15 @@ class gaussian_mixed_model:
         self.__means = np.zeros((cluster_number, feature_number))
         self.__sigma = np.zeros((cluster_number, feature_number, feature_number))
         for i in range(cluster_number):
-            self.__pis[:, i] = len(np.where(y == classes[i])[0]) / data_number
-            self.__means[i] = np.mean(X[np.where(y == classes[i])[0]], axis=0)
-            self.__sigma[i] = np.cov(X[np.where(y == classes[i])[0]].T)
+            self.__pis[:, i] = np.sum(y == classes[i]) / data_number
+
+            indexes = np.where(y == classes[i])[0]
+
+            self.__means[i] = np.mean(X[indexes], axis=0)
+
+            diff1 = (X[indexes] - self.__means[i])[:,:,np.newaxis]
+            diff2 = np.transpose(diff1, axes=(0, 2, 1))
+            self.__sigma[i] = np.tensordot(diff1, diff2, axes=(0, 0)).reshape((feature_number, feature_number)) / len(indexes)
         
         for _ in range(epochs):
             x_probs = np.zeros((data_number, cluster_number))
