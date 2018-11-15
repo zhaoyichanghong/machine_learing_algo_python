@@ -21,4 +21,4 @@ class linear_regression_locally_weight:
 
             W[i] = (np.linalg.pinv(self.__X.T.dot(Weights).dot(self.__X)).dot(self.__X.T).dot(Weights).dot(self.__y)).flatten()
 
-        return np.sum(X * W, axis=1).reshape((-1, 1))
+        return np.sum(X * W, axis=1, keepdims=True)

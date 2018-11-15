@@ -1,6 +1,7 @@
 import numpy as np
 import k_means
 from scipy.stats import multivariate_normal
+import distance
 
 class gaussian_mixed_model:
     def fit_transform(self, X, cluster_number, epochs):
@@ -8,7 +9,7 @@ class gaussian_mixed_model:
         self.__cluster_number = cluster_number
 
         model = k_means.k_means()
-        y = model.fit_transform(X, cluster_number, 1)
+        y = model.fit_transform(X, cluster_number, 1, distance.euclidean_distance)
 
         classes = np.unique(y)
         
@@ -25,9 +26,9 @@ class gaussian_mixed_model:
             for i in range(cluster_number):
                 x_probs[:, i] = multivariate_normal.pdf(X, mean=self.__means[i], cov=self.__sigma[i])
 
-            y_probs = self.__pis * x_probs / np.sum(self.__pis * x_probs, axis=1).reshape((-1, 1))
+            y_probs = self.__pis * x_probs / np.sum(self.__pis * x_probs, axis=1, keepdims=True)
             
-            number_classes = np.sum(y_probs, axis=0).reshape(1, -1)
+            number_classes = np.sum(y_probs, axis=0, keepdims=True)
 
             self.__sigma = np.zeros((cluster_number, feature_number, feature_number))
             for i in range(cluster_number):
@@ -55,6 +56,6 @@ class gaussian_mixed_model:
         for i in range(self.__cluster_number):
             x_probs[:, i] = multivariate_normal.pdf(X, mean=self.__means[i], cov=self.__sigma[i])
 
-        y_probs = self.__pis * x_probs / np.sum(self.__pis * x_probs, axis=1).reshape((-1, 1))
+        y_probs = self.__pis * x_probs / np.sum(self.__pis * x_probs, axis=1, keepdims=True)
 
         return np.argmax(y_probs, axis=1)

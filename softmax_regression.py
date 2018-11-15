@@ -8,7 +8,7 @@ class softmax_regression:
         self.__debug = debug
 
     def __softmax(self, x):
-        return np.exp(x) / np.sum(np.exp(x), axis=1).reshape(-1, 1)
+        return np.exp(x) / np.sum(np.exp(x), axis=1, keepdims=True)
 
     def fit(self, X, y, epochs, optimizer, regularizer=regularizer.regularizer(0)):
         data_number, feature_number = X.shape
