@@ -20,6 +20,7 @@ class softmax_regression:
         if self.__debug:
             accuracy = []
             loss = []
+            
         for _ in range(epochs):
             h = self.__softmax(X.dot(self.__W) + self.__b)
 
