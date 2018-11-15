@@ -10,15 +10,15 @@ class linear_regression_locally_weight:
         self.__k = k
 
     def predict(self, X):
-        data_number = X.shape[0]
         X = np.insert(X, 0, 1, axis=1)
+        data_number, feature_number = X.shape
 
-        y_pred = []
+        W = np.zeros((data_number, feature_number))
+
         for i in range(data_number):
             weights = self.__locally_weight(X[i])
             Weights = np.diag(weights.flatten())
 
-            w = np.linalg.pinv(self.__X.T.dot(Weights).dot(self.__X)).dot(self.__X.T).dot(Weights).dot(self.__y)
-            y_pred.append(X[i].dot(w))
+            W[i] = (np.linalg.pinv(self.__X.T.dot(Weights).dot(self.__X)).dot(self.__X.T).dot(Weights).dot(self.__y)).flatten()
 
-        return np.array(y_pred).reshape((-1, 1))
+        return np.sum(X * W, axis=1).reshape((-1, 1))
