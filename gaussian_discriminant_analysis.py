@@ -11,7 +11,7 @@ class gaussian_discriminant_analysis:
         self.__means = np.zeros((self.__class_number, feature_number))
         self.__sigma = 0
         for i in range(self.__class_number):
-            self.__phi[i] = np.sum(y == self.__classes[i]) / data_number
+            self.__phi[i] = np.mean(y == self.__classes[i])
 
             indexes = np.where(y == self.__classes[i])[0]
 

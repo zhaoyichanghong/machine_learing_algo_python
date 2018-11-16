@@ -9,12 +9,12 @@ class pla:
         
         while True:
             for i in range(data_number):
-                y_hat = X[i].dot(self.__W) + self.__b
+                y_hat = self.predict(X[i])
                 if y[i] * y_hat <= 0:
                     self.__W += learning_rate * y[i] * X[i].reshape(self.__W.shape)
                     self.__b += learning_rate * y[i]
 
-            y_hat = X.dot(self.__W) + self.__b
+            y_hat = self.predict(X)
             if all(y * y_hat > 0):
                 break
 

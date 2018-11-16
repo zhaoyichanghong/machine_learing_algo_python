@@ -17,7 +17,7 @@ class gaussian_mixed_model:
         self.__means = np.zeros((cluster_number, feature_number))
         self.__sigma = np.zeros((cluster_number, feature_number, feature_number))
         for i in range(cluster_number):
-            self.__pis[:, i] = np.sum(y == classes[i]) / data_number
+            self.__pis[:, i] = np.mean(y == classes[i])
 
             indexes = np.where(y == classes[i])[0]
 

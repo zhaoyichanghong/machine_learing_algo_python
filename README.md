@@ -30,7 +30,7 @@
 # decision_tree.py
     decision tree algorithm including ID3, C4.5, CART
 # random_forest.py
-    random_forest algorithm including bagging, random features
+    random_forest algorithm including bagging, random features, oob verification
 # nnet.py
     neural network algorithm including following components
     layers: cnn, max pool, mean pool, flatten, dense, dropout, batch normalization, relu, selu, tanh

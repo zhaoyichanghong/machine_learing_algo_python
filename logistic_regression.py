@@ -21,7 +21,7 @@ class logistic_regression_gradient_descent:
             loss = []
 
         for _ in range(epochs):
-            h = self.__sigmoid(X.dot(self.__W) + self.__b)
+            h = self.score(X)
 
             g_w = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
             g_b = np.mean(h - y)
@@ -30,9 +30,9 @@ class logistic_regression_gradient_descent:
             self.__b -= g_b
 
             if self.__debug:
-                y_hat = self.__sigmoid(X.dot(self.__W) + self.__b)
+                y_hat = self.score(X)
                 loss.append(np.mean(-y * np.log(y_hat) - (1 - y) * np.log(1 - y_hat)))
-                accuracy.append(metrics.accuracy(y, y_hat > 0.5))
+                accuracy.append(metrics.accuracy(y, np.around(y_hat)))
 
         if self.__debug:
             _, ax_loss = plt.subplots()
@@ -65,7 +65,7 @@ class logistic_regression_newton:
             loss = []
 
         for _ in range(epochs):
-            h = self.__sigmoid(X.dot(self.__W) + self.__b)
+            h = self.score(X)
 
             w_g = X.T.dot(h - y)
             A = np.diag((h * (1 - h)).flatten())
@@ -77,9 +77,9 @@ class logistic_regression_newton:
             self.__b -= b_g / b_H
             
             if self.__debug:
-                y_hat = self.__sigmoid(X.dot(self.__W) + self.__b)
+                y_hat = self.score(X)
                 loss.append(np.mean(-y * np.log(y_hat) - (1 - y) * np.log(1 - y_hat)))
-                accuracy.append(metrics.accuracy(y, y_hat > 0.5))
+                accuracy.append(metrics.accuracy(y, np.around(y_hat)))
 
         if self.__debug:
             _, ax_loss = plt.subplots()

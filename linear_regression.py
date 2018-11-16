@@ -17,7 +17,7 @@ class linear_regression_gradient_descent:
             loss = []
 
         for _ in range(epochs):
-            h = X.dot(self.__W) + self.__b
+            h = self.predict(X)
 
             g_w = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
             g_b = np.mean(h - y)
@@ -26,7 +26,7 @@ class linear_regression_gradient_descent:
             self.__b -= g_b
 
             if self.__debug:
-                y_hat = X.dot(self.__W) + self.__b
+                y_hat = self.predict(X)
                 loss.append(np.mean((y_hat - y) ** 2))
 
         if self.__debug:
@@ -50,18 +50,16 @@ class linear_regression_newton:
             loss = []
 
         for _ in range(epochs):
-            h = X.dot(self.__W) + self.__b
+            h = self.predict(X)
 
             w_g = X.T.dot(h - y)
             w_H = X.T.dot(X)
             self.__W -= np.linalg.pinv(w_H).dot(w_g)
 
-            b_g = np.sum(h - y)
-            b_H = data_number
-            self.__b -= b_g / b_H
+            self.__b -= np.mean(h - y)
 
             if self.__debug:
-                y_hat = X.dot(self.__W) + self.__b
+                y_hat = self.predict(X)
                 loss.append(np.mean((y_hat - y) ** 2))
 
         if self.__debug:
