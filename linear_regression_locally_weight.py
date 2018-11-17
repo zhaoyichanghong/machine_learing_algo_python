@@ -16,8 +16,7 @@ class linear_regression_locally_weight:
         W = np.zeros((data_number, feature_number))
 
         for i in range(data_number):
-            weights = self.__locally_weight(X[i])
-            Weights = np.diag(weights.flatten())
+            Weights = np.diag(self.__locally_weight(X[i]).flatten())
 
             W[i] = (np.linalg.pinv(self.__X.T.dot(Weights).dot(self.__X)).dot(self.__X.T).dot(Weights).dot(self.__y)).flatten()
 
