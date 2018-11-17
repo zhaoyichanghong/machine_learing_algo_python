@@ -28,11 +28,7 @@ class gaussian_mixed_model:
             self.__sigma[i] = np.tensordot(diff1, diff2, axes=(0, 0)).reshape((feature_number, feature_number)) / len(indexes)
         
         for _ in range(epochs):
-            x_probs = np.zeros((data_number, cluster_number))
-            for i in range(cluster_number):
-                x_probs[:, i] = multivariate_normal.pdf(X, mean=self.__means[i], cov=self.__sigma[i])
-
-            y_probs = self.__pis * x_probs / np.sum(self.__pis * x_probs, axis=1, keepdims=True)
+            y_probs = self.score(X)
             
             number_classes = np.sum(y_probs, axis=0, keepdims=True)
 
@@ -55,13 +51,14 @@ class gaussian_mixed_model:
 
         return np.argmax(y_probs, axis=1)
 
-    def predict(self, X):
+    def score(self, X):
         data_number = X.shape[0]
 
         x_probs = np.zeros((data_number, self.__cluster_number))
         for i in range(self.__cluster_number):
             x_probs[:, i] = multivariate_normal.pdf(X, mean=self.__means[i], cov=self.__sigma[i])
 
-        y_probs = self.__pis * x_probs / np.sum(self.__pis * x_probs, axis=1, keepdims=True)
+        return self.__pis * x_probs / np.sum(self.__pis * x_probs, axis=1, keepdims=True)
 
-        return np.argmax(y_probs, axis=1)
+    def predict(self, X):
+        return np.argmax(self.score(X), axis=1)

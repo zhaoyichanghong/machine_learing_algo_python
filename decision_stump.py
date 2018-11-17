@@ -44,9 +44,9 @@ class decision_stump():
         data_number = X.shape[0]
 
         y_pred = np.ones((data_number, 1))
-        if self.__direction == 'less':
-            y_pred[np.where(X[:, self.__feature_index] >= self.__threshold)] = -1
-        else:
+        if self.__direction == 'greater':
             y_pred[np.where(X[:, self.__feature_index] < self.__threshold)] = -1
+        else:
+            y_pred[np.where(X[:, self.__feature_index] >= self.__threshold)] = -1
 
         return y_pred

@@ -32,10 +32,8 @@ class discrete_adaboost:
         return y_pred
 
     def score(self, X):
-        classifier_number = len(self.__classifiers)
-
         h = 0
-        for i in range(classifier_number):
-            h += self.__alpha[i] * self.__classifiers[i].predict(X)
+        for alpha, classifier in zip(self.__alpha, self.__classifiers):
+            h += alpha * classifier.predict(X)
 
         return h

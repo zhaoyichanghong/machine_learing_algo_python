@@ -9,7 +9,7 @@ class svm:
     def __linear_kernel(self, X1, X2):
         return np.tensordot(X1, X2, axes=(1, 1))
 
-    def __qp(self, X, y, kernel, C, gamma):
+    def __qp(self, X, y, kernel, C):
         data_number = X.shape[0]
 
         P = y.dot(y.T) * kernel
@@ -38,7 +38,7 @@ class svm:
 
         self.__bias = y_free[0] - (self.__a_support * self.__y_support).T.dot(kernel[support_items, free_items[0]])
 
-    def __smo(self, X, y, kernel, C, gamma, epochs):
+    def __smo(self, X, y, kernel, C, epochs):
         data_number = X.shape[0]
 
         alpha = np.zeros((data_number, 1))
@@ -94,7 +94,7 @@ class svm:
         self.__y_support = y[support_items]
         self.__a_support = alpha[support_items]
 
-    def fit(self, X, y, kernel_option, C, gamma, solver, epochs=0):
+    def fit(self, X, y, kernel_option, C, solver, gamma=1, epochs=0):
         self.__gamma = gamma
         self.__kernel_option = kernel_option
 
@@ -104,9 +104,9 @@ class svm:
             kernel = self.__gaussian_kernel(X, X)
         
         if solver == 'qp':
-            self.__qp(X, y, kernel, C, self.__gamma)
+            self.__qp(X, y, kernel, C)
         elif solver == 'smo':
-            self.__smo(X, y, kernel, C, self.__gamma, epochs)
+            self.__smo(X, y, kernel, C, epochs)
         
     def predict(self, X):
         return np.sign(self.score(X))
