@@ -1,19 +1,14 @@
 import numpy as np
 import collections
+import scipy
 
 class decision_tree():
     def __tree(self): 
         return collections.defaultdict(self.__tree)
 
     def get_entropy(self, y):
-        data_number = y.shape[0]
-
-        items_number = []
-        for key, value in collections.Counter(y.flatten()).items():
-            items_number.append(value)
-        items_number = np.array(items_number)
-
-        return -np.sum(items_number / data_number * np.log2(items_number / data_number))
+        _, counts = np.unique(y, return_counts=True)
+        return scipy.stats.entropy(counts, base=2)
 
     def __create_tree(self, X, y):
         data_number, feature_number = X.shape
@@ -21,12 +16,11 @@ class decision_tree():
         if data_number == 0:
             return None, None
 
-        if len(np.unique(y)) == 1 or np.allclose(np.mean(X, axis=0), X[0]):
+        if len(np.unique(y)) == 1 or np.isclose(X, X[0]).all():
             if hasattr(self, 'mode') and self.mode == 'regression':
                 return None, np.mean(y)
             else:
-                labels = y.flatten().tolist()
-                return None, int(max(set(labels), key=labels.count))
+                return None, np.argmax(np.bincount(y.flatten().astype(int)))
 
         entropy = self.get_entropy(y)
 
@@ -104,14 +98,8 @@ class cart(decision_tree):
         self.mode = mode
 
     def __get_gini(self, y):
-        data_number = y.shape[0]
-
-        items_number = []
-        for key, value in collections.Counter(y.flatten()).items():
-            items_number.append(value)
-        items_number = np.array(items_number)
-
-        return 1 - np.sum((items_number / data_number) ** 2)
+        _, counts = np.unique(y, return_counts=True)
+        return 1 - np.sum((counts / np.sum(counts)) ** 2)
 
     def get_score(self, y_left, y_right, entropy):
         y_left_number = y_left.shape[0]
