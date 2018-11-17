@@ -4,7 +4,6 @@ import timeit
 import metrics
 import optimizer
 import threading
-from sklearn.utils import shuffle
 import random
 import math
 from functools import reduce
@@ -337,35 +336,27 @@ class nnet:
         self.__learning_rate = learning_rate
 
     def __get_residual(self, h, y):
-        y = y.reshape(h.shape)
-
         if self.__loss == 'binary_crossentropy' or self.__loss == 'mse' or self.__loss == 'categorical_crossentropy':
             return h - y
         elif self.__loss == 'categorical_hinge':
-            batch_size, class_number = y.shape
-
+            batch_size = y.shape[0]
             residual = np.zeros_like(y)
             correct_index = np.argmax(y, axis=1)
-            for i in range(batch_size):
-                for j in range(class_number):
-                    if j != correct_index[i]:
-                        if h[i, j] - h[i, correct_index[i]] + 1 > 0:
-                            residual[i, j] = 1
-                            residual[i, correct_index[i]] -= 1
+            residual[np.where(h - h[range(batch_size), correct_index].reshape((-1, 1)) + 1 > 0)] = 1
+            residual[range(batch_size), correct_index] = 0
+            residual[range(batch_size), correct_index] -= np.sum(residual, axis=1)
 
             return residual
            
     def __get_accuracy(self, h, y):
         if self.__loss == 'categorical_crossentropy' or self.__loss == 'categorical_hinge':
-            return np.mean(np.argmax(h, axis=1) == np.argmax(y, axis=1))
+            return metrics.accuracy(np.argmax(h, axis=1), np.argmax(y, axis=1))
         elif self.__loss == 'binary_crossentropy':
-            return np.mean(np.around(h) == y)
+            return metrics.accuracy(np.around(h), y)
         else:
             return 0
 
     def __get_loss(self, h, y):
-        y = y.reshape(h.shape)
-
         if self.__loss == 'binary_crossentropy':
             loss = -np.mean(np.sum(y * np.log(h) + (1 - y) * np.log(1 - h), axis=1))
         elif self.__loss == 'mse':
@@ -373,17 +364,10 @@ class nnet:
         elif self.__loss == 'categorical_crossentropy':
             loss = -np.mean(np.sum(y * np.log(h + 1e-8), axis=1))
         elif self.__loss == 'categorical_hinge':
-            batch_size, class_number = y.shape
-
-            loss = np.zeros(batch_size)
+            batch_size = y.shape[0]
             correct_index = np.argmax(y, axis=1)
-            for i in range(batch_size):
-                for j in range(class_number):
-                    if j != correct_index[i]:
-                        loss[i] += max(0, h[i, j] - h[i, correct_index[i]] + 1)
-
-            loss = np.mean(loss)
-
+            loss = np.mean(np.sum(np.maximum(0, h - h[range(batch_size), correct_index].reshape((-1, 1)) + 1), axis=1) - 1)
+        
         return loss
 
     def __log(self, epoch, loss, elapse, accuracy):
@@ -429,7 +413,10 @@ class nnet:
         for _ in range(epochs):
             start_time = timeit.default_timer()
 
-            X_epoch, y_epoch = shuffle(X, y)
+            permutation = np.random.permutation(data_number)
+            X_epoch = X[permutation]
+            y_epoch = y[permutation]
+
             for i in range(epoch):
                 X_batch = X_epoch[batch_size*i : min(batch_size*(i+1), data_number)]
                 y_batch = y_epoch[batch_size*i : min(batch_size*(i+1), data_number)]
