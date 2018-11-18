@@ -231,12 +231,25 @@ class batch_normalization(layer):
         self.__gamma = np.ones(self.unit_number)
         self.__beta = np.zeros(self.unit_number)
         self.__optimizer = optimizer(learning_rate)
+        self.__predict_mean = 0
+        self.__predict_std = 0
 
     def forward(self, X, mode):
+        momentum = 0.999
+        
         self.__X = X
-        self.__mean = np.mean(self.__X, axis=0)
-        self.__std = np.std(self.__X, axis=0)
-        self.__X_hat = (self.__X - self.__mean) / (self.__std + 1e-8)
+
+        if mode == 'fit':
+            self.__mean = np.mean(self.__X, axis=0)
+            self.__predict_mean = momentum * self.__predict_mean + (1 - momentum) * self.__mean
+
+            self.__std = np.std(self.__X, axis=0)
+            self.__predict_std = momentum * self.__predict_std + (1 - momentum) * self.__std
+
+            self.__X_hat = (self.__X - self.__mean) / (self.__std + 1e-8)
+        elif mode == 'predict':
+            self.__X_hat = (self.__X - self.__predict_mean) / (self.__predict_std + 1e-8)
+        
         return self.__gamma * self.__X_hat + self.__beta
 
     def backward(self, y, residual):
@@ -442,5 +455,4 @@ class nnet:
             return self.score(X).reshape(-1, 1)
 
     def score(self, X):
-        self.__mode = 'predict'
         return self.__foreward(X, 'predict')
