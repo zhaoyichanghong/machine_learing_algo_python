@@ -62,6 +62,57 @@ class cg_fr(optimizer):
 
         return self.learning_rate * d_w.reshape(g_w.shape), self.learning_rate * d_b.reshape(g_b.shape)
 
+class qnm_dfp(optimizer):
+    def __init__(self, learning_rate):
+        super().__init__(learning_rate)
+        self.__first_run = True
+
+    def optimize(self, g_w, g_b):
+        if self.__first_run:
+            feature_number = g_w.shape[0]
+            self.__D_w = np.eye(feature_number)
+            self.__D_b = g_b.reshape((1, -1))
+        else:
+            deta_w = g_w - self.__g_w
+            self.__D_w += (self.__s_w.dot(self.__s_w.T) / (self.__s_w.T.dot(deta_w) + 1e-8) - self.__D_w.dot(deta_w).dot(deta_w.T).dot(self.__D_w.T) / (deta_w.T.dot(self.__D_w).dot(deta_w) + 1e-8))
+
+            deta_b = g_b - self.__g_b
+            self.__D_b += (self.__s_b.dot(self.__s_b.T) / (self.__s_b.T.dot(deta_b) + 1e-8) - self.__D_b.dot(deta_b).dot(deta_b.T).dot(self.__D_b.T) / (deta_b.T.dot(self.__D_b).dot(deta_b) + 1e-8))
+
+        self.__s_w = self.__D_w.dot(g_w)
+        self.__g_w = g_w
+
+        self.__s_b = self.__D_b.dot(g_b)
+        self.__g_b = g_b
+
+        return self.learning_rate * self.__s_w, self.learning_rate * self.__s_b
+
+class qnm_bfgs(optimizer):
+    def __init__(self, learning_rate):
+        super().__init__(learning_rate)
+        self.__first_run = True
+
+    def optimize(self, g_w, g_b):
+        if self.__first_run:
+            feature_number = g_w.shape[0]
+            self.__D_w = np.eye(feature_number)
+            self.__D_b = g_b.reshape((1, -1))
+        else:
+            deta_w = g_w - self.__g_w
+            self.__D_w = (np.eye(feature_number) - self.__s_w.dot(deta_w.T)) / (deta_w.T.dot(self.__s_w) + 1e-8).dot(self.__D_w).dot(np.eye(feature_number) - deta_w.dot(self.__s_w.T) / (deta_w.T.dot(self.__s_w) + 1e-8)) + self.__s_w.dot(self.__s_w.T) / (deta_w.T.dot(self.__s_w) + 1e-8)
+
+            deta_b = g_b - self.__g_b
+            self.__D_b += (self.__s_b.dot(self.__s_b.T) / (self.__s_b.T.dot(deta_b) + 1e-8) - self.__D_b.dot(deta_b).dot(deta_b.T).dot(self.__D_b.T) / (deta_b.T.dot(self.__D_b).dot(deta_b) + 1e-8))
+            self.__D_b = (1 - self.__s_b.dot(deta_b.T)) / (deta_b.T.dot(self.__s_b) + 1e-8).dot(self.__D_b).dot(1 - deta_b.dot(self.__s_b.T) / (deta_b.T.dot(self.__s_b) + 1e-8)) + self.__s_b.dot(self.__s_b.T) / (deta_b.T.dot(self.__s_b) + 1e-8)
+
+        self.__s_w = self.__D_w.dot(g_w)
+        self.__g_w = g_w
+
+        self.__s_b = self.__D_b.dot(g_b)
+        self.__g_b = g_b
+
+        return self.learning_rate * self.__s_w, self.learning_rate * self.__s_b
+
 class momentum(optimizer):
     def __init__(self, learning_rate):
         super().__init__(learning_rate)
