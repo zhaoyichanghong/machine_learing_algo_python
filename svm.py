@@ -2,13 +2,6 @@ import numpy as np
 import cvxopt
 
 class svm:
-    def __gaussian_kernel(self, X1, X2):
-        comput_kernel_for_row = lambda row: np.exp(-self.__gamma * np.sum((X1 - row.reshape((1, -1))) ** 2, axis=1))
-        return np.apply_along_axis(comput_kernel_for_row, 1, X2)
-
-    def __linear_kernel(self, X1, X2):
-        return np.tensordot(X1, X2, axes=(1, 1))
-
     def __qp(self, X, y, kernel, C):
         data_number = X.shape[0]
 
@@ -94,14 +87,11 @@ class svm:
         self.__y_support = y[support_items]
         self.__a_support = alpha[support_items]
 
-    def fit(self, X, y, kernel_option, C, solver, gamma=1, epochs=0):
+    def fit(self, X, y, kernel_func, C, solver, gamma=1, epochs=0):
         self.__gamma = gamma
-        self.__kernel_option = kernel_option
+        self.__kernel_func = kernel_func
 
-        if self.__kernel_option == 'linear': 
-            kernel = self.__linear_kernel(X, X)
-        elif self.__kernel_option == 'rbf':
-            kernel = self.__gaussian_kernel(X, X)
+        kernel = self.__kernel_func(X, X, self.__gamma)
         
         if solver == 'qp':
             self.__qp(X, y, kernel, C)
@@ -112,9 +102,5 @@ class svm:
         return np.sign(self.score(X))
 
     def score(self, X):
-        if self.__kernel_option == 'linear':
-            kernel = self.__linear_kernel(self.__X_support, X)
-        elif self.__kernel_option == 'rbf':
-            kernel = self.__gaussian_kernel(X, self.__X_support)
-
+        kernel = self.__kernel_func(X, self.__X_support, self.__gamma)
         return kernel.T.dot(self.__a_support * self.__y_support) + self.__bias
