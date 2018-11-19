@@ -40,7 +40,7 @@
 # preprocess.py
     preprocess including min-max scaler, z-score scaler, one-hot encoder, bagging
 # pca.py
-    principal Component Analysis algorithm including whiten and zero-phase component analysis whiten
+    principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
 # linear_discriminant_analysis.py
     linear discriminant analysis algorithm with "eigen" solver
 # distance.py
