@@ -68,13 +68,18 @@ class kernel_pca:
             metrics.scatter_feature(pc)
 
         return pc
-
-    def transform(self, X):
-        kernel = self.__kernel_func(self.__X, X, self.__gamma)
+    
+    def __kernel_centeralization(self, kernel):
         kernel -= self.__K_row_mean
         K_pred_cols = (np.sum(kernel, axis=1) / self.__K_row_mean.shape[0]).reshape((-1, 1))
         kernel -= K_pred_cols
         kernel += self.__K_mean
+
+        return kernel
+
+    def transform(self, X):
+        kernel = self.__kernel_func(self.__X, X, self.__gamma)
+        kernel = self.__kernel_centeralization(kernel)
         pc = kernel.dot(self.__eig_vectors / np.sqrt(self.__eig_values))
 
         if self.__component_number == 2:
