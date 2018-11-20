@@ -87,7 +87,7 @@ class conv2d(layer):
         g_W = (np.tensordot(residual.reshape(self.__batch_size, self.__filter_number, -1), self.__col, axes=[[0,2], [0, 1]]) / self.__batch_size).reshape(self.__W.shape)
         g_b = np.mean(np.sum(residual, axis=(2, 3)), axis=0)
         
-        g_W, g_b = self.__optimizer.optimize(g_W, g_b)
+        g_W, g_b = self.__optimizer.optimize([g_W, g_b])
         
         self.__W -= g_W
         self.__b -= g_b
@@ -266,7 +266,7 @@ class batch_normalization(layer):
         g_gamma = np.mean(residual * self.__X_hat, axis=0)
         g_beta = np.mean(residual, axis=0)
 
-        g_gamma, g_beta = self.__optimizer.optimize(g_gamma, g_beta)
+        g_gamma, g_beta = self.__optimizer.optimize([g_gamma, g_beta])
 
         self.__gamma -= g_gamma
         self.__beta -= g_beta
@@ -297,7 +297,7 @@ class dense(layer):
         g_W = self.__X.T.dot(residual) / batch_size
         g_b = np.mean(residual, axis=0)
 
-        g_W, g_b = self.__optimizer.optimize(g_W, g_b)
+        g_W, g_b = self.__optimizer.optimize([g_W, g_b])
 
         self.__W -= g_W
         self.__b -= g_b

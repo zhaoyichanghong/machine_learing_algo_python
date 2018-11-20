@@ -26,7 +26,7 @@ class softmax_regression:
 
             g_w = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
             g_b = np.mean(h - y, axis=0)
-            g_w, g_b = optimizer.optimize(g_w, g_b)
+            g_w, g_b = optimizer.optimize([g_w, g_b])
             self.__W -= g_w
             self.__b -= g_b
 
@@ -43,7 +43,7 @@ class softmax_regression:
             plt.show()
 
     def predict(self, X, classes):
-        return classes[np.argmax(self.probability(X), axis=1)]
+        return classes[np.argmax(self.probability(X), axis=1)].reshape((-1, 1))
 
     def probability(self, X):
         return self.__softmax(X.dot(self.__W) + self.__b)

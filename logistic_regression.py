@@ -25,7 +25,7 @@ class logistic_regression_gradient_descent:
 
             g_w = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
             g_b = np.mean(h - y)
-            g_w, g_b = optimizer.optimize(g_w, g_b)
+            g_w, g_b = optimizer.optimize([g_w, g_b])
             self.__W -= g_w
             self.__b -= g_b
 

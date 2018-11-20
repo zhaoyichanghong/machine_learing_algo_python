@@ -3,6 +3,7 @@ import numpy as np
 class optimizer:
     def __init__(self, learning_rate=0):
         self.learning_rate = learning_rate
+        self.first_run = True
 
     def optimize(self, g_w, g_b):
         pass
@@ -11,145 +12,111 @@ class gradient_descent(optimizer):
     def __init__(self, learning_rate):
         super().__init__(learning_rate)
 
-    def optimize(self, g_w, g_b):
-        return self.learning_rate * g_w, self.learning_rate * g_b
+    def optimize(self, vars):
+        if self.first_run:
+            self.__vars_number = len(vars)
+            self.first_run = False
+
+        v = [0] * self.__vars_number
+        for i in range(self.__vars_number):
+            v[i] = self.learning_rate * vars[i]
+
+        return v
 
 class cg_prp(optimizer):
     def __init__(self, learning_rate):
         super().__init__(learning_rate)
-        self.__g_w = np.zeros((1, 1))
-        self.__d_w = np.zeros((1, 1))
-        self.__g_b = np.zeros((1, 1))
-        self.__d_b = np.zeros((1, 1))
 
-    def optimize(self, g_w, g_b):
-        beta = np.linalg.norm(g_w, axis=0) ** 2 / (np.linalg.norm(self.__g_w, axis=0) ** 2 + 1e-8)
-        d_w = g_w - beta * self.__d_w
-        self.__d_w = -d_w
-        self.__g_w = g_w
+    def optimize(self, vars):
+        if self.first_run:
+            self.__vars_number = len(vars)
+            self.__g = [np.zeros((1, 1))] * self.__vars_number
+            self.__d = [0] * self.__vars_number
+            self.first_run = False
 
-        if not hasattr(g_b, "__len__"):
-            g_b = np.full((1, 1), g_b)
+        v = [0] * self.__vars_number
+        for i in range(self.__vars_number):
+            beta = np.linalg.norm(vars[i], axis=0) ** 2 / (np.linalg.norm(self.__g[i], axis=0) ** 2 + 1e-8)
+            d = vars[i] - beta * self.__d[i]
+            self.__d[i] = -d
+            self.__g[i] = vars[i]
+            v[i] = self.learning_rate * d.reshape(vars[i].shape)
 
-        beta = np.linalg.norm(g_b, axis=0) ** 2 / (np.linalg.norm(self.__g_b, axis=0) ** 2 + 1e-8)
-        d_b = g_b - beta * self.__d_b
-        self.__d_b = -d_b
-        self.__g_b = g_b
-
-        return self.learning_rate * d_w.reshape(g_w.shape), self.learning_rate * d_b.reshape(g_b.shape)
+        return v
 
 class cg_fr(optimizer):
     def __init__(self, learning_rate):
         super().__init__(learning_rate)
-        self.__g_w = np.zeros((1, 1))
-        self.__d_w = np.zeros((1, 1))
-        self.__g_b = np.zeros((1, 1))
-        self.__d_b = np.zeros((1, 1))
 
-    def optimize(self, g_w, g_b):
-        beta = np.sum(g_w * (g_w - self.__g_w), axis=0) / (np.linalg.norm(self.__g_w, axis=0) ** 2 + 1e-8)
-        d_w = g_w - beta * self.__d_w
-        self.__d_w = -d_w
-        self.__g_w = g_w
+    def optimize(self, vars):
+        if self.first_run:
+            self.__vars_number = len(vars)
+            self.__g = [np.zeros((1, 1))] * self.__vars_number
+            self.__d = [0] * self.__vars_number
+            self.first_run = False
 
-        if not hasattr(g_b, "__len__"):
-            g_b = np.full((1, 1), g_b)
+        v = [0] * self.__vars_number
+        for i in range(self.__vars_number):
+            beta = np.sum(vars[i] * (vars[i] - self.__g[i]), axis=0) / (np.linalg.norm(self.__g[i], axis=0) ** 2 + 1e-8)
+            d = vars[i] - beta * self.__d[i]
+            self.__d[i] = -d
+            self.__g[i] = vars[i]
+            v[i] = self.learning_rate * d.reshape(vars[i].shape)
 
-        beta = np.sum(g_b * (g_b - self.__g_b), axis=0) / (np.linalg.norm(self.__g_b, axis=0) ** 2 + 1e-8)
-        d_b = g_b - beta * self.__d_b
-        self.__d_b = -d_b
-        self.__g_b = g_b
-
-        return self.learning_rate * d_w.reshape(g_w.shape), self.learning_rate * d_b.reshape(g_b.shape)
-
-class qnm_dfp(optimizer):
-    def __init__(self, learning_rate):
-        super().__init__(learning_rate)
-        self.__first_run = True
-
-    def optimize(self, g_w, g_b):
-        if self.__first_run:
-            feature_number = g_w.shape[0]
-            self.__D_w = np.eye(feature_number)
-            self.__D_b = g_b.reshape((1, -1))
-        else:
-            deta_w = g_w - self.__g_w
-            self.__D_w += (self.__s_w.dot(self.__s_w.T) / (self.__s_w.T.dot(deta_w) + 1e-8) - self.__D_w.dot(deta_w).dot(deta_w.T).dot(self.__D_w.T) / (deta_w.T.dot(self.__D_w).dot(deta_w) + 1e-8))
-
-            deta_b = g_b - self.__g_b
-            self.__D_b += (self.__s_b.dot(self.__s_b.T) / (self.__s_b.T.dot(deta_b) + 1e-8) - self.__D_b.dot(deta_b).dot(deta_b.T).dot(self.__D_b.T) / (deta_b.T.dot(self.__D_b).dot(deta_b) + 1e-8))
-
-        self.__s_w = self.__D_w.dot(g_w)
-        self.__g_w = g_w
-
-        self.__s_b = self.__D_b.dot(g_b)
-        self.__g_b = g_b
-
-        return self.learning_rate * self.__s_w, self.learning_rate * self.__s_b
-
-class qnm_bfgs(optimizer):
-    def __init__(self, learning_rate):
-        super().__init__(learning_rate)
-        self.__first_run = True
-
-    def optimize(self, g_w, g_b):
-        if self.__first_run:
-            feature_number = g_w.shape[0]
-            self.__D_w = np.eye(feature_number)
-            self.__D_b = g_b.reshape((1, -1))
-        else:
-            deta_w = g_w - self.__g_w
-            self.__D_w = (np.eye(feature_number) - self.__s_w.dot(deta_w.T)) / (deta_w.T.dot(self.__s_w) + 1e-8).dot(self.__D_w).dot(np.eye(feature_number) - deta_w.dot(self.__s_w.T) / (deta_w.T.dot(self.__s_w) + 1e-8)) + self.__s_w.dot(self.__s_w.T) / (deta_w.T.dot(self.__s_w) + 1e-8)
-
-            deta_b = g_b - self.__g_b
-            self.__D_b += (self.__s_b.dot(self.__s_b.T) / (self.__s_b.T.dot(deta_b) + 1e-8) - self.__D_b.dot(deta_b).dot(deta_b.T).dot(self.__D_b.T) / (deta_b.T.dot(self.__D_b).dot(deta_b) + 1e-8))
-            self.__D_b = (1 - self.__s_b.dot(deta_b.T)) / (deta_b.T.dot(self.__s_b) + 1e-8).dot(self.__D_b).dot(1 - deta_b.dot(self.__s_b.T) / (deta_b.T.dot(self.__s_b) + 1e-8)) + self.__s_b.dot(self.__s_b.T) / (deta_b.T.dot(self.__s_b) + 1e-8)
-
-        self.__s_w = self.__D_w.dot(g_w)
-        self.__g_w = g_w
-
-        self.__s_b = self.__D_b.dot(g_b)
-        self.__g_b = g_b
-
-        return self.learning_rate * self.__s_w, self.learning_rate * self.__s_b
+        return v
 
 class momentum(optimizer):
     def __init__(self, learning_rate):
         super().__init__(learning_rate)
         self.__alpha = 0.9
-        self.__v_w = 0
-        self.__v_b = 0
 
-    def optimize(self, g_w, g_b):
-        self.__v_w = (1 - self.__alpha) * g_w + self.__alpha * self.__v_w
-        self.__v_b = (1 - self.__alpha) * g_b + self.__alpha * self.__v_b
+    def optimize(self, vars):
+        if self.first_run:
+            self.__vars_number = len(vars)
+            self.__v = [0] * self.__vars_number
+            self.first_run = False
 
-        return self.learning_rate * self.__v_w, self.learning_rate * self.__v_b
+        v = [0] * self.__vars_number
+        for i in range(self.__vars_number):
+            self.__v[i] = (1 - self.__alpha) * vars[i] + self.__alpha * self.__v[i]
+            v[i] = self.learning_rate * self.__v[i]
+
+        return v
 
 class adagrad(optimizer):
     def __init__(self, learning_rate):
         super().__init__(learning_rate)
-        self.__r_w = 0
-        self.__r_b = 0
 
-    def optimize(self, g_w, g_b):
-        self.__r_w += g_w ** 2
-        self.__r_b += g_b ** 2
+    def optimize(self, vars):
+        if self.first_run:
+            self.__vars_number = len(vars)
+            self.__r = [0] * self.__vars_number
+            self.first_run = False
 
-        return self.learning_rate * g_w / (np.sqrt(self.__r_w) + 1e-7), self.learning_rate * g_b / (np.sqrt(self.__r_b) + 1e-7)
+        v = [0] * self.__vars_number
+        for i in range(self.__vars_number):
+            self.__r[i] += vars[i] ** 2
+            v[i] = self.learning_rate * vars[i] / (np.sqrt(self.__r[i]) + 1e-8)
+
+        return v
 
 class rmsprop(optimizer):
     def __init__(self, learning_rate):
         super().__init__(learning_rate)
         self.__alpha = 0.9
-        self.__r_w = 0
-        self.__r_b = 0
 
-    def optimize(self, g_w, g_b):
-        self.__r_w = self.__alpha * self.__r_w + (1 - self.__alpha) * g_w ** 2
-        self.__r_b = self.__alpha * self.__r_b + (1 - self.__alpha) * g_b ** 2
+    def optimize(self, vars):
+        if self.first_run:
+            self.__vars_number = len(vars)
+            self.__r = [0] * self.__vars_number
+            self.first_run = False
 
-        return self.learning_rate * g_w / (np.sqrt(self.__r_w) + 1e-7), self.learning_rate * g_b / (np.sqrt(self.__r_b) + 1e-7)
+        v = [0] * self.__vars_number
+        for i in range(self.__vars_number):
+            self.__r[i] = self.__alpha * self.__r[i] + (1 - self.__alpha) * vars[i] ** 2
+            v[i] = self.learning_rate * vars[i] / (np.sqrt(self.__r[i]) + 1e-8)
+
+        return v
 
 class adam(optimizer):
     def __init__(self, learning_rate):
@@ -157,24 +124,22 @@ class adam(optimizer):
         self.__t = 0
         self.__alpha = 0.9
         self.__alpha2 = 0.999
-        self.__s_w = 0
-        self.__s_b = 0
-        self.__r_w = 0
-        self.__r_b = 0
 
-    def optimize(self, g_w, g_b):
+    def optimize(self, vars):
+        if self.first_run:
+            self.__vars_number = len(vars)
+            self.__s = [0] * self.__vars_number
+            self.__r = [0] * self.__vars_number
+            self.first_run = False
+
         self.__t += 1
 
-        self.__s_w = self.__alpha * self.__s_w + (1 - self.__alpha) * g_w
-        s_hat_w = self.__s_w / (1 - self.__alpha ** self.__t)
-        self.__r_w = self.__alpha2 * self.__r_w + (1 - self.__alpha2) * np.power(g_w, 2)
-        r_hat_w = self.__r_w / (1 - self.__alpha2 ** self.__t)
-        v_w = s_hat_w / (1e-8 + np.sqrt(r_hat_w))
+        v = [0] * self.__vars_number
+        for i in range(self.__vars_number):
+            self.__s[i] = self.__alpha * self.__s[i] + (1 - self.__alpha) * vars[i]
+            s_hat = self.__s[i] / (1 - self.__alpha ** self.__t)
+            self.__r[i] = self.__alpha2 * self.__r[i] + (1 - self.__alpha2) * np.power(vars[i], 2)
+            r_hat = self.__r[i] / (1 - self.__alpha2 ** self.__t)
+            v[i] = self.learning_rate * s_hat / (1e-8 + np.sqrt(r_hat))
 
-        self.__s_b = self.__alpha * self.__s_b + (1 - self.__alpha) * g_b
-        s_hat_b = self.__s_b / (1 - self.__alpha ** self.__t)
-        self.__r_b = self.__alpha2 * self.__r_b + (1 - self.__alpha2) * np.power(g_b, 2)
-        r_hat_b = self.__r_b / (1 - self.__alpha2 ** self.__t)
-        v_b = s_hat_b / (1e-8 + np.sqrt(r_hat_b))
-
-        return self.learning_rate * v_w, self.learning_rate * v_b
+        return  v
