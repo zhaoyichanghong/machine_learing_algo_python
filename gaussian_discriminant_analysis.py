@@ -16,10 +16,7 @@ class gaussian_discriminant_analysis:
             indexes = np.where(y == self.__classes[i])[0]
 
             self.__means[i] = np.mean(X[indexes], axis=0)
-
-            diff1 = (X[indexes] - self.__means[i])[:,:,np.newaxis]
-            diff2 = np.transpose(diff1, axes=(0, 2, 1))
-            self.__sigma += np.tensordot(diff1, diff2, axes=(0, 0)).reshape((feature_number, feature_number))
+            self.__sigma += np.cov(X[indexes].T) * (len(indexes) - 1)
 
         self.__sigma /= data_number
 

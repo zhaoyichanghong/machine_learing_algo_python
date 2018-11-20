@@ -22,10 +22,7 @@ class gaussian_mixed_model:
             indexes = np.where(y == classes[i])[0]
 
             self.__means[i] = np.mean(X[indexes], axis=0)
-
-            diff1 = (X[indexes] - self.__means[i])[:,:,np.newaxis]
-            diff2 = np.transpose(diff1, axes=(0, 2, 1))
-            self.__sigma[i] = np.tensordot(diff1, diff2, axes=(0, 0)).reshape((feature_number, feature_number)) / len(indexes)
+            self.__sigma[i] = np.cov(X[indexes].T)
         
         for _ in range(epochs):
             y_probs = self.score(X)
