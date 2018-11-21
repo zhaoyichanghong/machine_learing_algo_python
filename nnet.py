@@ -9,8 +9,8 @@ import math
 from functools import reduce
 
 class layer:
-    def init(self, optimizer, learning_rate, input_number=0):
-        self.unit_number = input_number
+    def init(self, optimizer, learning_rate, input_size=0):
+        self.output_size = input_size
 
     def forward(self, X, mode):
         pass
@@ -18,22 +18,22 @@ class layer:
     def backward(self, y, residual):
         return residual
 
-    def optimize (self, y, residual):
+    def optimize (self, residual):
         pass
 
 class conv2d(layer):
-    def __init__(self, filter_number, kernel_shape, stride_size=(1, 1), padding='same',  input_number=0):
+    def __init__(self, filter_number, kernel_shape, stride_size=(1, 1), padding='same',  input_size=0):
         self.__filter_number = filter_number
-        self.__input_number = input_number
+        self.__input_size = input_size
         self.__kernel_h, self.__kernel_w = kernel_shape
         self.__stride_h, self.__stride_w = stride_size
         self.__padding = padding
 
-    def init(self, optimizer, learning_rate, input_number=0):
-        if self.__input_number == 0:
-            self.__input_number = input_number
+    def init(self, optimizer, learning_rate, input_size=0):
+        if self.__input_size == 0:
+            self.__input_size = input_size
 
-        self.__input_channels, self.__input_h, self.__input_w = self.__input_number
+        self.__input_channels, self.__input_h, self.__input_w = self.__input_size
 
         if self.__padding == 'same':
             self.__padding_h = (math.ceil(self.__input_h / self.__stride_h) - 1) * self.__stride_h + self.__kernel_h - self.__input_h
@@ -51,7 +51,7 @@ class conv2d(layer):
         self.__output_w = (self.__input_w - self.__kernel_w) // self.__stride_w + 1
         self.__output_size = self.__output_h * self.__output_w
 
-        self.unit_number = (self.__filter_number, self.__output_h, self.__output_w)
+        self.output_size = (self.__filter_number, self.__output_h, self.__output_w)
 
         self.__W = np.random.normal(scale=np.sqrt(4 / (self.__kernel_size + self.__filter_number)), size=(self.__filter_number, self.__input_channels, self.__kernel_h, self.__kernel_w))
         self.__b = np.zeros((self.__filter_number))
@@ -77,7 +77,7 @@ class conv2d(layer):
 
         return np.transpose(output, axes=(0, 2, 1)).reshape((self.__batch_size, self.__filter_number, self.__output_h, self.__output_w)) + self.__b[None, :, None, None]
 
-    def optimize(self, y, residual):
+    def optimize(self, residual):
         '''
         g_W = np.zeros_like(self.__W)
         for k in range(self.__filter_number):
@@ -113,11 +113,11 @@ class max_pool(layer):
         else:
             self.__stride_h, self.__stride_w = stride_size
 
-    def init(self, optimizer, learning_rate, input_number=0):
-        self.__input_channels, self.__input_h, self.__input_w = input_number
+    def init(self, optimizer, learning_rate, input_size=0):
+        self.__input_channels, self.__input_h, self.__input_w = input_size
         self.__output_h = (self.__input_h - self.__pool_h) // self.__stride_h + 1
         self.__output_w = (self.__input_w - self.__pool_w) // self.__stride_w + 1
-        self.unit_number = (self.__input_channels, self.__output_h, self.__output_w)
+        self.output_size = (self.__input_channels, self.__output_h, self.__output_w)
 
     def forward(self, X, mode):
         self.__batch_size = X.shape[0]
@@ -156,11 +156,11 @@ class mean_pool(layer):
         else:
             self.__stride_h, self.__stride_w = stride_size
 
-    def init(self, optimizer, learning_rate, input_number=0):
-        self.__input_channels, self.__input_h, self.__input_w = input_number
+    def init(self, optimizer, learning_rate, input_size=0):
+        self.__input_channels, self.__input_h, self.__input_w = input_size
         self.__output_h = (self.__input_h - self.__pool_h) // self.__stride_h + 1
         self.__output_w = (self.__input_w - self.__pool_w) // self.__stride_w + 1
-        self.unit_number = (self.__input_channels, self.__output_h, self.__output_w)
+        self.output_size = (self.__input_channels, self.__output_h, self.__output_w)
 
     def forward(self, X, mode):
         self.__batch_size = X.shape[0]
@@ -197,8 +197,8 @@ class mean_pool(layer):
         return layer_residual
 
 class flatten(layer):
-    def init(self, optimizer, learning_rate, input_number=0):
-        self.unit_number = reduce(lambda i, j : i * j, input_number)
+    def init(self, optimizer, learning_rate, input_size=0):
+        self.output_size = reduce(lambda i, j : i * j, input_size)
 
     def forward(self, X, mode):
         self.__input_shape = X.shape
@@ -213,7 +213,7 @@ class dropout(layer):
     
     def forward(self, X, mode):
         if self.__p > 0 and mode == 'fit':
-            self.__dropout_index = random.sample(range(self.unit_number), int(self.unit_number * self.__p))
+            self.__dropout_index = random.sample(range(self.output_size), int(self.output_size * self.__p))
             X[:, self.__dropout_index] = 0
             return X / (1 - self.__p)
         else:
@@ -226,10 +226,10 @@ class dropout(layer):
         return residual / (1 - self.__p)
 
 class batch_normalization(layer):
-    def init(self, optimizer, learning_rate, input_number=0):
-        self.unit_number = input_number
-        self.__gamma = np.ones(self.unit_number)
-        self.__beta = np.zeros(self.unit_number)
+    def init(self, optimizer, learning_rate, input_size=0):
+        self.output_size = input_size
+        self.__gamma = np.ones(self.output_size)
+        self.__beta = np.zeros(self.output_size)
         self.__optimizer = optimizer(learning_rate)
         self.__predict_mean = 0
         self.__predict_std = 0
@@ -262,7 +262,7 @@ class batch_normalization(layer):
         batch_size = self.__X.shape[0]
         return d_X_hat / (self.__std + 1e-8) + d_var * 2 * (self.__X - self.__mean) / batch_size + d_mean / batch_size
 
-    def optimize(self, y, residual):
+    def optimize(self, residual):
         g_gamma = np.mean(residual * self.__X_hat, axis=0)
         g_beta = np.mean(residual, axis=0)
 
@@ -272,16 +272,16 @@ class batch_normalization(layer):
         self.__beta -= g_beta
 
 class dense(layer):
-    def __init__(self, unit_number, input_number=0):
-        self.unit_number = unit_number
-        self.__input_number = input_number
+    def __init__(self, output_size, input_size=0):
+        self.output_size = output_size
+        self.__input_size = input_size
 
-    def init(self, optimizer, learning_rate, input_number=0):
-        if self.__input_number == 0:
-            self.__input_number = input_number
+    def init(self, optimizer, learning_rate, input_size=0):
+        if self.__input_size == 0:
+            self.__input_size = input_size
 
-        self.__W = np.random.normal(scale=np.sqrt(4 / (self.__input_number + self.unit_number)), size=(self.__input_number, self.unit_number))
-        self.__b = np.zeros(self.unit_number)
+        self.__W = np.random.normal(scale=np.sqrt(4 / (self.__input_size + self.output_size)), size=(self.__input_size, self.output_size))
+        self.__b = np.zeros(self.output_size)
 
         self.__optimizer = optimizer(learning_rate)
 
@@ -292,7 +292,7 @@ class dense(layer):
     def backward(self, y, residual):
         return residual.dot(self.__W.T)
 
-    def optimize(self, y, residual):
+    def optimize(self, residual):
         batch_size = self.__X.shape[0]
         g_W = self.__X.T.dot(residual) / batch_size
         g_b = np.mean(residual, axis=0)
@@ -403,15 +403,15 @@ class nnet:
 
     def __backward(self, y, residual):
         for layer in reversed(self.layers):
-            residual_back = residual
+            residual_backup = residual
             if layer != self.layers[0]:
                 residual = layer.backward(y, residual)
             if hasattr(layer, 'optimize'):
-                layer.optimize(y, residual_back)
+                layer.optimize(residual_backup)
 
     def add(self, layer):
         if len(self.layers) > 0:
-            layer.init(self.__optimizer, self.__learning_rate, self.layers[-1].unit_number)
+            layer.init(self.__optimizer, self.__learning_rate, self.layers[-1].output_size)
         else:
             layer.init(self.__optimizer, self.__learning_rate)
 

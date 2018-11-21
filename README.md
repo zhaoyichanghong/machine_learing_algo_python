@@ -51,6 +51,5 @@
     optimizer algorithm including following components
     gradient descent: momentum，adagrad，rmsprop，adam
     conjugate gradient: prp, fr
-    quasi-newton: dfp, bfgs
 # regularizer.py
     regularizer algorithm including L1, L2
