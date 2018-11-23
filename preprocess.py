@@ -2,23 +2,23 @@ import numpy as np
 
 class min_max_scaler:
     def fit_transform(self, X):
-        self.min = np.min(X, axis=0)
-        self.max = np.max(X, axis=0)
+        self.__min = np.min(X, axis=0)
+        self.__max = np.max(X, axis=0)
 
-        return (X - self.min) / (self.max - self.min)
+        return (X - self.__min) / (self.__max - self.__min)
 
     def transform(self, X):
-        return (X - self.min) / (self.max - self.min)
+        return (X - self.__min) / (self.__max - self.__min)
 
 class standard_scaler:
     def fit_transform(self, X):
-        self.mean = np.mean(X, axis=0)
-        self.std = np.std(X, axis=0)
+        self.__mean = np.mean(X, axis=0)
+        self.__std = np.std(X, axis=0)
 
-        return (X - self.mean) / self.std
+        return (X - self.__mean) / self.__std
 
     def transform(self, X):
-        return (X - self.mean) / self.std
+        return (X - self.__mean) / self.__std
 
 class one_hot:
     def fit_transform(self, X):
