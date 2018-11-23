@@ -343,7 +343,7 @@ class softmax(layer):
 class nnet:
     def __init__(self, loss, optimizer, learning_rate, debug=True):
         self.__debug = debug
-        self.layers = []
+        self.__layers = []
         self.__loss = loss
         self.__optimizer = optimizer
         self.__learning_rate = learning_rate
@@ -396,26 +396,26 @@ class nnet:
         plt.show()
 
     def __foreward(self, X, mode='fit'):
-        for layer in self.layers:
+        for layer in self.__layers:
             X = layer.forward(X, mode)
 
         return X
 
     def __backward(self, y, residual):
-        for layer in reversed(self.layers):
+        for layer in reversed(self.__layers):
             residual_backup = residual
-            if layer != self.layers[0]:
+            if layer != self.__layers[0]:
                 residual = layer.backward(y, residual)
             if hasattr(layer, 'optimize'):
                 layer.optimize(residual_backup)
 
     def add(self, layer):
-        if len(self.layers) > 0:
-            layer.init(self.__optimizer, self.__learning_rate, self.layers[-1].output_size)
+        if len(self.__layers) > 0:
+            layer.init(self.__optimizer, self.__learning_rate, self.__layers[-1].output_size)
         else:
             layer.init(self.__optimizer, self.__learning_rate)
 
-        self.layers.append(layer)
+        self.__layers.append(layer)
 
     def fit(self, X, y, batch_size, epochs):
         data_number = X.shape[0]
