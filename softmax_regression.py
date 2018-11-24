@@ -24,10 +24,10 @@ class softmax_regression:
         for _ in range(epochs):
             h = self.probability(X)
 
-            g_w = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
+            g_W = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
             g_b = np.mean(h - y, axis=0)
-            g_w, g_b = optimizer.optimize([g_w, g_b])
-            self.__W -= g_w
+            g_W, g_b = optimizer.optimize([g_W, g_b])
+            self.__W -= g_W
             self.__b -= g_b
 
             if self.__debug:

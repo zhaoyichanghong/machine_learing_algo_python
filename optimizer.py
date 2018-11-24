@@ -5,7 +5,7 @@ class optimizer:
         self.learning_rate = learning_rate
         self.first_run = True
 
-    def optimize(self, g_w, g_b):
+    def optimize(self, vars):
         pass
 
 class gradient_descent(optimizer):

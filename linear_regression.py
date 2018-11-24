@@ -19,10 +19,10 @@ class linear_regression_gradient_descent:
         for _ in range(epochs):
             h = self.predict(X)
 
-            g_w = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
+            g_W = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
             g_b = np.mean(h - y)
-            g_w, g_b = optimizer.optimize([g_w, g_b])
-            self.__W -= g_w
+            g_W, g_b = optimizer.optimize([g_W, g_b])
+            self.__W -= g_W
             self.__b -= g_b
 
             if self.__debug:
