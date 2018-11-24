@@ -15,7 +15,7 @@ class layer:
     def forward(self, X, mode):
         pass
 
-    def backward(self, y, residual):
+    def backward(self, residual):
         return residual
 
     def optimize (self, residual):
@@ -92,7 +92,7 @@ class conv2d(layer):
         self.__W -= g_W
         self.__b -= g_b
 
-    def backward(self, y, residual):
+    def backward(self, residual):
         if self.__padding == 'same':
             residual = np.pad(residual[:, :], ((0, 0), (0, 0), (self.__padding_h_up, self.__padding_h_down), (self.__padding_w_left, self.__padding_w_right)), 'constant')
 
@@ -135,7 +135,7 @@ class max_pool(layer):
 
         return output
 
-    def backward(self, y, residual):
+    def backward(self, residual):
         if self.__stride_h == self.__pool_h and self.__stride_w == self.__pool_w:
             layer_residual = np.repeat(residual, repeats=self.__pool_h, axis=2)
             layer_residual = np.repeat(layer_residual, repeats=self.__pool_w, axis=3)
@@ -182,7 +182,7 @@ class mean_pool(layer):
         return output
         '''
 
-    def backward(self, y, residual):
+    def backward(self, residual):
         residual /= self.__pool_h * self.__pool_w
 
         if self.__stride_h == self.__pool_h and self.__stride_w == self.__pool_w:
@@ -204,7 +204,7 @@ class flatten(layer):
         self.__input_shape = X.shape
         return X.reshape(self.__input_shape[0], -1)
 
-    def backward(self, y, residual):
+    def backward(self, residual):
         return residual.reshape(self.__input_shape)
 
 class dropout(layer):
@@ -219,7 +219,7 @@ class dropout(layer):
         else:
             return X
 
-    def backward(self, y, residual):
+    def backward(self, residual):
         if self.__p > 0:
             residual[:, self.__dropout_index] = 0
 
@@ -252,7 +252,7 @@ class batch_normalization(layer):
         
         return self.__gamma * self.__X_hat + self.__beta
 
-    def backward(self, y, residual):
+    def backward(self, residual):
         d_X_hat = residual * self.__gamma
         
         d_var =  np.sum(-d_X_hat * (self.__X - self.__mean) * ((self.__std + 1e-8) ** -3) / 2, axis=0)
@@ -270,6 +270,58 @@ class batch_normalization(layer):
 
         self.__gamma -= g_gamma
         self.__beta -= g_beta
+
+class rnn(layer):
+    def __init__(self, time_steps, output_size, activivation, input_size=0):
+        self.output_size = output_size
+        self.__input_size = input_size
+        self.__time_steps = time_steps
+        self.__activation = activivation
+
+    def init(self, optimizer, learning_rate, input_size=0):
+        if self.__input_size == 0:
+            self.__input_size = input_size
+
+        self.__U = np.random.random([self.output_size, self.output_size]) * 0.01
+        self.__W = np.random.random([self.__input_size, self.output_size]) * 0.01
+        self.__b = np.zeros(self.output_size)
+
+        self.__optimizer = optimizer(learning_rate)
+
+    def forward(self, X, mode):
+        self.__X = X
+        batch_size = self.__X.shape[0]
+
+        self.__h = np.zeros((batch_size, self.__time_steps, self.output_size))
+
+        for i in range(self.__time_steps):
+            if i == 0:
+                h = np.zeros((batch_size, self.output_size))
+            else:
+                h = self.__h[:, i - 1]
+            self.__h[:, i] = self.__activation.forward(X[:, i].dot(self.__W) + h.dot(self.__U) + self.__b, mode)
+
+        return self.__h[:, -1]
+
+    def optimize(self, residual):
+        batch_size = self.__X.shape[0]
+
+        g_U = 0
+        g_W = 0
+        g_b = 0
+        for i in range(self.__time_steps - 1, -1, -1):
+            residual = self.__activation.backward(residual)
+            g_W += self.__X[:, i].T.dot(residual) / batch_size
+            g_b += np.mean(residual, axis=0)
+            if i > 0:
+                g_U += self.__h[:, i - 1].T.dot(residual) / batch_size
+                residual = residual.dot(self.__U.T)
+
+        g_U, g_W, g_b = self.__optimizer.optimize([g_U, g_W, g_b])
+
+        self.__U -= g_U
+        self.__W -= g_W
+        self.__b -= g_b
 
 class dense(layer):
     def __init__(self, output_size, input_size=0):
@@ -289,7 +341,7 @@ class dense(layer):
         self.__X = X
         return self.__X.dot(self.__W) + self.__b
 
-    def backward(self, y, residual):
+    def backward(self, residual):
         return residual.dot(self.__W.T)
 
     def optimize(self, residual):
@@ -307,7 +359,7 @@ class relu(layer):
         self.__X = X
         return np.maximum(self.__X, 0)
 
-    def backward(self, y, residual):
+    def backward(self, residual):
         return (self.__X > 0) * residual
 
 class selu(layer):
@@ -319,7 +371,7 @@ class selu(layer):
         self.__X = X
         return self.__scale * np.where(self.__X > 0.0, self.__X, self.__alpha * (np.exp(self.__X) - 1))
 
-    def backward(self, y, residual):
+    def backward(self, residual):
         return self.__scale * np.where(self.__X > 0.0, 1, self.__alpha * (np.exp(self.__X) - 1)) * residual
 
 class tanh(layer):
@@ -327,7 +379,7 @@ class tanh(layer):
         self.__output = np.tanh(X)
         return self.__output
 
-    def backward(self, y, residual):
+    def backward(self, residual):
         return (1 - np.power(self.__output, 2)) * residual
 
 class sigmoid(layer):
@@ -405,7 +457,7 @@ class nnet:
         for layer in reversed(self.__layers):
             residual_backup = residual
             if layer != self.__layers[0]:
-                residual = layer.backward(y, residual)
+                residual = layer.backward(residual)
             if hasattr(layer, 'optimize'):
                 layer.optimize(residual_backup)
 
