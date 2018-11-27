@@ -272,56 +272,100 @@ class batch_normalization(layer):
         self.__beta -= g_beta
 
 class rnn(layer):
-    def __init__(self, time_steps, output_size, activivation, input_size=0):
+    class __rnn_cell:
+        def __init__(self, input_size, output_size, optimizer):
+            self.__U = np.random.random([output_size, output_size]) * 0.01
+            self.__U_gradient = 0
+            self.__W = np.random.random([input_size, output_size]) * 0.01
+            self.__W_gradient = 0
+            self.__b = np.zeros(output_size)
+            self.__b_gradient = 0
+            self.__optimizer = optimizer
+
+        def forward(self, X, h_pre):
+            return X.dot(self.__W) + h_pre.dot(self.__U) + self.__b
+
+        def backward(self, residual, X, h_pre):
+            batch_size = X.shape[0]
+
+            self.__W_gradient += X.T.dot(residual) / batch_size
+            self.__b_gradient += np.mean(residual, axis=0)
+            self.__U_gradient += h_pre.T.dot(residual) / batch_size
+
+            return residual.dot(self.__W.T), residual.dot(self.__U.T)
+
+        def optimize(self):
+            g_U, g_W, g_b = self.__optimizer.optimize([self.__U_gradient, self.__W_gradient, self.__b_gradient])
+
+            self.__U -= g_U
+            self.__W -= g_W
+            self.__b -= g_b
+            self.__U_gradient = 0
+            self.__W_gradient = 0
+            self.__b_gradient = 0
+        
+    def __init__(self, time_steps, output_size, activivation, layer_size, input_size=0):
         self.output_size = output_size
         self.__input_size = input_size
         self.__time_steps = time_steps
-        self.__activation = activivation
-
+        self.__layer_size = layer_size
+        self.__activations = np.array([activivation() for i in range(self.__time_steps * self.__layer_size)]).reshape((self.__layer_size, self.__time_steps))
+        
     def init(self, optimizer, learning_rate, input_size=0):
         if self.__input_size == 0:
             self.__input_size = input_size
 
-        self.__U = np.random.random([self.output_size, self.output_size]) * 0.01
-        self.__W = np.random.random([self.__input_size, self.output_size]) * 0.01
-        self.__b = np.zeros(self.output_size)
-
-        self.__optimizer = optimizer(learning_rate)
+        self.__rnn_cells = []
+        self.__rnn_cells.append(self.__rnn_cell(self.__input_size, self.output_size, optimizer(learning_rate)))
+        for i in range(1, self.__layer_size):
+            self.__rnn_cells.append(self.__rnn_cell(self.output_size, self.output_size, optimizer(learning_rate)))
 
     def forward(self, X, mode):
         self.__X = X
         batch_size = self.__X.shape[0]
 
-        self.__h = np.zeros((batch_size, self.__time_steps, self.output_size))
+        self.__h = np.zeros((batch_size, self.__time_steps, self.__layer_size, self.output_size))
 
         for i in range(self.__time_steps):
-            if i == 0:
-                h = np.zeros((batch_size, self.output_size))
-            else:
-                h = self.__h[:, i - 1]
-            self.__h[:, i] = self.__activation.forward(X[:, i].dot(self.__W) + h.dot(self.__U) + self.__b, mode)
+            for j in range(self.__layer_size):
+                if i == 0:
+                    h_pre = np.zeros((batch_size, self.output_size))
+                else:
+                    h_pre = self.__h[:, i - 1, j]
 
-        return self.__h[:, -1]
+                if j == 0:
+                    X = self.__X[:, i]
+                else:
+                    X = self.__h[:, i, j - 1]
+
+                self.__h[:, i, j] = self.__activations[j, i].forward(self.__rnn_cells[j].forward(X, h_pre), mode)
+
+        return self.__h[:, -1, -1]
 
     def optimize(self, residual):
         batch_size = self.__X.shape[0]
 
-        g_U = 0
-        g_W = 0
-        g_b = 0
+        residual_X = residual
+        residual_h = [0 for i in range(self.__layer_size)]
         for i in range(self.__time_steps - 1, -1, -1):
-            residual = self.__activation.backward(residual)
-            g_W += self.__X[:, i].T.dot(residual) / batch_size
-            g_b += np.mean(residual, axis=0)
-            if i > 0:
-                g_U += self.__h[:, i - 1].T.dot(residual) / batch_size
-                residual = residual.dot(self.__U.T)
+            for j in range(self.__layer_size - 1, -1, -1):
+                if i == 0:
+                    h_pre = np.zeros((batch_size, self.output_size))
+                else:
+                    h_pre = self.__h[:, i - 1, j]
 
-        g_U, g_W, g_b = self.__optimizer.optimize([g_U, g_W, g_b])
+                if j == 0:
+                    X = self.__X[:, i]
+                else:
+                    X = self.__h[:, i, j - 1]
 
-        self.__U -= g_U
-        self.__W -= g_W
-        self.__b -= g_b
+                residual_tmp = self.__activations[j, i].backward(residual_X + residual_h[j])
+                residual_X, residual_h[j] = self.__rnn_cells[j].backward(residual_tmp, X, h_pre)
+
+            residual_X = 0
+
+        for i in range(self.__layer_size):
+            self.__rnn_cells[i].optimize()
 
 class dense(layer):
     def __init__(self, output_size, input_size=0):
@@ -453,7 +497,7 @@ class nnet:
 
         return X
 
-    def __backward(self, y, residual):
+    def __backward(self, residual):
         for layer in reversed(self.__layers):
             residual_backup = residual
             if layer != self.__layers[0]:
@@ -488,7 +532,7 @@ class nnet:
                     
                 h = self.__foreward(X_batch)
                 residual = self.__get_residual(h, y_batch)
-                self.__backward(y_batch, residual)
+                self.__backward(residual)
 
                 loss.append(self.__get_loss(h, y_batch))
                 accuracy.append(self.__get_accuracy(h, y_batch))
