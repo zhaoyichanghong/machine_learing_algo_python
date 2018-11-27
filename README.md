@@ -33,7 +33,7 @@
     random_forest algorithm including bagging, random features, oob verification
 # nnet.py
     neural network algorithm including following components
-    layers: cnn, max pool, mean pool, flatten, dense, dropout, batch normalization, relu, selu, tanh
+    layers: cnn, max pool, mean pool, flatten, dense, dropout, batch normalization, rnn, relu, selu, tanh
     loss: binary crossentropy, categorical crossentropy, mse, categorical hinge
 # kernel.py
     kernel function including linear, rbf

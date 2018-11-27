@@ -28,9 +28,10 @@ class decision_tree():
 
         if hasattr(self, 'mode') and self.mode == 'regression':
             root['result'] = np.mean(y)
+            root['error'] = np.sum((y - root['result']) ** 2)
         else:
             root['result'] = np.argmax(np.bincount(y.flatten().astype(int)))
-        root['error'] = np.sum(y != root['result'])
+            root['error'] = np.sum(y != root['result'])
 
         if len(np.unique(y)) == 1 or np.isclose(X, X[0]).all():
             if hasattr(self, 'mode') and self.mode == 'regression':
