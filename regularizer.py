@@ -20,3 +20,12 @@ class l2_regularizer(regularizer):
 
     def regularize(self, W):
         return self.param * W
+
+class elastic_regularizer(regularizer):
+    def __init__(self, param, ratio):
+        self.__l1 = l1_regularizer(param)
+        self.__l2 = l2_regularizer(param)
+        self.__ratio = ratio
+
+    def regularize(self, W):
+        return self.__ratio * self.__l1.regularize(W) + (1 - self.__ratio) * self.__l2.regularize(W)

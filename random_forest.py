@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import preprocess
-import decision_tree
 import metrics
 
 class random_forest:
