@@ -28,9 +28,9 @@
 # gaussian_mixed_model.py
     gaussian mixed model algorithm
 # decision_tree.py
-    decision tree algorithm including ID3, C4.5, CART
+    decision tree algorithm including ID3, C4.5, CART, CCP prune
 # random_forest.py
-    random_forest algorithm including bagging, random features, oob verification
+    random_forest algorithm including bagging, random features, oob verification, feature selection
 # nnet.py
     neural network algorithm including following components
     layers: cnn, max pool, mean pool, flatten, dense, dropout, batch normalization, rnn, relu, selu, tanh

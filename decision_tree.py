@@ -27,7 +27,7 @@ class decision_tree():
             return
 
         if hasattr(self, 'mode') and self.mode == 'regression':
-            root['result'] = np.mean(y)
+            root['result'] = np.mean(y, axis=0)
             root['error'] = np.sum((y - root['result']) ** 2)
         else:
             root['result'] = np.argmax(np.bincount(y.flatten().astype(int)))
@@ -35,7 +35,7 @@ class decision_tree():
 
         if len(np.unique(y)) == 1 or np.isclose(X, X[0]).all():
             if hasattr(self, 'mode') and self.mode == 'regression':
-                root['result'] = np.mean(y) 
+                root['result'] = np.mean(y, axis=0) 
             else:
                 root['result'] = np.argmax(np.bincount(y.flatten().astype(int)))
             root['error'] = 0
@@ -88,7 +88,7 @@ class decision_tree():
             return self.__query(x, root['right'])
 
     def predict(self, X):
-        return np.apply_along_axis(self.__query, 1, X, self.__root).reshape((-1, 1))
+        return np.apply_along_axis(self.__query, 1, X, self.__root)
 
     def __compute_leaves(self, root):
         if root['left'] == None and root['right'] == None:

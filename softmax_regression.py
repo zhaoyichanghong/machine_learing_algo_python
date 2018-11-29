@@ -22,7 +22,7 @@ class softmax_regression:
             loss = []
             
         for _ in range(epochs):
-            h = self.probability(X)
+            h = self.score(X)
 
             g_W = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
             g_b = np.mean(h - y, axis=0)
@@ -31,7 +31,7 @@ class softmax_regression:
             self.__b -= g_b
 
             if self.__debug:
-                y_hat = self.probability(X)
+                y_hat = self.score(X)
                 loss.append(np.mean(-np.sum(y * np.log(y_hat), axis=1)))
                 accuracy.append(metrics.accuracy(np.argmax(y, axis=1), np.argmax(y_hat, axis=1)))
 
@@ -43,7 +43,7 @@ class softmax_regression:
             plt.show()
 
     def predict(self, X, classes):
-        return classes[np.argmax(self.probability(X), axis=1)].reshape((-1, 1))
+        return classes[np.argmax(self.score(X), axis=1)].reshape((-1, 1))
 
-    def probability(self, X):
+    def score(self, X):
         return self.__softmax(X.dot(self.__W) + self.__b)
