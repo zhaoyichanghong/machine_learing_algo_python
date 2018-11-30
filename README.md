@@ -52,4 +52,4 @@
     gradient descent: momentum，adagrad，rmsprop，adam
     conjugate gradient: prp, fr
 # regularizer.py
-    regularizer algorithm including L1, L2
+    regularizer algorithm including L1, L2, elastic-net
