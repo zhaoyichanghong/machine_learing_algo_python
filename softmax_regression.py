@@ -31,9 +31,9 @@ class softmax_regression:
             self.__b -= g_b
 
             if self.__debug:
-                y_hat = self.score(X)
-                loss.append(np.mean(-np.sum(y * np.log(y_hat), axis=1)))
-                accuracy.append(metrics.accuracy(np.argmax(y, axis=1), np.argmax(y_hat, axis=1)))
+                h = self.score(X)
+                loss.append(np.mean(-np.sum(y * np.log(h), axis=1)))
+                accuracy.append(metrics.accuracy(np.argmax(y, axis=1), np.argmax(h, axis=1)))
 
         if self.__debug:
             _, ax_loss = plt.subplots()
