@@ -10,14 +10,14 @@ class pocket:
 
         accuracy = 0
         for _ in range(epochs):
-            y_pred = self.predict(X)
-            index = np.random.choice(np.where(y != y_pred)[0])
+            h = self.predict(X)
+            error_index = np.random.choice(np.where(y != h)[0])
 
-            W_tmp = self.__W + learning_rate * y[index] * X[index].reshape(self.__W.shape)
-            b_tmp = self.__b + learning_rate * y[index]
+            W_tmp = self.__W + learning_rate * y[error_index] * X[error_index].reshape(self.__W.shape)
+            b_tmp = self.__b + learning_rate * y[error_index]
 
-            y_pred = np.sign(X.dot(W_tmp) + b_tmp)
-            accuracy_tmp = metrics.accuracy(y, y_pred)
+            h = np.sign(X.dot(W_tmp) + b_tmp)
+            accuracy_tmp = metrics.accuracy(y, h)
             if accuracy_tmp > accuracy:
                 accuracy = accuracy_tmp
                 self.__W = W_tmp

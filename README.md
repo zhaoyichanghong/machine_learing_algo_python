@@ -31,6 +31,8 @@
     decision tree algorithm including ID3, C4.5, CART, CCP prune
 # random_forest.py
     random_forest algorithm including bagging, random features, oob verification, feature selection
+# gbdt.py
+    gradient boost decision tree algorithm including mse, binary_crossentropy, categorical_crossentropy
 # nnet.py
     neural network algorithm including following components
     layers: cnn, max pool, mean pool, flatten, dense, dropout, batch normalization, rnn, relu, selu, tanh
