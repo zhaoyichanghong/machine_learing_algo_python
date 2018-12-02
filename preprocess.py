@@ -5,7 +5,7 @@ class min_max_scaler:
         self.__min = np.min(X, axis=0)
         self.__max = np.max(X, axis=0)
 
-        return (X - self.__min) / (self.__max - self.__min)
+        return self.transform(X)
 
     def transform(self, X):
         return (X - self.__min) / (self.__max - self.__min)
@@ -15,7 +15,7 @@ class standard_scaler:
         self.__mean = np.mean(X, axis=0)
         self.__std = np.std(X, axis=0)
 
-        return (X - self.__mean) / self.__std
+        return self.transform(X)
 
     def transform(self, X):
         return (X - self.__mean) / self.__std
@@ -28,7 +28,7 @@ class one_hot:
 
         X_transformed = np.zeros((data_number, class_number))
         for i in range(class_number):
-            X_transformed[:, i] = (X == self.classes[i]).flatten()
+            X_transformed[:, i] = (X == self.classes[i]).ravel()
 
         return X_transformed + 0
 
