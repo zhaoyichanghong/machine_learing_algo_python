@@ -21,6 +21,70 @@ class layer:
     def optimize (self, residual):
         pass
 
+class conv1d(layer):
+    def __init__(self, filter_number, kernel_size, stride_size=1, padding='same',  input_size=0):
+        self.__filter_number = filter_number
+        self.__input_size = input_size
+        self.__kernel_size = kernel_size
+        self.__stride_size = stride_size
+        self.__padding = padding
+
+    def init(self, optimizer, learning_rate, input_size=0):
+        if self.__input_size == 0:
+            self.__input_size = input_size
+
+        self.__input_timesteps, self.__input_channels = self.__input_size
+
+        if self.__padding == 'same':
+            self.__padding_size = (math.ceil(self.__input_timesteps / self.__stride_size) - 1) * self.__stride_size + self.__kernel_size - self.__input_timesteps
+            self.__padding_pre = self.__padding_size // 2
+            self.__padding_latter = self.__padding_size - self.__padding_pre
+            
+            self.__input_timesteps += self.__padding_size
+
+        self.__output_size = (self.__input_timesteps - self.__kernel_size) // self.__stride_size + 1
+
+        self.output_size = (self.__output_size, self.__filter_number)
+
+        self.__W = np.random.normal(scale=np.sqrt(4 / (self.__kernel_size + self.__filter_number)), size=(self.__filter_number, self.__input_channels, self.__kernel_size))
+        self.__b = np.zeros((self.__filter_number))
+        self.__optimizer = optimizer(learning_rate)
+
+    def __img2col(self, img, input_channels):
+        col = np.zeros((self.__batch_size, self.__output_size, self.__kernel_size * input_channels))
+        for h in range(0, self.__output_size):
+            col[:, h, :] = img[:, h*self.__stride_size:h*self.__stride_size+self.__kernel_size, :].reshape(self.__batch_size, -1, order='F')
+        
+        return col
+
+    def forward(self, X, mode):
+        self.__batch_size = X.shape[0]
+        self.__input_shape = X.shape
+
+        if self.__padding == 'same':
+            X = np.pad(X[:], ((0, 0), (self.__padding_pre, self.__padding_latter), (0, 0)), 'constant')
+
+        self.__col = self.__img2col(X, self.__input_channels)
+        return self.__col.dot(self.__W.reshape(self.__filter_number, -1).T) + self.__b[None, None, :]
+
+    def optimize(self, residual):
+        g_W = (np.tensordot(residual.reshape(self.__batch_size, self.__filter_number, -1), self.__col, axes=[[0,2], [0, 1]]) / self.__batch_size).reshape(self.__W.shape)
+        g_b = np.mean(np.sum(residual, axis=(1, 2)), axis=0)
+        
+        g_W, g_b = self.__optimizer.optimize([g_W, g_b])
+        
+        self.__W -= g_W
+        self.__b -= g_b
+
+    def backward(self, residual):
+        if self.__padding == 'same':
+            residual = np.pad(residual[:], ((0, 0), (self.__padding_pre, self.__padding_latter), (0, 0)), 'constant')
+
+        W = self.__W[:, ::-1]
+
+        col = self.__img2col(residual, self.__filter_number)
+        return col.dot(W.reshape(self.__input_channels, -1).T)
+
 class conv2d(layer):
     def __init__(self, filter_number, kernel_shape, stride_size=(1, 1), padding='same',  input_size=0):
         self.__filter_number = filter_number
