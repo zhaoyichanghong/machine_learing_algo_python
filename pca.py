@@ -24,7 +24,7 @@ class pca:
             self.__eig_vectors = eig_vectors[:, ::-1][:, :self.__component_number]
         
         if self.__whiten:
-            self.__var = np.sqrt(self.__eig_values.reshape((1, -1)) / (data_number - 1))
+            self.__std = np.sqrt(self.__eig_values.reshape((1, -1)) / (data_number - 1))
 
         return self.transform(X)
         
@@ -34,7 +34,7 @@ class pca:
         pc = X_sub_mean.dot(self.__eig_vectors)
 
         if self.__whiten:
-            pc /= self.__var
+            pc /= self.__std
 
         if self.__component_number == 2:
             metrics.scatter_feature(pc)
@@ -107,7 +107,7 @@ class zca_whiten:
             self.__eig_values = eig_values[::-1]
             self.__eig_vectors = eig_vectors[:, ::-1]
 
-        self.__var = np.sqrt(self.__eig_values.reshape((1, -1)) / (data_number - 1))
+        self.__std = np.sqrt(self.__eig_values.reshape((1, -1)) / (data_number - 1))
 
         return self.transform(X)
 
@@ -115,6 +115,6 @@ class zca_whiten:
         X_sub_mean = X - self.__mean
 
         pc = X_sub_mean.dot(self.__eig_vectors)
-        pc /= self.__var
+        pc /= self.__std
 
         return pc.dot(self.__eig_vectors.T)
