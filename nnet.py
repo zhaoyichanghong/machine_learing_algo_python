@@ -129,6 +129,26 @@ class conv2d(layer):
         
         return col
 
+    def __get_im2col_indices(self, x_shape):
+        # First figure out what the size of the output should be
+        N, C, H, W = x_shape
+        i0 = np.repeat(np.arange(self.__kernel_h), self.__kernel_w)
+        i0 = np.tile(i0, C)
+        i1 = self.__stride_w * np.repeat(np.arange(self.__output_h), self.__output_w)
+        j0 = np.tile(np.arange(self.__kernel_w), self.__kernel_h * C)
+        j1 = self.__stride_h * np.tile(np.arange(self.__output_w), self.__output_h)
+        i = i0.reshape(-1, 1) + i1.reshape(1, -1)
+        j = j0.reshape(-1, 1) + j1.reshape(1, -1)
+        k = np.repeat(np.arange(C), self.__kernel_h * self.__kernel_w).reshape(-1, 1)
+        return (k, i, j)
+
+
+    def __im2col_indices(self, x):
+        """ An implementation of im2col based on some fancy indexing """
+        k, i, j = self.__get_im2col_indices(x.shape)
+        cols = x[:, k, i, j]
+        return cols.transpose(0, 2, 1)
+
     def forward(self, X, mode):
         self.__batch_size = X.shape[0]
         self.__input_shape = X.shape
@@ -136,7 +156,8 @@ class conv2d(layer):
         if self.__padding == 'same':
             X = np.pad(X[:, :], ((0, 0), (0, 0), (self.__padding_h_up, self.__padding_h_down), (self.__padding_w_left, self.__padding_w_right)), 'constant')
 
-        self.__col = self.__img2col(X, self.__input_channels)
+        self.__col = self.__im2col_indices(X)
+        #self.__col = self.__img2col(X, self.__input_channels)
         output = self.__col.dot(self.__W.reshape(self.__filter_number, -1).T)
 
         return np.transpose(output, axes=(0, 2, 1)).reshape((self.__batch_size, self.__filter_number, self.__output_h, self.__output_w)) + self.__b[None, :, None, None]
@@ -163,7 +184,8 @@ class conv2d(layer):
         W = np.transpose(self.__W, axes=(1, 0, 2, 3))
         W = np.rot90(W, k=2, axes=(2, 3))
 
-        col = self.__img2col(residual, self.__filter_number)
+        col = self.__im2col_indices(residual)
+        #col = self.__img2col(residual, self.__filter_number)
         residual = col.dot(W.reshape(self.__input_channels, -1).T)
 
         return np.transpose(residual, axes=(0, 2, 1)).reshape(self.__input_shape)
