@@ -8,8 +8,7 @@ class k_means:
         self.__centers = X[np.random.choice(data_number, cluster_number)]
 
         for _ in range(epochs):
-            distances = np.apply_along_axis(self.__distance, 1, self.__centers, X).T
-            labels = np.argmin(distances, axis=1)
+            labels = self.predict(X)
 
             for i in range(cluster_number):
                 self.__centers[i] = np.mean(X[np.where(labels == i)[0]], axis=0)

@@ -1,4 +1,5 @@
 import numpy as np
+import metrics
 
 class pla:
     def fit(self, X, y, learning_rate):
@@ -15,7 +16,7 @@ class pla:
                     self.__b += learning_rate * y[i]
 
             h = self.predict(X)
-            if all(y * h > 0):
+            if metrics.accuracy(y, h) == 1:
                 break
 
     def predict(self, X):

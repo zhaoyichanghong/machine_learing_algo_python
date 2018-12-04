@@ -35,7 +35,7 @@
     gradient boost decision tree algorithm including mse, binary_crossentropy, categorical_crossentropy
 # nnet.py
     neural network algorithm including following components
-    layers: cnn, max pool, mean pool, flatten, dense, dropout, batch normalization, rnn, relu, selu, tanh
+    layers: conv1d, conv2d, max pool, mean pool, flatten, dense, dropout, batch normalization, rnn, relu, selu, tanh
     loss: binary crossentropy, categorical crossentropy, mse, categorical hinge
 # kernel.py
     kernel function including linear, rbf
