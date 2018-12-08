@@ -29,7 +29,6 @@ class gaussian_mixed_model:
             
             number_classes = np.sum(y_probs, axis=0, keepdims=True)
 
-            self.__sigma = np.zeros((cluster_number, feature_number, feature_number))
             for i in range(cluster_number):
                 self.__means[i] = np.sum(y_probs[:, i].reshape((-1, 1)) * X, axis=0) / number_classes[:, i]
 
