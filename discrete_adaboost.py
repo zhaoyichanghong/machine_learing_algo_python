@@ -16,7 +16,7 @@ class discrete_adaboost:
             h = model.predict(X)
 
             eta = np.sum(w[np.where(h != y)[0]]) / np.sum(w)
-            beta = np.sqrt((1 - eta) / eta)
+            beta = np.sqrt((1 - eta) / (eta + 1e-8))
             w[np.where(h != y)[0]] *= beta
             w[np.where(h == y)[0]] /= beta
 
