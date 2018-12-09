@@ -45,7 +45,7 @@ class random_forest:
             tree = self.__trees[i]['model']
             features = self.__trees[i]['features']
             X_bag_oob = X[self.__indexs_oob[i]][:, features]
-            results[self.__indexs_oob[i], i] = tree.predict(X_bag_oob).flatten()
+            results[self.__indexs_oob[i], i] = tree.predict(X_bag_oob).ravel()
 
         y_pred = np.full_like(y, np.inf)
         for i in range(data_number):
