@@ -1,16 +1,9 @@
 import numpy as np
 
-class optimizer:
-    def __init__(self, learning_rate=0):
+class gradient_descent:
+    def __init__(self, learning_rate):
         self.learning_rate = learning_rate
         self.first_run = True
-
-    def optimize(self, vars):
-        pass
-
-class gradient_descent(optimizer):
-    def __init__(self, learning_rate):
-        super().__init__(learning_rate)
 
     def optimize(self, vars):
         if self.first_run:
@@ -23,9 +16,10 @@ class gradient_descent(optimizer):
 
         return v
 
-class cg_prp(optimizer):
+class cg_prp:
     def __init__(self, learning_rate):
-        super().__init__(learning_rate)
+        self.learning_rate = learning_rate
+        self.first_run = True
 
     def optimize(self, vars):
         if self.first_run:
@@ -44,9 +38,10 @@ class cg_prp(optimizer):
 
         return v
 
-class cg_fr(optimizer):
+class cg_fr:
     def __init__(self, learning_rate):
-        super().__init__(learning_rate)
+        self.learning_rate = learning_rate
+        self.first_run = True
 
     def optimize(self, vars):
         if self.first_run:
@@ -65,9 +60,10 @@ class cg_fr(optimizer):
 
         return v
 
-class momentum(optimizer):
+class momentum:
     def __init__(self, learning_rate):
-        super().__init__(learning_rate)
+        self.learning_rate = learning_rate
+        self.first_run = True
         self.__alpha = 0.9
 
     def optimize(self, vars):
@@ -83,9 +79,10 @@ class momentum(optimizer):
 
         return v
 
-class adagrad(optimizer):
+class adagrad:
     def __init__(self, learning_rate):
-        super().__init__(learning_rate)
+        self.learning_rate = learning_rate
+        self.first_run = True
 
     def optimize(self, vars):
         if self.first_run:
@@ -100,9 +97,10 @@ class adagrad(optimizer):
 
         return v
 
-class rmsprop(optimizer):
+class rmsprop:
     def __init__(self, learning_rate):
-        super().__init__(learning_rate)
+        self.learning_rate = learning_rate
+        self.first_run = True
         self.__alpha = 0.9
 
     def optimize(self, vars):
@@ -118,9 +116,10 @@ class rmsprop(optimizer):
 
         return v
 
-class adam(optimizer):
+class adam:
     def __init__(self, learning_rate):
-        super().__init__(learning_rate)
+        self.learning_rate = learning_rate
+        self.first_run = True
         self.__t = 0
         self.__alpha = 0.9
         self.__alpha2 = 0.999

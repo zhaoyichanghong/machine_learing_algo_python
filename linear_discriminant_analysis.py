@@ -21,7 +21,8 @@ class lda:
         eig_values, eig_vectors = np.linalg.eigh(np.linalg.pinv(s_w).dot(s_b))
         self.__eig_vectors = eig_vectors[:, ::-1][:, :self.__component_number]
 
-        pc = X.dot(self.__eig_vectors)
+        pc = self.transform(X)
+        
         if self.__component_number == 2:
             metrics.scatter_feature(pc, y)
 
