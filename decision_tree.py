@@ -1,6 +1,6 @@
 import numpy as np
 import collections
-import scipy
+import scipy.stats
 import metrics
 
 class decision_tree():
