@@ -25,6 +25,8 @@
     solver: smo, quadratic programming
 # k_means.py
     k-means algorithm
+# agnes.py
+    agnes clustering algorithm
 # gaussian_mixed_model.py
     gaussian mixed model algorithm
 # decision_tree.py
