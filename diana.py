@@ -1,6 +1,6 @@
 import numpy as np
 
-class diana:
+class Diana:
     def fit_transform(self, X, cluster_number, distance):
         self.__distance = distance
         feature_number = X.shape[1]

@@ -1,6 +1,6 @@
 import numpy as np
 
-class min_max_scaler:
+class MinMaxScaler:
     def fit_transform(self, X):
         self.__min = np.min(X, axis=0)
         self.__max = np.max(X, axis=0)
@@ -10,7 +10,7 @@ class min_max_scaler:
     def transform(self, X):
         return (X - self.__min) / (self.__max - self.__min)
 
-class standard_scaler:
+class StandardScaler:
     def fit_transform(self, X):
         self.__mean = np.mean(X, axis=0)
         self.__std = np.std(X, axis=0)
@@ -20,7 +20,7 @@ class standard_scaler:
     def transform(self, X):
         return (X - self.__mean) / self.__std
 
-class one_hot:
+class OneHot:
     def fit_transform(self, X):
         data_number = X.shape[0]
         self.classes = np.unique(X)

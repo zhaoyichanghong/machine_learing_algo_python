@@ -1,27 +1,27 @@
 import numpy as np
 
-class regularizer:
+class Regularizer:
     def __init__(self, param):
-        self.param = param
+        self._param = param
 
     def regularize(self, W):
         return 0
 
-class l1_regularizer(regularizer):
+class L1Regularizer(Regularizer):
     def __init__(self, param):
         super().__init__(param)
 
     def regularize(self, W):
-        return self.param * np.where(W >= 0, 1, -1)
+        return self._param * np.where(W >= 0, 1, -1)
 
-class l2_regularizer(regularizer):
+class L2Regularizer(Regularizer):
     def __init__(self, param):
         super().__init__(param)
 
     def regularize(self, W):
-        return self.param * W
+        return self._param * W
 
-class elastic_regularizer(regularizer):
+class ElasticRegularizer(Regularizer):
     def __init__(self, param, ratio):
         self.__l1 = l1_regularizer(param)
         self.__l2 = l2_regularizer(param)

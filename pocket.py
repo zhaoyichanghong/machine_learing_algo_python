@@ -1,7 +1,7 @@
 import numpy as np
 import metrics
 
-class pocket:
+class Pocket:
     def fit(self, X, y, learning_rate, epochs):
         feature_number = X.shape[1]
 

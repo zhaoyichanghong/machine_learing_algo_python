@@ -1,6 +1,6 @@
 import numpy as np
 
-class knn:
+class KNN:
     def fit(self, X, y, k, distance):
         self.__X = X
         self.__y = y

@@ -1,7 +1,7 @@
 import numpy as np
 import metrics
 
-class pla:
+class Pla:
     def fit(self, X, y, learning_rate):
         data_number, feature_number = X.shape
 

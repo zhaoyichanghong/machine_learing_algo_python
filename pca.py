@@ -1,7 +1,7 @@
 import numpy as np
 import metrics
 
-class pca:
+class PCA:
     def __init__(self, component_number, whiten=False, method=''):
         self.__component_number = component_number
         self.__whiten = whiten
@@ -41,7 +41,7 @@ class pca:
 
         return pc
 
-class kernel_pca:
+class KernelPCA:
     def __init__(self, component_number, kernel_func, gamma=1):
         self.__component_number = component_number
         self.__kernel_func = kernel_func
@@ -87,7 +87,7 @@ class kernel_pca:
 
         return pc
 
-class zca_whiten:
+class ZCAWhiten:
     def __init__(self, method=''):
         self.__method = method
     

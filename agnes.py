@@ -1,13 +1,11 @@
 import numpy as np
 
-class agnes:
+class Agnes:
     def fit_transform(self, X, cluster_number, distance):
         self.__distance = distance
         data_number, feature_number = X.shape
 
-        clusters = []
-        for i in range(data_number):
-            clusters.append([X[i].reshape(-1, feature_number)])
+        clusters = [[X[i].reshape(-1, feature_number)] for i in range(data_number)]
         self.__centers = X
 
         for j in reversed(range(cluster_number, data_number)):

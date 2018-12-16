@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import optimizer
 import regularizer
 
-class linear_regression_gradient_descent:
+class LinearRegressionGradientDescent:
     def __init__(self, debug=True):
         self.__debug = debug
 
-    def fit(self, X, y, epochs, optimizer, regularizer=regularizer.regularizer(0)):
+    def fit(self, X, y, epochs, optimizer, regularizer=regularizer.Regularizer(0)):
         data_number, feature_number = X.shape
 
         self.__W = np.zeros((feature_number, 1))
@@ -36,7 +36,7 @@ class linear_regression_gradient_descent:
     def predict(self, X):
         return X.dot(self.__W) + self.__b
 
-class linear_regression_newton:
+class LinearRegressionNewton:
     def __init__(self, debug=True):
         self.__debug = debug
 
@@ -69,7 +69,7 @@ class linear_regression_newton:
     def predict(self, X):
         return X.dot(self.__W) + self.__b
 
-class linear_regression_equation:
+class LinearRegressionEquation:
     def fit(self, X, y):
         X_with_b = np.insert(X, 0, 1, axis=1)
         self.__W = np.linalg.pinv(X_with_b.T.dot(X_with_b)).dot(X_with_b.T).dot(y)

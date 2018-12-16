@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.stats import multivariate_normal
 
-class gaussian_discriminant_analysis:
+class GDA:
     def fit(self, X, y):
         data_number, feature_number = X.shape
         self.__classes = np.unique(y)

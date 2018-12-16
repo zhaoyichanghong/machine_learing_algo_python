@@ -1,7 +1,7 @@
 import numpy as np
 import metrics
 
-class lda:
+class LDA:
     def __init__(self, component_number = None):
         self.__component_number = component_number
 

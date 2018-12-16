@@ -8,20 +8,7 @@ import random
 import math
 from functools import reduce
 
-class layer:
-    def init(self, optimizer, learning_rate, input_size=0):
-        self.output_size = input_size
-
-    def forward(self, X, mode):
-        pass
-
-    def backward(self, residual):
-        return residual
-
-    def optimize (self, residual):
-        pass
-
-class conv1d(layer):
+class Conv1d:
     def __init__(self, filter_number, kernel_size, stride_size=1, padding='same',  input_size=0):
         self.__filter_number = filter_number
         self.__input_size = input_size
@@ -85,7 +72,7 @@ class conv1d(layer):
         col = self.__img2col(residual, self.__filter_number)
         return col.dot(W.reshape(self.__input_channels, -1).T)
 
-class conv2d(layer):
+class Conv2d:
     def __init__(self, filter_number, kernel_shape, stride_size=(1, 1), padding='same',  input_size=0):
         self.__filter_number = filter_number
         self.__input_size = input_size
@@ -190,7 +177,7 @@ class conv2d(layer):
 
         return np.transpose(residual, axes=(0, 2, 1)).reshape(self.__input_shape)
 
-class max_pool(layer):
+class MaxPool:
     def __init__(self, pool_shape, stride_size=None):
         self.__pool_h, self.__pool_w = pool_shape
 
@@ -233,7 +220,7 @@ class max_pool(layer):
 
         return layer_residual * self.__output_index
 
-class mean_pool(layer):
+class MeanPool:
     def __init__(self, pool_shape, stride_size=None):
         self.__pool_h, self.__pool_w = pool_shape
 
@@ -282,7 +269,7 @@ class mean_pool(layer):
 
         return layer_residual
 
-class flatten(layer):
+class Flatten:
     def init(self, optimizer, learning_rate, input_size=0):
         self.output_size = reduce(lambda i, j : i * j, input_size)
 
@@ -293,9 +280,12 @@ class flatten(layer):
     def backward(self, residual):
         return residual.reshape(self.__input_shape)
 
-class dropout(layer):
+class Dropout:
     def __init__(self, p=0):
         self.__p = p
+
+    def init(self, optimizer, learning_rate, input_size=0):
+        self.output_size = input_size
     
     def forward(self, X, mode):
         if self.__p > 0 and mode == 'fit':
@@ -311,7 +301,7 @@ class dropout(layer):
 
         return residual / (1 - self.__p)
 
-class batch_normalization(layer):
+class BatchNormalization:
     def init(self, optimizer, learning_rate, input_size=0):
         self.output_size = input_size
         self.__gamma = np.ones(self.output_size)
@@ -357,8 +347,8 @@ class batch_normalization(layer):
         self.__gamma -= g_gamma
         self.__beta -= g_beta
 
-class rnn(layer):
-    class __rnn_cell:
+class Rnn:
+    class __RnnCell:
         def __init__(self, input_size, output_size, optimizer):
             self.__U = np.random.random([output_size, output_size]) * 0.01
             self.__U_gradient = 0
@@ -402,9 +392,9 @@ class rnn(layer):
             self.__input_size = input_size
 
         self.__rnn_cells = []
-        self.__rnn_cells.append(self.__rnn_cell(self.__input_size, self.output_size, optimizer(learning_rate)))
+        self.__rnn_cells.append(self.__RnnCell(self.__input_size, self.output_size, optimizer(learning_rate)))
         for i in range(1, self.__layer_size):
-            self.__rnn_cells.append(self.__rnn_cell(self.output_size, self.output_size, optimizer(learning_rate)))
+            self.__rnn_cells.append(self.__RnnCell(self.output_size, self.output_size, optimizer(learning_rate)))
 
     def forward(self, X, mode):
         self.__X = X
@@ -453,7 +443,7 @@ class rnn(layer):
         for i in range(self.__layer_size):
             self.__rnn_cells[i].optimize()
 
-class dense(layer):
+class Dense:
     def __init__(self, output_size, input_size=0):
         self.output_size = output_size
         self.__input_size = input_size
@@ -484,7 +474,10 @@ class dense(layer):
         self.__W -= g_W
         self.__b -= g_b
 
-class relu(layer):
+class Relu:
+    def init(self, optimizer, learning_rate, input_size=0):
+        self.output_size = input_size
+        
     def forward(self, X, mode):
         self.__X = X
         return np.maximum(self.__X, 0)
@@ -492,10 +485,13 @@ class relu(layer):
     def backward(self, residual):
         return (self.__X > 0) * residual
 
-class selu(layer):
+class Selu:
     def __init__(self):
         self.__alpha = 1.6732632423543772848170429916717
         self.__scale = 1.0507009873554804934193349852946
+    
+    def init(self, optimizer, learning_rate, input_size=0):
+        self.output_size = input_size
 
     def forward(self, X, mode):
         self.__X = X
@@ -504,7 +500,10 @@ class selu(layer):
     def backward(self, residual):
         return self.__scale * np.where(self.__X > 0.0, 1, self.__alpha * (np.exp(self.__X) - 1)) * residual
 
-class tanh(layer):
+class Tanh:
+    def init(self, optimizer, learning_rate, input_size=0):
+        self.output_size = input_size
+
     def forward(self, X, mode):
         self.__output = np.tanh(X)
         return self.__output
@@ -512,17 +511,23 @@ class tanh(layer):
     def backward(self, residual):
         return (1 - np.power(self.__output, 2)) * residual
 
-class sigmoid(layer):
+class Sigmoid:
     def forward(self, X, mode):
         return 1 / (1 + np.exp(-X))
 
-class softmax(layer):
+    def backward(self, residual):
+        return residual
+
+class Softmax:
     def forward(self, X, mode):
         X_max = np.max(X, axis=1, keepdims=True)
         X_exp = np.exp(X - X_max)
         return X_exp / np.sum(X_exp, axis=1, keepdims=True)
 
-class nnet:
+    def backward(self, residual):
+        return residual
+
+class Nnet:
     def __init__(self, loss, optimizer, learning_rate, debug=True):
         self.__debug = debug
         self.__layers = []
@@ -592,10 +597,11 @@ class nnet:
                 layer.optimize(residual_backup)
 
     def add(self, layer):
-        if len(self.__layers) > 0:
-            layer.init(self.__optimizer, self.__learning_rate, self.__layers[-1].output_size)
-        else:
-            layer.init(self.__optimizer, self.__learning_rate)
+        if hasattr(layer, 'init'):
+            if len(self.__layers) > 0:
+                layer.init(self.__optimizer, self.__learning_rate, self.__layers[-1].output_size)
+            else:
+                layer.init(self.__optimizer, self.__learning_rate)
 
         self.__layers.append(layer)
 

@@ -1,7 +1,7 @@
 import numpy as np
 import decision_tree
 
-class gbdt:
+class GBDT:
     def __sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
 
@@ -18,7 +18,7 @@ class gbdt:
 
         residual = y
         for _ in range(epochs):
-            model = decision_tree.cart('regression')
+            model = decision_tree.Cart('regression')
             model.fit(X, residual)
             self.__models.append(model)
 

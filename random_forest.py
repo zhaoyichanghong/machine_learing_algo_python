@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import preprocess
 import metrics
 
-class random_forest:
+class RandomForest:
     def __init__(self, tree_model, mode='classification', debug=True):
         self.__model = tree_model
         self.__trees = []

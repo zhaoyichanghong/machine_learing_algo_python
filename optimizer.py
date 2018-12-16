@@ -1,6 +1,6 @@
 import numpy as np
 
-class gradient_descent:
+class GradientDescent:
     def __init__(self, learning_rate):
         self.learning_rate = learning_rate
         self.first_run = True
@@ -16,7 +16,7 @@ class gradient_descent:
 
         return v
 
-class cg_prp:
+class CgPrp:
     def __init__(self, learning_rate):
         self.learning_rate = learning_rate
         self.first_run = True
@@ -38,7 +38,7 @@ class cg_prp:
 
         return v
 
-class cg_fr:
+class CgFr:
     def __init__(self, learning_rate):
         self.learning_rate = learning_rate
         self.first_run = True
@@ -60,7 +60,7 @@ class cg_fr:
 
         return v
 
-class momentum:
+class Momentum:
     def __init__(self, learning_rate):
         self.learning_rate = learning_rate
         self.first_run = True
@@ -79,7 +79,7 @@ class momentum:
 
         return v
 
-class adagrad:
+class Adagrad:
     def __init__(self, learning_rate):
         self.learning_rate = learning_rate
         self.first_run = True
@@ -97,7 +97,7 @@ class adagrad:
 
         return v
 
-class rmsprop:
+class Rmsprop:
     def __init__(self, learning_rate):
         self.learning_rate = learning_rate
         self.first_run = True
@@ -116,7 +116,7 @@ class rmsprop:
 
         return v
 
-class adam:
+class Adam:
     def __init__(self, learning_rate):
         self.learning_rate = learning_rate
         self.first_run = True

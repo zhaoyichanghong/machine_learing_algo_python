@@ -1,6 +1,6 @@
 import numpy as np
 
-class k_means:
+class KMeans:
     def fit_transform(self, X, cluster_number, epochs, distance):
         data_number = X.shape[0]
 

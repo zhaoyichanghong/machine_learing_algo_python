@@ -1,6 +1,6 @@
 import numpy as np
 
-class linear_regression_locally_weight:
+class LinearRegressionLocallyWeight:
     def __locally_weight(self, x):
         return np.exp(np.sum((self.__X - x) ** 2, axis=1) / (-2 * (self.__k ** 2)))
 

@@ -1,6 +1,6 @@
 import numpy as np
 
-class decision_stump():
+class DecisionStump():
     def __update_parameter(self, h, feature_index, threshold, direction, err_value):
         self.__min_err_value = err_value
         self.__feature_index = feature_index

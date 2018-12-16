@@ -3,7 +3,7 @@ import collections
 import scipy.stats
 import metrics
 
-class decision_tree():
+class DecisionTree():
     def __init__(self):
         self.__prune_id = []
 
@@ -13,7 +13,7 @@ class decision_tree():
         self.__node_count += 1
         return root
 
-    def get_entropy(self, y):
+    def _get_entropy(self, y):
         _, counts = np.unique(y, return_counts=True)
         return scipy.stats.entropy(counts, base=2)
 
@@ -26,7 +26,7 @@ class decision_tree():
         if data_number == 0:
             return
 
-        if hasattr(self, 'mode') and self.mode == 'regression':
+        if hasattr(self, 'mode') and self._mode == 'regression':
             root['result'] = np.mean(y, axis=0)
             root['error'] = np.sum((y - root['result']) ** 2)
         else:
@@ -34,14 +34,14 @@ class decision_tree():
             root['error'] = np.sum(y != root['result'])
 
         if len(np.unique(y)) == 1 or np.isclose(X, X[0]).all():
-            if hasattr(self, 'mode') and self.mode == 'regression':
+            if hasattr(self, 'mode') and self._mode == 'regression':
                 root['result'] = np.mean(y, axis=0) 
             else:
                 root['result'] = np.argmax(np.bincount(y.flatten().astype(int)))
             root['error'] = 0
             return
 
-        entropy = self.get_entropy(y)
+        entropy = self._get_entropy(y)
 
         score_max = -np.inf
         for i in range(feature_number):
@@ -130,21 +130,21 @@ class decision_tree():
             accuracy[i] = metrics.accuracy(y, self.predict(X))
         self.__prune_id = self.__prune_sequence[:len(accuracy) - np.argmax(accuracy[::-1]) - 1]
 
-class id3(decision_tree):
+class ID3(DecisionTree):
     def get_score(self, y_left, y_right, entropy):
         y_left_number = y_left.shape[0]
         y_right_number = y_right.shape[0]
         data_number = y_left_number + y_right_number
 
-        return entropy - (y_left_number / data_number * self.get_entropy(y_left) + y_right_number / data_number * self.get_entropy(y_right))
+        return entropy - (y_left_number / data_number * self._get_entropy(y_left) + y_right_number / data_number * self._get_entropy(y_right))
 
-class c4_5(decision_tree):
+class C4_5(DecisionTree):
     def get_score(self, y_left, y_right, entropy):
         y_left_number = y_left.shape[0]
         y_right_number = y_right.shape[0]
         data_number = y_left_number + y_right_number
 
-        info_gain = entropy - (y_left_number / data_number * self.get_entropy(y_left) + y_right_number / data_number * self.get_entropy(y_right))
+        info_gain = entropy - (y_left_number / data_number * self._get_entropy(y_left) + y_right_number / data_number * self._get_entropy(y_right))
 
         if y_left_number == 0:
             info_value = - y_right_number / data_number * np.log2(y_right_number / data_number)
@@ -155,10 +155,10 @@ class c4_5(decision_tree):
 
         return info_gain / info_value
 
-class cart(decision_tree):
+class Cart(DecisionTree):
     def __init__(self, mode='classification'):
         super().__init__()
-        self.mode = mode
+        self._mode = mode
 
     def __get_gini(self, y):
         _, counts = np.unique(y, return_counts=True)
@@ -169,7 +169,7 @@ class cart(decision_tree):
         y_right_number = y_right.shape[0]
         data_number = y_left_number + y_right_number
 
-        if self.mode == 'regression':
+        if self._mode == 'regression':
             return -(np.std(y_left) + np.std(y_right))
         else:
             return -(y_left_number / data_number * self.__get_gini(y_left) + y_right_number / data_number * self.__get_gini(y_right))

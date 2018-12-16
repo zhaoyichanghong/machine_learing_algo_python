@@ -1,7 +1,7 @@
 import numpy as np
 import decision_stump
 
-class discrete_adaboost:
+class DiscreteAdaboost:
     def fit(self, X, y, classifier_number):
         data_number = X.shape[0] 
 
@@ -11,7 +11,7 @@ class discrete_adaboost:
         w = np.full(data_number, 1 / data_number)
 
         for i in range(classifier_number):
-            model = decision_stump.decision_stump()
+            model = decision_stump.DecisionStump()
             model.fit(X, y, w)
             h = model.predict(X)
 

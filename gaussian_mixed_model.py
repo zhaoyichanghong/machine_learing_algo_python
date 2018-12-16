@@ -3,7 +3,7 @@ import k_means
 from scipy.stats import multivariate_normal
 import distance
 
-class gaussian_mixed_model:
+class GMM:
     def fit_transform(self, X, cluster_number, epochs):
         data_number, feature_number = X.shape
         self.__cluster_number = cluster_number

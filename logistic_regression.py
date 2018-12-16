@@ -3,14 +3,14 @@ import matplotlib.pyplot as plt
 import metrics
 import regularizer
 
-class logistic_regression_gradient_descent:
+class LogisticRegressionGradientDescent:
     def __init__(self, debug=True):
         self.__debug = debug
 
     def __sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
 
-    def fit(self, X, y, epochs, optimizer, regularizer=regularizer.regularizer(0)):
+    def fit(self, X, y, epochs, optimizer, regularizer=regularizer.Regularizer(0)):
         data_number, feature_number = X.shape
 
         self.__W = np.zeros((feature_number, 1))
@@ -47,7 +47,7 @@ class logistic_regression_gradient_descent:
     def score(self, X):
         return self.__sigmoid(X.dot(self.__W) + self.__b)
 
-class logistic_regression_newton:
+class LogisticRegressionNewton:
     def __init__(self, debug=True):
         self.__debug = debug
 

@@ -1,7 +1,7 @@
 import numpy as np
 import cvxopt
 
-class svm:
+class SVM:
     def __qp(self, X, y, kernel, C):
         data_number = X.shape[0]
 
