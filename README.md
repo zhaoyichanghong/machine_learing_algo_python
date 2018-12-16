@@ -27,6 +27,8 @@
     k-means algorithm
 # agnes.py
     agnes clustering algorithm
+# diana.py
+    diana clustering algorithm
 # gaussian_mixed_model.py
     gaussian mixed model algorithm
 # decision_tree.py
