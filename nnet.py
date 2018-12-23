@@ -181,7 +181,7 @@ class MaxPool:
     def __init__(self, pool_shape, stride_size=None):
         self.__pool_h, self.__pool_w = pool_shape
 
-        if stride_size == None:
+        if stride_size is None:
             self.__stride_h, self.__stride_w = pool_shape
         else:
             self.__stride_h, self.__stride_w = stride_size
@@ -224,7 +224,7 @@ class MeanPool:
     def __init__(self, pool_shape, stride_size=None):
         self.__pool_h, self.__pool_w = pool_shape
 
-        if stride_size == None:
+        if stride_size is None:
             self.__stride_h, self.__stride_w = pool_shape
         else:
             self.__stride_h, self.__stride_w = stride_size

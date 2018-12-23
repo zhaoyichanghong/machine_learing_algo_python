@@ -12,7 +12,7 @@ class Agnes:
             distances = np.apply_along_axis(self.__distance, 1, self.__centers, self.__centers)
             near_indexes = divmod(np.argmin(distances + np.diag(np.full(j + 1, np.inf))), j + 1)
 
-            clusters[near_indexes[0]] += clusters[near_indexes[1]]
+            clusters[near_indexes[0]].extend(clusters[near_indexes[1]])
             self.__centers[near_indexes[0]] = np.mean(clusters[near_indexes[0]], axis=0)
             
             del clusters[near_indexes[1]]

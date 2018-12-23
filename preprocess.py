@@ -21,9 +21,13 @@ class StandardScaler:
         return (X - self.__mean) / self.__std
 
 class OneHot:
+    @property
+    def classes(self):
+        return self.__classes
+
     def fit_transform(self, X):
         data_number = X.shape[0]
-        self.classes = np.unique(X)
+        self.__classes = np.unique(X)
         class_number = len(self.classes)
 
         X_transformed = np.zeros((data_number, class_number))

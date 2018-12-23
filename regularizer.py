@@ -23,8 +23,8 @@ class L2Regularizer(Regularizer):
 
 class ElasticRegularizer(Regularizer):
     def __init__(self, param, ratio):
-        self.__l1 = l1_regularizer(param)
-        self.__l2 = l2_regularizer(param)
+        self.__l1 = L1Regularizer(param)
+        self.__l2 = L2Regularizer(param)
         self.__ratio = ratio
 
     def regularize(self, W):
