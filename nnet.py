@@ -542,7 +542,7 @@ class Nnet:
             batch_size = y.shape[0]
             residual = np.zeros_like(y)
             correct_index = np.argmax(y, axis=1)
-            residual[np.where(h - h[range(batch_size), correct_index].reshape((-1, 1)) + 1 > 0)] = 1
+            residual[np.flatnonzero(h - h[range(batch_size), correct_index].reshape((-1, 1)) + 1 > 0)] = 1
             residual[range(batch_size), correct_index] = 0
             residual[range(batch_size), correct_index] -= np.sum(residual, axis=1)
 

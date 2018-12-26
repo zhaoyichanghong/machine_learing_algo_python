@@ -15,10 +15,10 @@ class DiscreteAdaboost:
             model.fit(X, y, w)
             h = model.predict(X)
 
-            eta = np.sum(w[np.where(h != y)[0]]) / np.sum(w)
+            eta = np.sum(w[np.flatnonzero(h != y)]) / np.sum(w)
             beta = np.sqrt((1 - eta) / (eta + 1e-8))
-            w[np.where(h != y)[0]] *= beta
-            w[np.where(h == y)[0]] /= beta
+            w[np.flatnonzero(h != y)] *= beta
+            w[np.flatnonzero(h == y)] /= beta
 
             self.__alpha[i] = np.log(beta)
             self.__classifiers.append(model)
@@ -27,7 +27,7 @@ class DiscreteAdaboost:
         h = self.score(X)
 
         y_pred = np.ones_like(h)
-        y_pred[np.where(h < 0)] = -1
+        y_pred[np.flatnonzero(h < 0)] = -1
 
         return y_pred
 

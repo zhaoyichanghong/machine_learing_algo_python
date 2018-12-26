@@ -1,10 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-TP = lambda y_true, y_pred: np.sum(y_pred[np.where(y_true == 1)[0]] == 1)
-TN = lambda y_true, y_pred, label_negative: np.sum(y_pred[np.where(y_true == label_negative)[0]] == label_negative)
-FP = lambda y_true, y_pred, label_negative: np.sum(y_pred[np.where(y_true == label_negative)[0]] == 1)
-FN = lambda y_true, y_pred, label_negative: np.sum(y_pred[np.where(y_true == 1)[0]] == label_negative)
+TP = lambda y_true, y_pred: np.sum(y_pred[np.flatnonzero(y_true == 1)] == 1)
+TN = lambda y_true, y_pred, label_negative: np.sum(y_pred[np.flatnonzero(y_true == label_negative)] == label_negative)
+FP = lambda y_true, y_pred, label_negative: np.sum(y_pred[np.flatnonzero(y_true == label_negative)] == 1)
+FN = lambda y_true, y_pred, label_negative: np.sum(y_pred[np.flatnonzero(y_true == 1)] == label_negative)
 
 def accuracy(y_true, y_pred):
     return np.mean(y_true == y_pred)
@@ -35,7 +35,7 @@ def confusion_matrix(y_true, y_pred, labels=[]):
     matrix = np.zeros((class_number, class_number))
     for r in range(class_number):
         for c in range(class_number):
-            matrix[r, c] = np.sum(y_pred[np.where(y_true == labels[r])[0]] == labels[c])
+            matrix[r, c] = np.sum(y_pred[np.flatnonzero(y_true == labels[r])] == labels[c])
 
     return matrix
 
@@ -76,7 +76,7 @@ def roc_curve(y_true, y_score, label_negative=0):
 
 def auc(y_true, y_score, label_negative=0):
     rank = y_score[:, 0].argsort()
-    positives = np.where(y_true == 1)[0]
+    positives = np.flatnonzero(y_true == 1)
     rank_sum = np.sum([np.argwhere(rank == positive)[0][0] + 1 for positive in positives])
 
     positive_number = np.sum(y_true == 1)
@@ -97,9 +97,9 @@ def silhouette_coefficient(X, y, distance):
         bs = []
         for cluster in np.unique(y):
             if y[i] == cluster:
-                a = np.sum(distances[np.where(y == cluster)[0]]) / (np.sum(y == cluster) - 1)
+                a = np.sum(distances[np.flatnonzero(y == cluster)]) / (np.sum(y == cluster) - 1)
             else:
-                bs.append(np.mean(distances[np.where(y == cluster)[0]]))
+                bs.append(np.mean(distances[np.flatnonzero(y == cluster)]))
         b = np.min(bs)
 
         s.append((b - a) / max(a, b))
@@ -113,7 +113,7 @@ def scatter_feature(X, y=None):
         colors = ['r', 'b', 'g']
         labels = np.unique(y)
         for color, label in zip(colors, labels):
-            class_data = X[np.where(y == label)[0]]
+            class_data = X[np.flatnonzero(y == label)]
             plt.scatter(class_data[:, 0], class_data[:, 1], c=color)
 
     plt.show()

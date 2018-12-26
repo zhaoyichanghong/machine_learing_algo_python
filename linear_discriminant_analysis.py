@@ -13,7 +13,7 @@ class LDA:
         s_t = np.cov(X.T) * (data_number - 1)
         s_w = 0
         for i in range(class_number):
-            items = np.where(y == classes[i])[0]
+            items = np.flatnonzero(y == classes[i])
             number = len(items)           
             s_w += np.cov(X[items].T) * (number - 1)
 

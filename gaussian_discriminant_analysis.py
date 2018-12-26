@@ -13,7 +13,7 @@ class GDA:
         for i in range(self.__class_number):
             self.__phi[i] = np.mean(y == self.__classes[i])
 
-            indexes = np.where(y == self.__classes[i])[0]
+            indexes = np.flatnonzero(y == self.__classes[i])
 
             self.__means[i] = np.mean(X[indexes], axis=0)
             self.__sigma += np.cov(X[indexes].T) * (len(indexes) - 1)

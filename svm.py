@@ -20,12 +20,12 @@ class SVM:
         res = cvxopt.solvers.qp(cvxopt.matrix(P), cvxopt.matrix(q), cvxopt.matrix(G), cvxopt.matrix(h), cvxopt.matrix(A), cvxopt.matrix(b))
         alpha = np.array(res['x'])
 
-        support_items = np.where(alpha > 1e-6)[0]
+        support_items = np.flatnonzero(alpha > 1e-6)
         self.__X_support = X[support_items]
         self.__y_support = y[support_items]
         self.__a_support = alpha[support_items]
 
-        free_items = np.where(self.__a_support < (C - 1e-6))[0]
+        free_items = np.flatnonzero(self.__a_support < (C - 1e-6))
         X_free = X[free_items]
         y_free = y[free_items]
 
@@ -82,7 +82,7 @@ class SVM:
                     e[i] = kernel[i].dot(alpha * y) + self.__bias - y[i]
                     e[j] = kernel[j].dot(alpha * y) + self.__bias - y[j]
                 
-        support_items = np.where(alpha > 1e-6)[0]
+        support_items = np.flatnonzero(alpha > 1e-6)
         self.__X_support = X[support_items]
         self.__y_support = y[support_items]
         self.__a_support = alpha[support_items]

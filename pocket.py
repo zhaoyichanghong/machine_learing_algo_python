@@ -11,7 +11,7 @@ class Pocket:
         accuracy = 0
         for _ in range(epochs):
             h = self.predict(X)
-            error_index = np.random.choice(np.where(y != h)[0])
+            error_index = np.random.choice(np.flatnonzero(y != h))
 
             W_tmp = self.__W + learning_rate * y[error_index] * X[error_index].reshape(self.__W.shape)
             b_tmp = self.__b + learning_rate * y[error_index]

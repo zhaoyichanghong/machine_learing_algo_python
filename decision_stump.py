@@ -12,11 +12,11 @@ class DecisionStump():
             h = np.ones_like(y)
 
             if direction == 'greater':
-                h[np.where(X[:, feature_index] < threshold)[0]] = -1
+                h[np.flatnonzero(X[:, feature_index] < threshold)] = -1
             else:
-                h[np.where(X[:, feature_index] >= threshold)[0]] = -1
+                h[np.flatnonzero(X[:, feature_index] >= threshold)] = -1
 
-            err_value = np.sum(w[np.where(h != y)[0]])
+            err_value = np.sum(w[np.flatnonzero(h != y)])
             if err_value < self.__min_err_value:
                 self.__update_parameter(h, feature_index, threshold, 'greater', err_value)
 
@@ -45,8 +45,8 @@ class DecisionStump():
 
         y_pred = np.ones((data_number, 1))
         if self.__direction == 'greater':
-            y_pred[np.where(X[:, self.__feature_index] < self.__threshold)] = -1
+            y_pred[np.flatnonzero(X[:, self.__feature_index] < self.__threshold)] = -1
         else:
-            y_pred[np.where(X[:, self.__feature_index] >= self.__threshold)] = -1
+            y_pred[np.flatnonzero(X[:, self.__feature_index] >= self.__threshold)] = -1
 
         return y_pred

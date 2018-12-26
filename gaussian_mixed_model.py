@@ -19,7 +19,7 @@ class GMM:
         for i in range(cluster_number):
             self.__pis[:, i] = np.mean(y == classes[i])
 
-            indexes = np.where(y == classes[i])[0]
+            indexes = np.flatnonzero(y == classes[i])
 
             self.__means[i] = np.mean(X[indexes], axis=0)
             self.__sigma[i] = np.cov(X[indexes].T)

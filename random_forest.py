@@ -53,9 +53,9 @@ class RandomForest:
                 continue
 
             if self.__mode == 'regression':
-                y_pred[i] = np.mean(results[i, np.where(results[i] != np.inf)])
+                y_pred[i] = np.mean(results[i, np.flatnonzero(results[i] != np.inf)])
             else:
-                y_pred[i] = np.argmax(np.bincount(results[i][np.where(results[i] != np.inf)].astype(int)))
+                y_pred[i] = np.argmax(np.bincount(results[i][np.flatnonzero(results[i] != np.inf)].astype(int)))
 
         if self.__mode == 'regression':
             return metrics.r2_score(y, y_pred)

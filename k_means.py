@@ -11,7 +11,7 @@ class KMeans:
             labels = self.predict(X)
 
             for i in range(cluster_number):
-                self.__centers[i] = np.mean(X[np.where(labels == i)[0]], axis=0)
+                self.__centers[i] = np.mean(X[np.flatnonzero(labels == i)], axis=0)
 
         return labels
 
