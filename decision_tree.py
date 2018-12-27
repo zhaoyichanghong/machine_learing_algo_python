@@ -3,16 +3,19 @@ import collections
 import metrics
 
 class DecisionTree():
+    def __is_leaf(self, node):
+        if node['left'] is None and node['right'] is None:
+            return True
+        else:
+            return False
+
     def __init__(self):
-        self.__prune_ids = []
+        self.__prune_nodes = []
 
     def __node(self):
         root = collections.defaultdict(self.__node)
         root['left'] = None
         root['right'] = None
-        root['id'] = self.__node_count
-        root['is_leaf'] = True
-        self.__node_count += 1
         return root
 
     def _get_entropy(self, y):
@@ -61,20 +64,15 @@ class DecisionTree():
 
         root['left'] = self.__node()
         root['right'] = self.__node()
-        root['is_leaf'] = False
         self.__create_tree(root['left'], X[left_items_split], y[left_items_split])
         self.__create_tree(root['right'], X[right_items_split], y[right_items_split])
 
     def fit(self, X, y):
-        self.__node_count = 0
         self.__root = self.__node()
         self.__create_tree(self.__root, X, y)
 
     def __query(self, x, root):
-        if root['is_leaf']:
-            return root['result']
-
-        if root['id'] in self.__prune_ids:
+        if self.__is_leaf(root) or (root in self.__prune_nodes):
             return root['result']
 
         if x[root['feature']] < root['threshold']:
@@ -84,59 +82,54 @@ class DecisionTree():
 
     def predict(self, X):
         return np.apply_along_axis(self.__query, 1, X, self.__root).reshape(-1, 1)
-
-    def __compute_leaves(self, root):
-        if root['left'] is None and root['right'] is None:
-            return 1, root['error']
-        if root['id'] in self.__prune_sequence:
-            return 1, root['error']
-        else:
-            return list(map(lambda x: x[0] + x[1], zip(self.__compute_leaves(root['left']), self.__compute_leaves(root['right']))))
-
-    def __traversal(self, root):
-        leaves_count, leaves_error = self.__compute_leaves(root)
-
-        if root['left'] is None and root['right'] is None or root['id'] in self.__prune_sequence:
-            return
-        
-        cost = (root['error'] - leaves_error) / (leaves_count - 1)
-        self.__costs.append([root['id'], cost, leaves_count])
-
-        self.__traversal(root['left'])
-        self.__traversal(root['right'])
     
     def __traversal_bottom2top(self, root):
         queue = [root]
-        ids = []
+        nodes = []
 
         while queue:
             length = len(queue)
             for _ in range(length):
                 node = queue.pop(0)
-                if not node['is_leaf']:
-                    ids.append(node['id'])
+                if not self.__is_leaf(node):
+                    nodes.append(node)
                     queue.append(node['left'])
                     queue.append(node['right'])
         
-        return ids[::-1]
+        return nodes[::-1]
 
     def __rep(self, X, y):
-        root_ids = self.__traversal_bottom2top(self.__root)
+        nodes = self.__traversal_bottom2top(self.__root)
 
         acc = metrics.accuracy(y, self.predict(X))
-        for id in root_ids:
-            self.__prune_ids.append(id)
+        for node in nodes:
+            self.__prune_nodes.append(node)
             acc_prune = metrics.accuracy(y, self.predict(X))
 
             if acc_prune < acc:
-                self.__prune_ids.pop()
+                self.__prune_nodes.pop()
             else:
                 acc = acc_prune
 
-    def prune(self, X, y, solver='rep'):
-        if solver == 'rep':
-            self.__rep(X, y)
-        '''
+    def __compute_leaves(self, root):
+        if self.__is_leaf(root) or (root in self.__prune_sequence):
+            return 1, root['error']
+        else:
+            return list(map(lambda x: x[0] + x[1], zip(self.__compute_leaves(root['left']), self.__compute_leaves(root['right']))))
+
+    def __traversal(self, root):
+        if self.__is_leaf(root) or (root in self.__prune_sequence):
+            return
+
+        leaves_count, leaves_error = self.__compute_leaves(root)
+        
+        cost = (root['error'] - leaves_error) / (leaves_count - 1)
+        self.__costs.append([root, cost, leaves_count])
+
+        self.__traversal(root['left'])
+        self.__traversal(root['right'])
+
+    def __ccp(self, X, y):
         self.__prune_sequence = []
         while True:
             self.__costs = []
@@ -148,14 +141,26 @@ class DecisionTree():
             self.__costs = self.__costs[self.__costs[:, 1].argsort()]
             min_costs = self.__costs[np.flatnonzero(self.__costs[:, 1] == self.__costs[0, 1])]
             min_costs = min_costs[min_costs[:, 2].argsort()]
-            self.__prune_sequence.append(int(min_costs[0][0]))
+            self.__prune_sequence.append(min_costs[-1][0])
                 
-        accuracy = np.zeros(len(self.__prune_sequence) + 1)
+        accuracy_max = 0
+        prune_nodes_final = []
         for i in range(len(self.__prune_sequence) + 1):
-            self.__prune_ids = self.__prune_sequence[:i]
-            accuracy[i] = metrics.accuracy(y, self.predict(X))
-        self.__prune_ids = self.__prune_sequence[:len(accuracy) - np.argmax(accuracy[::-1]) - 1]
-        '''
+            self.__prune_nodes = self.__prune_sequence[:i]
+            accuracy = metrics.accuracy(y, self.predict(X))
+
+            if accuracy >= accuracy_max:
+                accuracy_max = accuracy
+                prune_nodes_final = self.__prune_nodes
+
+        self.__prune_nodes = prune_nodes_final
+
+    def prune(self, X, y, solver='ccp'):
+        if solver == 'rep':
+            self.__rep(X, y)
+        elif solver == 'ccp':
+            self.__ccp(X, y)
+        print(self.__prune_nodes)
 
 class ID3(DecisionTree):
     def get_score(self, y_left, y_right, entropy):
