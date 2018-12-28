@@ -31,10 +31,11 @@ class DecisionTree():
 
         if hasattr(self, '_mode') and self._mode == 'regression':
             root['result'] = np.mean(y, axis=0)
-            root['error'] = np.sum((y - root['result']) ** 2)
+            root['error_number'] = np.sum((y - root['result']) ** 2)
         else:
             root['result'] = np.argmax(np.bincount(y.flatten().astype(int)))
-            root['error'] = np.sum(y != root['result'])
+            root['error_number'] = np.sum(y != root['result'])
+            root['data_number'] = data_number
 
         if len(np.unique(y)) == 1 or np.isclose(X, X[0]).all():
             return
@@ -112,28 +113,33 @@ class DecisionTree():
                 acc = acc_prune
 
     def __compute_leaves(self, root):
-        if self.__is_leaf(root) or (root in self.__prune_sequence):
-            return 1, root['error']
+        if self.__is_leaf(root):
+            return 1, root['error_number']
+        elif hasattr(self, '__prune_sequence') and (root in self.__prune_sequence):
+            return 1, root['error_number']
         else:
             return list(map(lambda x: x[0] + x[1], zip(self.__compute_leaves(root['left']), self.__compute_leaves(root['right']))))
 
-    def __traversal(self, root):
+    def __traversal(self, root, func):
         if self.__is_leaf(root) or (root in self.__prune_sequence):
             return
 
-        leaves_count, leaves_error = self.__compute_leaves(root)
-        
-        cost = (root['error'] - leaves_error) / (leaves_count - 1)
-        self.__costs.append([root, cost, leaves_count])
+        func(root)
 
-        self.__traversal(root['left'])
-        self.__traversal(root['right'])
+        self.__traversal(root['left'], func)
+        self.__traversal(root['right'], func)
 
     def __ccp(self, X, y):
+        def compute_costs(node):
+            leaves_count, leaves_error = self.__compute_leaves(node)
+        
+            cost = (node['error_number'] - leaves_error) / (leaves_count - 1)
+            self.__costs.append([node, cost, leaves_count])
+
         self.__prune_sequence = []
         while True:
             self.__costs = []
-            self.__traversal(self.__root)
+            self.__traversal(self.__root, compute_costs)
             if len(self.__costs) == 0:
                 break
 
@@ -154,12 +160,27 @@ class DecisionTree():
                 prune_nodes_final = self.__prune_nodes
 
         self.__prune_nodes = prune_nodes_final
+    
+    def __pep(self):
+        nodes = self.__traversal_bottom2top(self.__root)
 
-    def prune(self, X, y, solver='ccp'):
+        for node in nodes[::-1]:
+            leaves_count, leaves_error = self.__compute_leaves(node)
+
+            error = (leaves_error + leaves_count * 0.5) / node['data_number']
+            std = np.sqrt(error * (1 - error) * node['data_number'])
+
+            if error * node['data_number'] + std > node['error_number'] + 0.5:
+                #self.__traversal(node, lambda n: nodes.remove(n))
+                self.__prune_nodes.append(node)
+    
+    def prune(self, X=None, y=None, solver='pep'):
         if solver == 'rep':
             self.__rep(X, y)
         elif solver == 'ccp':
             self.__ccp(X, y)
+        elif solver == 'pep':
+            self.__pep()
         print(self.__prune_nodes)
 
 class ID3(DecisionTree):
