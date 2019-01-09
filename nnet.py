@@ -7,14 +7,17 @@ import threading
 import random
 import math
 from functools import reduce
+import regularizer
+import weights_initializer
 
 class Conv1d:
-    def __init__(self, filter_number, kernel_size, stride_size=1, padding='same',  input_size=0):
+    def __init__(self, filter_number, kernel_size, stride_size=1, padding='same',  input_size=0, weights_initializer=weights_initializer.he_normal):
         self.__filter_number = filter_number
         self.__input_size = input_size
         self.__kernel_size = kernel_size
         self.__stride_size = stride_size
         self.__padding = padding
+        self.__weights_initializer = weights_initializer
 
     def init(self, optimizer, learning_rate, input_size=0):
         if self.__input_size == 0:
@@ -33,7 +36,7 @@ class Conv1d:
 
         self.output_size = (self.__output_size, self.__filter_number)
 
-        self.__W = np.random.normal(scale=np.sqrt(4 / (self.__kernel_size + self.__filter_number)), size=(self.__filter_number, self.__input_channels, self.__kernel_size))
+        self.__W = self.__weights_initializer(self.__kernel_size * self.__input_channels, self.__filter_number, (self.__filter_number, self.__input_channels, self.__kernel_size))
         self.__b = np.zeros((self.__filter_number))
         self.__optimizer = optimizer(learning_rate)
 
@@ -73,12 +76,13 @@ class Conv1d:
         return col.dot(W.reshape(self.__input_channels, -1).T)
 
 class Conv2d:
-    def __init__(self, filter_number, kernel_shape, stride_size=(1, 1), padding='same',  input_size=0):
+    def __init__(self, filter_number, kernel_shape, stride_size=(1, 1), padding='same',  input_size=0, weights_initializer=weights_initializer.he_normal):
         self.__filter_number = filter_number
         self.__input_size = input_size
         self.__kernel_h, self.__kernel_w = kernel_shape
         self.__stride_h, self.__stride_w = stride_size
         self.__padding = padding
+        self.__weights_initializer = weights_initializer
 
     def init(self, optimizer, learning_rate, input_size=0):
         if self.__input_size == 0:
@@ -104,7 +108,7 @@ class Conv2d:
 
         self.output_size = (self.__filter_number, self.__output_h, self.__output_w)
 
-        self.__W = np.random.normal(scale=np.sqrt(4 / (self.__kernel_size + self.__filter_number)), size=(self.__filter_number, self.__input_channels, self.__kernel_h, self.__kernel_w))
+        self.__W = self.__weights_initializer(self.__kernel_size * self.__input_channels, self.__filter_number, (self.__filter_number, self.__input_channels, self.__kernel_h, self.__kernel_w))
         self.__b = np.zeros((self.__filter_number))
         self.__optimizer = optimizer(learning_rate)
 
@@ -422,15 +426,17 @@ class Rnn:
             self.__rnn_cells[i].optimize()
 
 class Dense:
-    def __init__(self, output_size, input_size=0):
+    def __init__(self, output_size, input_size=0, regularizer=regularizer.Regularizer(0), weights_initializer=weights_initializer.he_normal):
         self.output_size = output_size
         self.__input_size = input_size
+        self.__regularizer = regularizer
+        self.__weights_initializer = weights_initializer
 
     def init(self, optimizer, learning_rate, input_size=0):
         if self.__input_size == 0:
             self.__input_size = input_size
 
-        self.__W = np.random.normal(scale=np.sqrt(4 / (self.__input_size + self.output_size)), size=(self.__input_size, self.output_size))
+        self.__W = self.__weights_initializer(self.__input_size, self.output_size, (self.__input_size, self.output_size))
         self.__b = np.zeros(self.output_size)
 
         self.__optimizer = optimizer(learning_rate)
@@ -444,7 +450,7 @@ class Dense:
 
     def optimize(self, residual):
         batch_size = self.__X.shape[0]
-        g_W = self.__X.T.dot(residual) / batch_size
+        g_W = self.__X.T.dot(residual) / batch_size + self.__regularizer.regularize(self.__W)
         g_b = np.mean(residual, axis=0)
 
         g_W, g_b = self.__optimizer.optimize([g_W, g_b])

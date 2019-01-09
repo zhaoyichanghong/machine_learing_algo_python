@@ -44,7 +44,7 @@
 # kernel.py
     kernel function including linear, rbf
 # preprocess.py
-    preprocess including min-max scaler, z-score scaler, one-hot encoder, bagging
+    preprocess including min-max scaler, z-score scaler, one-hot encoder, bagging, convert rgb image to gray
 # pca.py
     principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
 # linear_discriminant_analysis.py
