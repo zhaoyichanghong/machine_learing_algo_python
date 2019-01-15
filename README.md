@@ -17,6 +17,8 @@
     gaussian discriminant analysis algorithm
 # knn.py
     k-NearestNeighbor algorithm
+# hog.py
+    histogram of oriented gradient
 # discrete_adaboost.py
     discrete adaboost algorithm
 # svm.py
@@ -37,6 +39,8 @@
     random_forest algorithm including bagging, random features, oob verification, feature selection
 # gbdt.py
     gradient boost decision tree algorithm including mse, binary_crossentropy, categorical_crossentropy
+# weights_initializer.py
+    weights initialization algo
 # nnet.py
     neural network algorithm including following components
     layers: conv1d, conv2d, max pool, mean pool, flatten, dense, dropout, batch normalization, rnn, relu, selu, tanh

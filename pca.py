@@ -2,10 +2,11 @@ import numpy as np
 import metrics
 
 class PCA:
-    def __init__(self, component_number, whiten=False, method=''):
+    def __init__(self, component_number, whiten=False, method='', visualize=False):
         self.__component_number = component_number
         self.__whiten = whiten
         self.__method = method
+        self.__visualize = visualize
 
     def fit_transform(self, X):
         data_number = X.shape[0]
@@ -36,16 +37,17 @@ class PCA:
         if self.__whiten:
             pc /= self.__std
 
-        if self.__component_number == 2:
+        if self.__component_number == 2 and self.__visualize:
             metrics.scatter_feature(pc)
 
         return pc
 
 class KernelPCA:
-    def __init__(self, component_number, kernel_func, gamma=1):
+    def __init__(self, component_number, kernel_func, gamma=1, visualize=False):
         self.__component_number = component_number
         self.__kernel_func = kernel_func
         self.__gamma = gamma
+        self.__visualize = visualize
 
     def fit_transform(self, X):
         self.__X = X
@@ -64,7 +66,7 @@ class KernelPCA:
 
         pc = self.__eig_vectors * np.sqrt(self.__eig_values)
 
-        if self.__component_number == 2:
+        if self.__component_number == 2 and self.__visualize:
             metrics.scatter_feature(pc)
 
         return pc
@@ -82,7 +84,7 @@ class KernelPCA:
         kernel = self.__kernel_centeralization(kernel)
         pc = kernel.dot(self.__eig_vectors / np.sqrt(self.__eig_values))
 
-        if self.__component_number == 2:
+        if self.__component_number == 2 and self.__visualize:
             metrics.scatter_feature(pc)
 
         return pc

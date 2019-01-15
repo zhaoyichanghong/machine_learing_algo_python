@@ -8,7 +8,7 @@ class GMM:
         data_number, feature_number = X.shape
         self.__cluster_number = cluster_number
 
-        model = k_means.k_means()
+        model = k_means.KMeans()
         y = model.fit_transform(X, cluster_number, 1, distance.euclidean_distance)
 
         classes = np.unique(y)

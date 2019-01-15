@@ -1,6 +1,10 @@
 import numpy as np
 
 class KMeans:
+    @property
+    def centers(self):
+        return self.__centers
+
     def fit_transform(self, X, cluster_number, epochs, distance):
         data_number = X.shape[0]
 
