@@ -51,6 +51,8 @@
     preprocess including min-max scaler, z-score scaler, one-hot encoder, bagging, convert rgb image to gray
 # pca.py
     principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
+# ica.py
+    independent component correlation algorithm
 # linear_discriminant_analysis.py
     linear discriminant analysis algorithm with "eigen" solver
 # distance.py
