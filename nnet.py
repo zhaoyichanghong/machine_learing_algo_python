@@ -76,13 +76,14 @@ class Conv1d:
         return col.dot(W.reshape(self.__input_channels, -1).T)
 
 class Conv2d:
-    def __init__(self, filter_number, kernel_shape, stride_size=(1, 1), padding='same',  input_size=0, weights_initializer=weights_initializer.he_normal):
+    def __init__(self, filter_number, kernel_shape, stride_size=(1, 1), padding='same',  input_size=0, groups=1, weights_initializer=weights_initializer.he_normal):
         self.__filter_number = filter_number
         self.__input_size = input_size
         self.__kernel_h, self.__kernel_w = kernel_shape
         self.__stride_h, self.__stride_w = stride_size
         self.__padding = padding
         self.__weights_initializer = weights_initializer
+        self.__groups = groups
 
     def init(self, optimizer, learning_rate, input_size=0):
         if self.__input_size == 0:
@@ -332,35 +333,57 @@ class BatchNormalization:
 class Rnn:
     class __RnnCell:
         def __init__(self, input_size, output_size, optimizer):
-            self.__U = np.random.random([output_size, output_size]) * 0.01
+            self.__U = weights_initializer.xavier_normal(output_size, output_size, (output_size, output_size))
             self.__U_gradient = 0
-            self.__W = np.random.random([input_size, output_size]) * 0.01
+            self.__W = weights_initializer.xavier_normal(input_size, output_size, (input_size, output_size))
             self.__W_gradient = 0
             self.__b = np.zeros(output_size)
             self.__b_gradient = 0
+
+            self.__V = weights_initializer.xavier_normal(output_size, output_size, (output_size, output_size))
+            self.__V_gradient = 0
+            self.__c = np.zeros(output_size)
+            self.__c_gradient = 0
+
             self.__optimizer = optimizer
 
         def forward(self, X, h_pre):
-            return X.dot(self.__W) + h_pre.dot(self.__U) + self.__b
+            self.__X = X
+            self.__h_pre = h_pre
 
-        def backward(self, residual, X, h_pre):
-            batch_size = X.shape[0]
+            self.__h = np.tanh(self.__X.dot(self.__W) + self.__h_pre.dot(self.__U) + self.__b)
+            Z = self.__h.dot(self.__V) + self.__c
 
-            self.__W_gradient += X.T.dot(residual) / batch_size
+            return self.__h, Z
+
+        def backward(self, residual):
+            batch_size = residual.shape[0]
+
+            self.__V_gradient += self.__h.T.dot(residual) / batch_size
+            self.__c_gradient += np.mean(residual, axis=0)
+
+            residual = residual.dot(self.__V.T)
+            residual *= (1 - self.__h ** 2)
+
+            self.__W_gradient += self.__X.T.dot(residual) / batch_size
             self.__b_gradient += np.mean(residual, axis=0)
-            self.__U_gradient += h_pre.T.dot(residual) / batch_size
+            self.__U_gradient += self.__h_pre.T.dot(residual) / batch_size
 
             return residual.dot(self.__W.T), residual.dot(self.__U.T)
 
         def optimize(self):
-            g_U, g_W, g_b = self.__optimizer.optimize([self.__U_gradient, self.__W_gradient, self.__b_gradient])
+            g_U, g_W, g_b, g_V, g_c = self.__optimizer.optimize([self.__U_gradient, self.__W_gradient, self.__b_gradient, self.__V_gradient, self.__c_gradient])
 
             self.__U -= g_U
             self.__W -= g_W
             self.__b -= g_b
+            self.__V -= g_V
+            self.__c -= g_c
             self.__U_gradient = 0
             self.__W_gradient = 0
             self.__b_gradient = 0
+            self.__V_gradient = 0
+            self.__c_gradient = 0
         
     def __init__(self, time_steps, output_size, activivation, layer_size, input_size=0):
         self.output_size = output_size
@@ -368,7 +391,7 @@ class Rnn:
         self.__time_steps = time_steps
         self.__layer_size = layer_size
         self.__activations = np.array([activivation() for i in range(self.__time_steps * self.__layer_size)]).reshape((self.__layer_size, self.__time_steps))
-        
+
     def init(self, optimizer, learning_rate, input_size=0):
         if self.__input_size == 0:
             self.__input_size = input_size
@@ -379,46 +402,30 @@ class Rnn:
             self.__rnn_cells.append(self.__RnnCell(self.output_size, self.output_size, optimizer(learning_rate)))
 
     def forward(self, X, mode):
-        self.__X = X
-        batch_size = self.__X.shape[0]
+        batch_size = X.shape[0]
 
-        self.__h = np.zeros((batch_size, self.__time_steps, self.__layer_size, self.output_size))
+        h = np.zeros((batch_size, self.__time_steps, self.__layer_size, self.output_size))
 
         for i in range(self.__time_steps):
+            y = X[:, i]
             for j in range(self.__layer_size):
                 if i == 0:
                     h_pre = np.zeros((batch_size, self.output_size))
                 else:
-                    h_pre = self.__h[:, i - 1, j]
+                    h_pre = h[:, i - 1, j]
 
-                if j == 0:
-                    X = self.__X[:, i]
-                else:
-                    X = self.__h[:, i, j - 1]
+                h[:, i, j], Z = self.__rnn_cells[j].forward(y, h_pre)
+                y = self.__activations[j, i].forward(Z, mode)
 
-                self.__h[:, i, j] = self.__activations[j, i].forward(self.__rnn_cells[j].forward(X, h_pre), mode)
-
-        return self.__h[:, -1, -1]
+        return y
 
     def optimize(self, residual):
-        batch_size = self.__X.shape[0]
-
         residual_X = residual
         residual_h = [0 for i in range(self.__layer_size)]
         for i in range(self.__time_steps - 1, -1, -1):
             for j in range(self.__layer_size - 1, -1, -1):
-                if i == 0:
-                    h_pre = np.zeros((batch_size, self.output_size))
-                else:
-                    h_pre = self.__h[:, i - 1, j]
-
-                if j == 0:
-                    X = self.__X[:, i]
-                else:
-                    X = self.__h[:, i, j - 1]
-
                 residual_tmp = self.__activations[j, i].backward(residual_X + residual_h[j])
-                residual_X, residual_h[j] = self.__rnn_cells[j].backward(residual_tmp, X, h_pre)
+                residual_X, residual_h[j] = self.__rnn_cells[j].backward(residual_tmp)
 
             residual_X = 0
 
@@ -493,7 +500,7 @@ class Tanh:
         return self.__output
 
     def backward(self, residual):
-        return (1 - np.power(self.__output, 2)) * residual
+        return (1 - self.__output ** 2) * residual
 
 class Sigmoid:
     def forward(self, X, mode):
