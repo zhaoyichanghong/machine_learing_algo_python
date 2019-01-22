@@ -21,6 +21,8 @@
     histogram of oriented gradient
 # discrete_adaboost.py
     discrete adaboost algorithm
+# rbf_network.py
+    rbf network algorithm
 # svm.py
     support vector machine algorithm including following components
     kernel: linear, rbf
