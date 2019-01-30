@@ -38,9 +38,6 @@ class NaiveBayesianForText:
             _, indexes, _ = np.intersect1d(vocab_set, X[i], return_indices=True)
             word_vec[i, indexes] = 1
 
-        classes_number = len(self.__classes)
-        p_class_of_doc = np.zeros((data_number, classes_number))
-        for i in range(data_number):
-            p_class_of_doc[i] = np.sum(word_vec[i] * np.log(self.__p_word_of_classes), axis=1) + np.log(self.__p_classes)
+        p_class_of_doc = word_vec.dot(np.log(self.__p_word_of_classes).T) + np.log(self.__p_classes)
 
-        return np.argmax(p_class_of_doc, axis=1)
+        return self.__classes[np.argmax(p_class_of_doc, axis=1)]
