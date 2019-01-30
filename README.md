@@ -1,6 +1,3 @@
-**X:** data_number * feature_number matrix<br>
-**y:** data_number * 1 vector<br>
-
 # pla.py
     perceptron learning algorithm
 # pocket.py
@@ -15,6 +12,8 @@
     softmax regression algorithm
 # gaussian_discriminant_analysis.py
     gaussian discriminant analysis algorithm
+# naive_bayesian_for_text.py
+    naive bayesian algorithm for text
 # knn.py
     k-NearestNeighbor algorithm
 # hog.py
