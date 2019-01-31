@@ -38,6 +38,8 @@
     decision tree algorithm including ID3, C4.5, CART, CCP prune
 # random_forest.py
     random_forest algorithm including bagging, random features, oob verification, feature selection
+# collaborative_filtering.py
+    collaborative filtering algorithm
 # gbdt.py
     gradient boost decision tree algorithm including mse, binary_crossentropy, categorical_crossentropy
 # weights_initializer.py
