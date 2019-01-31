@@ -28,6 +28,8 @@
     solver: smo, quadratic programming
 # k_means.py
     k-means algorithm
+# k_mediods.py
+    k-mediods algorithm
 # agnes.py
     agnes clustering algorithm
 # diana.py
