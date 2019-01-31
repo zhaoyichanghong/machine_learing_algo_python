@@ -5,7 +5,7 @@ class KMediods:
     def centers(self):
         return self.__centers
 
-    def fit_transform(self, X, cluster_number, epochs, distance):
+    def fit(self, X, cluster_number, epochs, distance):
         data_number = X.shape[0]
 
         self.__distance = distance
@@ -20,7 +20,7 @@ class KMediods:
                 errors = np.zeros(cluster_data_number)
 
                 for j in range(cluster_data_number):
-                    errors[j] = np.sum(distance(cluster_data[j], cluster_data))
+                    errors[j] = np.sum(self.__distance(cluster_data[j], cluster_data))
                 
                 self.__centers[i] = cluster_data[np.argmin(errors)]
 

@@ -97,7 +97,7 @@ def silhouette_coefficient(X, y, distance):
         bs = []
         for cluster in np.unique(y):
             if y[i] == cluster:
-                a = np.sum(distances[np.flatnonzero(y == cluster)]) / (np.sum(y == cluster) - 1)
+                a = np.sum(distances[np.flatnonzero(y == cluster)]) / (np.sum(y == cluster) - 1 + 1e-8)
             else:
                 bs.append(np.mean(distances[np.flatnonzero(y == cluster)]))
         b = np.min(bs)
