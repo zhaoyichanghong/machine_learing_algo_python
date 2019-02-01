@@ -17,7 +17,7 @@ class KMeans:
             for i in range(cluster_number):
                 self.__centers[i] = np.mean(X[np.flatnonzero(labels == i)], axis=0)
 
-        return labels
+        return self.predict(X)
 
     def predict(self, X):
         distances = np.apply_along_axis(self.__distance, 1, self.__centers, X).T

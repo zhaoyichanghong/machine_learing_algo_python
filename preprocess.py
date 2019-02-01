@@ -44,6 +44,3 @@ def bagging(data_number, bags_number):
         indexs_oob.append(np.setdiff1d(range(data_number), indexs[-1]))
 
     return indexs, indexs_oob
-
-def rgb2gray(rgb):
-    return rgb[:, :, 0] * 0.299 + rgb[:, :, 1] * 0.578 + rgb[:, :, 2] * 0.114
