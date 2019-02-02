@@ -1,5 +1,4 @@
 import numpy as np
-from functools import reduce
 import text_preprocess
 
 class NaiveBayesianForText:

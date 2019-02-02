@@ -140,7 +140,7 @@ class DecisionTree():
         while True:
             self.__costs = []
             self.__traversal(self.__root, compute_costs)
-            if len(self.__costs) == 0:
+            if not self.__costs:
                 break
 
             self.__costs = np.array(self.__costs)
@@ -174,7 +174,7 @@ class DecisionTree():
                 #self.__traversal(node, lambda n: nodes.remove(n))
                 self.__prune_nodes.append(node)
     
-    def prune(self, X=None, y=None, solver='pep'):
+    def prune(self, X=None, y=None, solver='ccp'):
         if solver == 'rep':
             self.__rep(X, y)
         elif solver == 'ccp':
