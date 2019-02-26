@@ -40,6 +40,8 @@
     diana clustering algorithm
 # dbscan.py
     dbscan clustering algorithm
+# spectral_clustering.py
+    spectral clustering algorithm
 # gaussian_mixed_model.py
     gaussian mixed model algorithm
 # decision_tree.py
