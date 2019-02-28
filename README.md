@@ -1,5 +1,8 @@
-# pla.py
+# Supervised Learning
+## [pla.py](pla.py)
     perceptron learning algorithm
+    
+# ---------------------------------------------------
 # pocket.py
     pocket algorithm
 # linear_regression.py
