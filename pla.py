@@ -35,7 +35,7 @@ class Pla:
             Predicting data
 
         Returns
-        ----------
+        -------
         y : shape (data_number, 1)
             Predicted class label per sample.
         '''
