@@ -2,15 +2,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 import metrics
 import regularizer
+import scipy
 
 class LogisticRegressionGradientDescent:
     def __init__(self, debug=True):
         self.__debug = debug
 
-    def __sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
-
     def fit(self, X, y, epochs, optimizer, regularizer=regularizer.Regularizer(0)):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Training data
+        y : shape (data_number, 1)
+            Target values
+        epochs : The number of epochs
+        optimizer : Optimize algorithm, see also optimizer.py
+        regularizer : Regularize algorithm, see also regularizer.py
+        '''
         data_number, feature_number = X.shape
 
         self.__W = np.zeros((feature_number, 1))
@@ -42,20 +51,48 @@ class LogisticRegressionGradientDescent:
             plt.show()
 
     def predict(self, X):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (data_number, 1)
+            Predicted class label per sample.
+        '''
         return np.around(self.score(X))
 
     def score(self, X):
-        return self.__sigmoid(X.dot(self.__W) + self.__b)
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (data_number, 1)
+            Predicted score per sample.
+        '''
+        return scipy.special.expit(X.dot(self.__W) + self.__b)
 
 class LogisticRegressionNewton:
     def __init__(self, debug=True):
         self.__debug = debug
 
-    def __sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
-
     def fit(self, X, y, epochs):
-        data_number, feature_number = X.shape
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Training data
+        y : shape (data_number, 1)
+            Target values
+        epochs : The number of epochs
+        '''
+        feature_number = X.shape[1]
 
         self.__W = np.zeros((feature_number, 1))
         self.__b = 0
@@ -89,7 +126,29 @@ class LogisticRegressionNewton:
             plt.show()
 
     def predict(self, X):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (data_number, 1)
+            Predicted class label per sample.
+        '''
         return np.around(self.score(X))
 
     def score(self, X):
-        return self.__sigmoid(X.dot(self.__W) + self.__b)
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (data_number, 1)
+            Predicted score per sample.
+        '''
+        return scipy.special.expit(X.dot(self.__W) + self.__b)

@@ -2,15 +2,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 import metrics
 import regularizer
+import scipy
 
 class SoftmaxRegression:
     def __init__(self, debug=True):
         self.__debug = debug
 
-    def __softmax(self, x):
-        return np.exp(x) / np.sum(np.exp(x), axis=1, keepdims=True)
-
     def fit(self, X, y, epochs, optimizer, regularizer=regularizer.Regularizer(0)):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Training data
+        y : One-hot encoder, shape (data_number, class_number)
+            Target values 
+        epochs : The number of epochs
+        optimizer : Optimize algorithm, see also optimizer.py
+        regularizer : Regularize algorithm, see also regularizer.py
+        '''
         data_number, feature_number = X.shape
         class_number = y.shape[1]
 
@@ -43,7 +52,31 @@ class SoftmaxRegression:
             plt.show()
 
     def predict(self, X, classes):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+        classes : shape (class_number,)
+            The all labels
+
+        Returns
+        -------
+        y : shape (data_number, 1)
+            Predicted class label per sample.
+        '''
         return classes[np.argmax(self.score(X), axis=1)].reshape((-1, 1))
 
     def score(self, X):
-        return self.__softmax(X.dot(self.__W) + self.__b)
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (data_number, class_number)
+            Predicted score of class per sample.
+        '''
+        return scipy.special.softmax(X.dot(self.__W) + self.__b, axis=1)

@@ -8,6 +8,17 @@ class LinearRegressionGradientDescent:
         self.__debug = debug
 
     def fit(self, X, y, epochs, optimizer, regularizer=regularizer.Regularizer(0)):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Training data
+        y : shape (data_number, 1)
+            Target values
+        epochs : The number of epochs
+        optimizer : Optimize algorithm, see also optimizer.py
+        regularizer : Regularize algorithm, see also regularizer.py
+        '''
         data_number, feature_number = X.shape
 
         self.__W = np.zeros((feature_number, 1))
@@ -34,6 +45,17 @@ class LinearRegressionGradientDescent:
             plt.show()
 
     def predict(self, X):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (data_number, 1)
+            Predicted value per sample.
+        '''
         return X.dot(self.__W) + self.__b
 
 class LinearRegressionNewton:
@@ -41,6 +63,15 @@ class LinearRegressionNewton:
         self.__debug = debug
 
     def fit(self, X, y, epochs):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Training data
+        y : shape (data_number, 1)
+            Target values
+        epochs : The number of epochs
+        '''
         data_number, feature_number = X.shape
 
         self.__W = np.zeros((feature_number, 1))
@@ -67,13 +98,43 @@ class LinearRegressionNewton:
             plt.show()
 
     def predict(self, X):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (data_number, 1)
+            Predicted value per sample.
+        '''
         return X.dot(self.__W) + self.__b
 
 class LinearRegressionEquation:
     def fit(self, X, y):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Training data
+        y : shape (data_number, 1)
+            Target values
+        '''
         X_with_b = np.insert(X, 0, 1, axis=1)
         self.__W = np.linalg.pinv(X_with_b.T.dot(X_with_b)).dot(X_with_b.T).dot(y)
 
     def predict(self, X):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (data_number, 1)
+            Predicted value per sample.
+        '''
         X_with_b = np.insert(X, 0, 1, axis=1)
         return X_with_b.dot(self.__W)
