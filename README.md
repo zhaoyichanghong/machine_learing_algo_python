@@ -4,11 +4,12 @@
     perceptron algorithm
 ## [pocket.py](pocket.py)
     pocket algorithm
-    
+## Regression
+## [linear_regression.py](linear_regression.py)
+    linear regression algorithm including gradient descent, newton, equation
 # ---------------------------------------------------
 
-# linear_regression.py
-    linear regression algorithm including gradient descent, newton, equation
+
 # linear_regression_locally_weight.py
     locally weight linear regression algorithm
 # logistic_regression.py
