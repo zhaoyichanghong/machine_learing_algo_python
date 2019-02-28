@@ -1,10 +1,12 @@
 # Supervised Learning
+## Classification
 ## [pla.py](pla.py)
-    perceptron learning algorithm
+    perceptron algorithm
+## [pocket.py](pocket.py)
+    pocket algorithm
     
 # ---------------------------------------------------
-# pocket.py
-    pocket algorithm
+
 # linear_regression.py
     linear regression algorithm including gradient descent, newton, equation
 # linear_regression_locally_weight.py
