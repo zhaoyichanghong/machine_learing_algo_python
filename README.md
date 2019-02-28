@@ -11,9 +11,6 @@
     locally weight linear regression algorithm
 # ---------------------------------------------------
 
-
-# linear_regression_locally_weight.py
-    locally weight linear regression algorithm
 # logistic_regression.py
     logistic regression algorithm including gradient descent, newton
 # softmax_regression.py
