@@ -11,6 +11,9 @@
 ## [logistic_regression.py](logistic_regression.py)
     logistic regression algorithm including gradient descent, newton
     
+## [softmax_regression.py](softmax_regression.py)
+    softmax regression algorithm
+    
 ## Regression
 
 ## [linear_regression.py](linear_regression.py)
@@ -21,8 +24,7 @@
 # ---------------------------------------------------
 
 
-# softmax_regression.py
-    softmax regression algorithm
+
 # gaussian_discriminant_analysis.py
     gaussian discriminant analysis algorithm
 # naive_bayesian_for_text.py
