@@ -7,6 +7,8 @@
 ## Regression
 ## [linear_regression.py](linear_regression.py)
     linear regression algorithm including gradient descent, newton, equation
+## [linear_regression_locally_weight.py](linear_regression_locally_weight.py)
+    locally weight linear regression algorithm
 # ---------------------------------------------------
 
 
