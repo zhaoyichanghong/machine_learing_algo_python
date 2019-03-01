@@ -13,6 +13,12 @@
     
 ## [softmax_regression.py](softmax_regression.py)
     softmax regression algorithm
+
+## [knn.py](knn.py)
+    k-NearestNeighbor algorithm
+
+## [gaussian_discriminant_analysis.py](gaussian_discriminant_analysis.py)
+    gaussian discriminant analysis algorithm
     
 ## Regression
 
@@ -21,16 +27,31 @@
     
 ## [linear_regression_locally_weight.py](linear_regression_locally_weight.py)
     locally weight linear regression algorithm
+    
+## [collaborative_filtering.py](collaborative_filtering.py)
+    collaborative filtering algorithm
+    
+# Unsupervised Learning
+
+## Clustering
+
+## [k_means.py](k_means.py)
+    k-means algorithm
+    
+## [k_means_plus.py](k_means_plus.py)
+    k-means++ algorithm
+    
+## [bisecting_kmeans.py](bisecting_kmeans.py)
+    bisecting k-means algorithm
+    
+## [k_median.py](k_median.py)
+    k-median algorithm
+    
+## [gaussian_mixed_model.py](gaussian_mixed_model.py)
+    gaussian mixed model algorithm
 # ---------------------------------------------------
-
-
-
-# gaussian_discriminant_analysis.py
-    gaussian discriminant analysis algorithm
 # naive_bayesian_for_text.py
     naive bayesian algorithm for text
-# knn.py
-    k-NearestNeighbor algorithm
 # hog.py
     histogram of oriented gradient
 # discrete_adaboost.py
@@ -41,14 +62,8 @@
     support vector machine algorithm including following components
     kernel: linear, rbf
     solver: smo, quadratic programming
-# k_means.py
-    k-means algorithm
-# k_means_plus.py
-    k-means++ algorithm
 # k_mediods.py
     k-mediods algorithm
-# bisecting_kmeans.py
-    bisecting k-means algorithm
 # agnes.py
     agnes clustering algorithm
 # diana.py
@@ -57,14 +72,10 @@
     dbscan clustering algorithm
 # spectral_clustering.py
     spectral clustering algorithm
-# gaussian_mixed_model.py
-    gaussian mixed model algorithm
 # decision_tree.py
     decision tree algorithm including ID3, C4.5, CART, CCP prune
 # random_forest.py
     random_forest algorithm including bagging, random features, oob verification, feature selection
-# collaborative_filtering.py
-    collaborative filtering algorithm
 # gbdt.py
     gradient boost decision tree algorithm including mse, binary_crossentropy, categorical_crossentropy
 # weights_initializer.py
