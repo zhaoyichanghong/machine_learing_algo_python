@@ -16,6 +16,9 @@
 
 ## [knn.py](knn.py)
     k-NearestNeighbor algorithm
+
+## [gaussian_discriminant_analysis.py](gaussian_discriminant_analysis.py)
+    gaussian discriminant analysis algorithm
     
 ## Regression
 
@@ -47,8 +50,7 @@
 
 
 
-# gaussian_discriminant_analysis.py
-    gaussian discriminant analysis algorithm
+
 # naive_bayesian_for_text.py
     naive bayesian algorithm for text
 
