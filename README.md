@@ -32,8 +32,11 @@
 ## [k_means.py](k_means.py)
     k-means algorithm
     
+## [k_means_plus.py](k_means_plus.py)
+    k-means++ algorithm
+    
 ## [k_median.py](k_median.py)
-    k_median algorithm
+    k-median algorithm
 # ---------------------------------------------------
 
 
@@ -54,8 +57,7 @@
     kernel: linear, rbf
     solver: smo, quadratic programming
 
-# k_means_plus.py
-    k-means++ algorithm
+
 # k_mediods.py
     k-mediods algorithm
 # bisecting_kmeans.py
