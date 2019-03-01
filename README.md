@@ -31,6 +31,9 @@
 
 ## [k_means.py](k_means.py)
     k-means algorithm
+    
+## [k_median.py](k_median.py)
+    k_median algorithm
 # ---------------------------------------------------
 
 
