@@ -35,6 +35,9 @@
 ## [k_means_plus.py](k_means_plus.py)
     k-means++ algorithm
     
+## [bisecting_kmeans.py](bisecting_kmeans.py)
+    bisecting k-means algorithm
+    
 ## [k_median.py](k_median.py)
     k-median algorithm
 # ---------------------------------------------------
@@ -60,8 +63,7 @@
 
 # k_mediods.py
     k-mediods algorithm
-# bisecting_kmeans.py
-    bisecting k-means algorithm
+
 # agnes.py
     agnes clustering algorithm
 # diana.py
