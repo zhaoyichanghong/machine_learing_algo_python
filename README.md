@@ -24,6 +24,13 @@
     
 ## [linear_regression_locally_weight.py](linear_regression_locally_weight.py)
     locally weight linear regression algorithm
+    
+# Unsupervised Learning
+
+## Clustering
+
+## [k_means.py](k_means.py)
+    k-means algorithm
 # ---------------------------------------------------
 
 
@@ -43,8 +50,7 @@
     support vector machine algorithm including following components
     kernel: linear, rbf
     solver: smo, quadratic programming
-# k_means.py
-    k-means algorithm
+
 # k_means_plus.py
     k-means++ algorithm
 # k_mediods.py
