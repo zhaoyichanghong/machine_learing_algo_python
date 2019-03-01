@@ -46,14 +46,12 @@
     
 ## [k_median.py](k_median.py)
     k-median algorithm
+    
+## [gaussian_mixed_model.py](gaussian_mixed_model.py)
+    gaussian mixed model algorithm
 # ---------------------------------------------------
-
-
-
-
 # naive_bayesian_for_text.py
     naive bayesian algorithm for text
-
 # hog.py
     histogram of oriented gradient
 # discrete_adaboost.py
@@ -64,11 +62,8 @@
     support vector machine algorithm including following components
     kernel: linear, rbf
     solver: smo, quadratic programming
-
-
 # k_mediods.py
     k-mediods algorithm
-
 # agnes.py
     agnes clustering algorithm
 # diana.py
@@ -77,13 +72,10 @@
     dbscan clustering algorithm
 # spectral_clustering.py
     spectral clustering algorithm
-# gaussian_mixed_model.py
-    gaussian mixed model algorithm
 # decision_tree.py
     decision tree algorithm including ID3, C4.5, CART, CCP prune
 # random_forest.py
     random_forest algorithm including bagging, random features, oob verification, feature selection
-
 # gbdt.py
     gradient boost decision tree algorithm including mse, binary_crossentropy, categorical_crossentropy
 # weights_initializer.py
