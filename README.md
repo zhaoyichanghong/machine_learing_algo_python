@@ -13,6 +13,9 @@
     
 ## [softmax_regression.py](softmax_regression.py)
     softmax regression algorithm
+
+## [knn.py](knn.py)
+    k-NearestNeighbor algorithm
     
 ## Regression
 
@@ -29,8 +32,7 @@
     gaussian discriminant analysis algorithm
 # naive_bayesian_for_text.py
     naive bayesian algorithm for text
-# knn.py
-    k-NearestNeighbor algorithm
+
 # hog.py
     histogram of oriented gradient
 # discrete_adaboost.py
