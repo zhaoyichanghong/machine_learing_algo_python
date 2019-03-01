@@ -49,6 +49,12 @@
     
 ## [gaussian_mixed_model.py](gaussian_mixed_model.py)
     gaussian mixed model algorithm
+    
+# Tools
+
+## [distance.py](distance.py)
+    distance algorithms including euclidean distance, manhattan distance, chebyshev distance, mahalanobis distance, cosine distance
+    
 # ---------------------------------------------------
 # naive_bayesian_for_text.py
     naive bayesian algorithm for text
@@ -94,8 +100,6 @@
     independent component correlation algorithm
 # linear_discriminant_analysis.py
     linear discriminant analysis algorithm with "eigen" solver
-# distance.py
-    distance algorithms including euclidean distance, manhattan distance, chebyshev distance, mahalanobis distance, cosine distance
 # metrics.py
     scores including accuracy, precision, recall, f_score, R2, confusion matrix, pr curve, roc curve, auc, silhouette coefficient, 2d feature scatter, learning curve
 # optimizer.py
