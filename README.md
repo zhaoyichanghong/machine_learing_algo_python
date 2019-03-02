@@ -52,6 +52,9 @@
     
 # Tools
 
+## [image_preprocess.py](image_preprocess.py)
+    image preprocess algorithms including rgb2gray
+
 ## [distance.py](distance.py)
     distance algorithms including euclidean distance, manhattan distance, chebyshev distance, mahalanobis distance, cosine distance
 
