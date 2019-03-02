@@ -6,6 +6,19 @@ class LDA:
         self.__component_number = component_number
 
     def fit_transform(self, X, y):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Training data
+        y : shape (data_number, 1)
+            Data label
+
+        Returns
+        -------
+        X : shape (data_number, component_number)
+            The data of dimensionality reduction
+        '''
         data_number, feature_number = X.shape
         classes = np.unique(y)
         class_number = len(classes)
@@ -29,4 +42,15 @@ class LDA:
         return pc
 
     def transform(self, X):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        X : shape (data_number, component_number)
+            The data of dimensionality reduction
+        '''
         return X.dot(self.__eig_vectors)

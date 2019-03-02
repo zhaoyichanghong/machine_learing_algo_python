@@ -87,11 +87,24 @@ class SVM:
         self.__y_support = y[support_items]
         self.__a_support = alpha[support_items]
 
-    def fit(self, X, y, kernel_func, C, solver, gamma=1, epochs=0):
-        self.__gamma = gamma
+    def fit(self, X, y, kernel_func, C, solver, sigma=1, epochs=0):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Training data
+        y : One-hot encoder, shape (data_number, class_number)
+            Target values, 1 or -1
+        kernel_func : kernel algorithm
+        C : Penalty parameter C of the error term
+        solver : Solve algorithm
+        sigma : Parameter for rbf kernel
+        epochs : The number of epochs
+        '''
+        self.__sigma = sigma
         self.__kernel_func = kernel_func
 
-        kernel = self.__kernel_func(X, X, self.__gamma)
+        kernel = self.__kernel_func(X, X, self.__sigma)
         
         if solver == 'qp':
             self.__qp(X, y, kernel, C)
@@ -99,8 +112,19 @@ class SVM:
             self.__smo(X, y, kernel, C, epochs)
         
     def predict(self, X):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (data_number, 1)
+            Predicted class label per sample, 1 or -1
+        '''
         return np.sign(self.score(X))
 
     def score(self, X):
-        kernel = self.__kernel_func(X, self.__X_support, self.__gamma)
+        kernel = self.__kernel_func(X, self.__X_support, self.__sigma)
         return kernel.T.dot(self.__a_support * self.__y_support) + self.__bias

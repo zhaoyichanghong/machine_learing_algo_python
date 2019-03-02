@@ -9,7 +9,7 @@ class Pocket:
         X : shape (data_number, feature_number)
             Training data
         y : shape (data_number, 1)
-            Target values
+            Target values, 1 or -1
         epochs : The number of epochs
         '''
         feature_number = X.shape[1]
@@ -42,6 +42,6 @@ class Pocket:
         Returns
         -------
         y : shape (data_number, 1)
-            Predicted class label per sample.
+            Predicted class label per sample, 1 or -1
         '''
         return np.sign(X.dot(self.__W) + self.__b)

@@ -15,7 +15,7 @@ class LogisticRegressionGradientDescent:
         X : shape (data_number, feature_number)
             Training data
         y : shape (data_number, 1)
-            Target values
+            Target values, 1 or 0
         epochs : The number of epochs
         optimizer : Optimize algorithm, see also optimizer.py
         regularizer : Regularize algorithm, see also regularizer.py
@@ -60,7 +60,7 @@ class LogisticRegressionGradientDescent:
         Returns
         -------
         y : shape (data_number, 1)
-            Predicted class label per sample.
+            Predicted class label per sample, 1 or 0
         '''
         return np.around(self.score(X))
 
@@ -89,7 +89,7 @@ class LogisticRegressionNewton:
         X : shape (data_number, feature_number)
             Training data
         y : shape (data_number, 1)
-            Target values
+            Target values, 1 or 0
         epochs : The number of epochs
         '''
         feature_number = X.shape[1]
@@ -135,7 +135,7 @@ class LogisticRegressionNewton:
         Returns
         -------
         y : shape (data_number, 1)
-            Predicted class label per sample.
+            Predicted class label per sample, 1 or 0
         '''
         return np.around(self.score(X))
 

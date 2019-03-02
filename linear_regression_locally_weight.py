@@ -1,10 +1,8 @@
 import numpy as np
+import kernel
 
 class LinearRegressionLocallyWeight:
-    def __locally_weight(self, x):
-        return np.exp(np.sum((self.__X - x) ** 2, axis=1) / (-2 * (self.__gamma ** 2)))
-
-    def fit(self, X, y, gamma):
+    def fit(self, X, y, sigma):
         '''
         Parameters
         ----------
@@ -16,7 +14,7 @@ class LinearRegressionLocallyWeight:
         '''
         self.__X = np.insert(X, 0, 1, axis=1)
         self.__y = y
-        self.__gamma = gamma
+        self.__sigma = sigma
 
     def predict(self, X):
         '''
@@ -36,8 +34,7 @@ class LinearRegressionLocallyWeight:
         W = np.zeros((data_number, feature_number))
 
         for i in range(data_number):
-            Weights = np.diag(self.__locally_weight(X[i]).ravel())
-
+            Weights = np.diag(kernel.gaussian_kernel(self.__X, X[i].reshape(1, -1), self.__sigma).ravel())
             W[i] = (np.linalg.pinv(self.__X.T.dot(Weights).dot(self.__X)).dot(self.__X.T).dot(Weights).dot(self.__y)).ravel()
 
         return np.sum(X * W, axis=1, keepdims=True)
