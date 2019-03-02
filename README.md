@@ -54,6 +54,9 @@
 
 ## [distance.py](distance.py)
     distance algorithms including euclidean distance, manhattan distance, chebyshev distance, mahalanobis distance, cosine distance
+
+## [regularizer.py](regularizer.py)
+    regularizer algorithm including L1, L2, elastic-net
     
 # ---------------------------------------------------
 # naive_bayesian_for_text.py
@@ -106,5 +109,3 @@
     optimizer algorithm including following components
     gradient descent: momentum，adagrad，rmsprop，adam
     conjugate gradient: prp, fr
-# regularizer.py
-    regularizer algorithm including L1, L2, elastic-net
