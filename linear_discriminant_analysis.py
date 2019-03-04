@@ -2,8 +2,13 @@ import numpy as np
 import metrics
 
 class LDA:
-    def __init__(self, component_number = None):
-        self.__component_number = component_number
+    def __init__(self, n_components = None):
+        '''
+        Parameters
+        ----------
+        n_components : Number of components to keep
+        '''
+        self.__n_components = n_components
 
     def fit_transform(self, X, y):
         '''
@@ -16,7 +21,7 @@ class LDA:
 
         Returns
         -------
-        X : shape (data_number, component_number)
+        X : shape (data_number, n_components)
             The data of dimensionality reduction
         '''
         data_number, feature_number = X.shape
@@ -32,11 +37,11 @@ class LDA:
 
         s_b = s_t - s_w
         eig_values, eig_vectors = np.linalg.eigh(np.linalg.pinv(s_w).dot(s_b))
-        self.__eig_vectors = eig_vectors[:, ::-1][:, :self.__component_number]
+        self.__eig_vectors = eig_vectors[:, ::-1][:, :self.__n_components]
 
         pc = self.transform(X)
         
-        if self.__component_number == 2:
+        if self.__n_components == 2:
             metrics.scatter_feature(pc, y)
 
         return pc
@@ -50,7 +55,7 @@ class LDA:
 
         Returns
         -------
-        X : shape (data_number, component_number)
+        X : shape (data_number, n_components)
             The data of dimensionality reduction
         '''
         return X.dot(self.__eig_vectors)

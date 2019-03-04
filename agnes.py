@@ -1,25 +1,34 @@
 import numpy as np
+import distance
 
 class Agnes:
-    def fit_transform(self, X, cluster_number, distance):
-        self.__distance = distance
-        data_number, feature_number = X.shape
+    def fit(self, X, cluster_number):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Training data
+        cluster_number : The number of clusters
 
-        clusters = [[X[i].reshape(-1, feature_number)] for i in range(data_number)]
-        self.__centers = X
+        Returns
+        -------
+        y : shape (data_number,)
+            Predicted cluster label per sample.
+        '''
+        data_number = X.shape[0]
 
+        clusters = [[i] for i in range(data_number)]
         for j in reversed(range(cluster_number, data_number)):
-            distances = np.apply_along_axis(self.__distance, 1, self.__centers, self.__centers)
-            near_indexes = divmod(np.argmin(distances + np.diag(np.full(j + 1, np.inf))), j + 1)
+            centers = np.array([np.mean(X[cluster], axis=0).ravel() for cluster in clusters])
+            distances = np.apply_along_axis(distance.euclidean_distance, 1, centers, centers)
+            near_indexes = np.unravel_index(np.argmin(distances + np.diag(np.full(j + 1, np.inf))), distances.shape)
 
             clusters[near_indexes[0]].extend(clusters[near_indexes[1]])
-            self.__centers[near_indexes[0]] = np.mean(clusters[near_indexes[0]], axis=0)
             
             del clusters[near_indexes[1]]
-            self.__centers = np.delete(self.__centers, near_indexes[1], axis=0)
         
-        return self.predict(X)
+        y = np.zeros(data_number)
+        for i in range(len(clusters)):
+            y[clusters[i]] = i
 
-    def predict(self, X):
-        distances = np.apply_along_axis(self.__distance, 1, self.__centers, X).T
-        return np.argmin(distances, axis=1)
+        return y

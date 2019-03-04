@@ -1,5 +1,5 @@
 import numpy as np
-import cvxopt
+#import cvxopt
 
 class SVM:
     def __qp(self, X, y, kernel, C):
@@ -95,7 +95,7 @@ class SVM:
             Training data
         y : One-hot encoder, shape (data_number, class_number)
             Target values, 1 or -1
-        kernel_func : kernel algorithm
+        kernel_func : kernel algorithm see also kernel.py
         C : Penalty parameter C of the error term
         solver : Solve algorithm
         sigma : Parameter for rbf kernel
@@ -126,5 +126,16 @@ class SVM:
         return np.sign(self.score(X))
 
     def score(self, X):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (data_number, 1)
+            Predicted score of class per sample.
+        '''
         kernel = self.__kernel_func(X, self.__X_support, self.__sigma)
         return kernel.T.dot(self.__a_support * self.__y_support) + self.__bias

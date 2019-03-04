@@ -19,6 +19,11 @@
 
 ## [gaussian_discriminant_analysis.py](gaussian_discriminant_analysis.py)
     gaussian discriminant analysis algorithm
+
+## [svm.py](svm.py)
+    support vector machine algorithm including following components
+    kernel: linear, rbf
+    solver: smo, quadratic programming
     
 ## Regression
 
@@ -30,7 +35,12 @@
     
 ## [collaborative_filtering.py](collaborative_filtering.py)
     collaborative filtering algorithm
-    
+
+# Dimensionality Reduction
+
+## [linear_discriminant_analysis.py](linear_discriminant_analysis.py)
+    linear discriminant analysis algorithm with "eigen" solver
+ 
 # Unsupervised Learning
 
 ## Clustering
@@ -58,8 +68,17 @@
 ## [distance.py](distance.py)
     distance algorithms including euclidean distance, manhattan distance, chebyshev distance, mahalanobis distance, cosine distance
 
+## [kernel.py](kernel.py)
+    kernel function including linear, rbf
+    
+## [preprocess.py](preprocess.py)
+    preprocess algorithm including min-max scaler, z-score scaler, one-hot encoder, bagging
+    
 ## [regularizer.py](regularizer.py)
     regularizer algorithm including L1, L2, elastic-net
+    
+## [metrics.py](metrics.py)
+    scores including accuracy, precision, recall, f-score, R2 score, confusion matrix, pr curve, roc curve, auc, silhouette coefficient, 2d feature scatter, learning curve
     
 # ---------------------------------------------------
 # naive_bayesian_for_text.py
@@ -70,10 +89,6 @@
     discrete adaboost algorithm
 # rbf_network.py
     rbf network algorithm
-# svm.py
-    support vector machine algorithm including following components
-    kernel: linear, rbf
-    solver: smo, quadratic programming
 # k_mediods.py
     k-mediods algorithm
 # agnes.py
@@ -96,18 +111,10 @@
     neural network algorithm including following components
     layers: conv1d, conv2d, max pool, mean pool, flatten, dense, dropout, batch normalization, rnn, relu, selu, tanh
     loss: binary crossentropy, categorical crossentropy, mse, categorical hinge
-# kernel.py
-    kernel function including linear, rbf
-# preprocess.py
-    preprocess including min-max scaler, z-score scaler, one-hot encoder, bagging, convert rgb image to gray
 # pca.py
     principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
 # ica.py
     independent component correlation algorithm
-# linear_discriminant_analysis.py
-    linear discriminant analysis algorithm with "eigen" solver
-# metrics.py
-    scores including accuracy, precision, recall, f_score, R2, confusion matrix, pr curve, roc curve, auc, silhouette coefficient, 2d feature scatter, learning curve
 # optimizer.py
     optimizer algorithm including following components
     gradient descent: momentum，adagrad，rmsprop，adam

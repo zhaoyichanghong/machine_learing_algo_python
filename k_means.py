@@ -17,7 +17,7 @@ class KMeans:
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (data_number,)
             Predicted cluster label per sample.
         '''
         data_number = X.shape[0]
@@ -38,7 +38,7 @@ class KMeans:
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (data_number,)
             Predicted cluster label per sample.
         '''
         distances = np.apply_along_axis(distance.euclidean_distance, 1, self.__centers, X).T

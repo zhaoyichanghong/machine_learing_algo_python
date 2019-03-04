@@ -1,37 +1,53 @@
 import numpy as np
 
 class KMediods:
-    @property
-    def centers(self):
-        return self.__centers
-
     def fit(self, X, cluster_number, distance):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Training data
+        cluster_number : The number of clusters
+        distance : Distance algorithm, see also distance.py
+
+        Returns
+        -------
+        y : shape (data_number,)
+            Predicted cluster label per sample.
+        '''
         data_number = X.shape[0]
-
         self.__distance = distance
-        self.__centers = X[np.random.choice(data_number, cluster_number)]
-
+        distances = np.apply_along_axis(self.__distance, 1, X, X)
+        
+        centers = np.random.choice(data_number, cluster_number)
         while True:
-            labels = self.predict(X)
+            y = np.argmin(distances[centers], axis=0)
 
-            centers = np.zeros_like(self.__centers)
+            centers_tmp = np.zeros_like(centers)
             for i in range(cluster_number):
-                cluster_data = X[np.flatnonzero(labels == i)]
-                cluster_data_number = cluster_data.shape[0]
-                errors = np.zeros(cluster_data_number)
-
-                for j in range(cluster_data_number):
-                    errors[j] = np.sum(self.__distance(cluster_data[j], cluster_data))
-                
-                centers[i] = cluster_data[np.argmin(errors)]
+                indexes = np.flatnonzero(y == i)
+                errors = np.sum(distances[indexes][:, indexes], axis=0)
+                centers_tmp[i] = indexes[np.argmin(errors)]
             
-            if (centers == self.__centers).all():
+            if (centers == centers_tmp).all():
                 break
             else:
-                self.__centers = centers
+                centers = centers_tmp
 
-        return self.predict(X)
+        self.__centers = X[centers]
+        return y
 
     def predict(self, X):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (data_number,)
+            Predicted cluster label per sample.
+        '''
         distances = np.apply_along_axis(self.__distance, 1, self.__centers, X).T
         return np.argmin(distances, axis=1)
