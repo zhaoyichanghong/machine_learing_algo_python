@@ -58,6 +58,9 @@
 ## [distance.py](distance.py)
     distance algorithms including euclidean distance, manhattan distance, chebyshev distance, mahalanobis distance, cosine distance
 
+## [preprocess.py](preprocess.py)
+    preprocess including min-max scaler, z-score scaler, one-hot encoder, bagging
+    
 ## [regularizer.py](regularizer.py)
     regularizer algorithm including L1, L2, elastic-net
     
@@ -98,8 +101,7 @@
     loss: binary crossentropy, categorical crossentropy, mse, categorical hinge
 # kernel.py
     kernel function including linear, rbf
-# preprocess.py
-    preprocess including min-max scaler, z-score scaler, one-hot encoder, bagging, convert rgb image to gray
+
 # pca.py
     principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
 # ica.py
