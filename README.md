@@ -19,6 +19,11 @@
 
 ## [gaussian_discriminant_analysis.py](gaussian_discriminant_analysis.py)
     gaussian discriminant analysis algorithm
+
+## [svm.py](svm.py)
+    support vector machine algorithm including following components
+    kernel: linear, rbf
+    solver: smo, quadratic programming
     
 ## Regression
 
@@ -76,10 +81,6 @@
     discrete adaboost algorithm
 # rbf_network.py
     rbf network algorithm
-# svm.py
-    support vector machine algorithm including following components
-    kernel: linear, rbf
-    solver: smo, quadratic programming
 # k_mediods.py
     k-mediods algorithm
 # agnes.py
