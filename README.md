@@ -58,8 +58,11 @@
 ## [distance.py](distance.py)
     distance algorithms including euclidean distance, manhattan distance, chebyshev distance, mahalanobis distance, cosine distance
 
+## [kernel.py](kernel.py)
+    kernel function including linear, rbf
+    
 ## [preprocess.py](preprocess.py)
-    preprocess including min-max scaler, z-score scaler, one-hot encoder, bagging
+    preprocess algorithm including min-max scaler, z-score scaler, one-hot encoder, bagging
     
 ## [regularizer.py](regularizer.py)
     regularizer algorithm including L1, L2, elastic-net
@@ -99,9 +102,6 @@
     neural network algorithm including following components
     layers: conv1d, conv2d, max pool, mean pool, flatten, dense, dropout, batch normalization, rnn, relu, selu, tanh
     loss: binary crossentropy, categorical crossentropy, mse, categorical hinge
-# kernel.py
-    kernel function including linear, rbf
-
 # pca.py
     principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
 # ica.py
