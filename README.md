@@ -77,6 +77,9 @@
 ## [regularizer.py](regularizer.py)
     regularizer algorithm including L1, L2, elastic-net
     
+## [metrics.py](metrics.py)
+    scores including accuracy, precision, recall, f-score, R2 score, confusion matrix, pr curve, roc curve, auc, silhouette coefficient, 2d feature scatter, learning curve
+    
 # ---------------------------------------------------
 # naive_bayesian_for_text.py
     naive bayesian algorithm for text
@@ -112,8 +115,6 @@
     principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
 # ica.py
     independent component correlation algorithm
-# metrics.py
-    scores including accuracy, precision, recall, f_score, R2, confusion matrix, pr curve, roc curve, auc, silhouette coefficient, 2d feature scatter, learning curve
 # optimizer.py
     optimizer algorithm including following components
     gradient descent: momentum，adagrad，rmsprop，adam
