@@ -35,7 +35,12 @@
     
 ## [collaborative_filtering.py](collaborative_filtering.py)
     collaborative filtering algorithm
-    
+
+# Dimensionality Reduction
+
+## [linear_discriminant_analysis.py](linear_discriminant_analysis.py)
+    linear discriminant analysis algorithm with "eigen" solver
+ 
 # Unsupervised Learning
 
 ## Clustering
@@ -107,8 +112,6 @@
     principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
 # ica.py
     independent component correlation algorithm
-# linear_discriminant_analysis.py
-    linear discriminant analysis algorithm with "eigen" solver
 # metrics.py
     scores including accuracy, precision, recall, f_score, R2, confusion matrix, pr curve, roc curve, auc, silhouette coefficient, 2d feature scatter, learning curve
 # optimizer.py
