@@ -60,6 +60,9 @@
 ## [gaussian_mixed_model.py](gaussian_mixed_model.py)
     gaussian mixed model algorithm
 
+## [diana.py](diana.py)
+    diana clustering algorithm
+    
 ## Dimensionality Reduction
 
 ## [pca.py](pca.py)
@@ -106,8 +109,6 @@
     k-mediods algorithm
 # agnes.py
     agnes clustering algorithm
-# diana.py
-    diana clustering algorithm
 # dbscan.py
     dbscan clustering algorithm
 # spectral_clustering.py
