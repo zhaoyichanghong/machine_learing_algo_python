@@ -59,6 +59,11 @@
     
 ## [gaussian_mixed_model.py](gaussian_mixed_model.py)
     gaussian mixed model algorithm
+
+## Others
+
+## [ica.py](ica.py)
+    independent component analysis algorithm
     
 # Tools
 
@@ -83,7 +88,6 @@
 ## [optimizer.py](optimizer.py)
     optimizer algorithm including following components
     gradient descent: momentum，nesterov, adagrad，rmsprop，adam
-    
 # ---------------------------------------------------
 # naive_bayesian_for_text.py
     naive bayesian algorithm for text
@@ -117,5 +121,3 @@
     loss: binary crossentropy, categorical crossentropy, mse, categorical hinge
 # pca.py
     principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
-# ica.py
-    independent component correlation algorithm
