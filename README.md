@@ -36,7 +36,7 @@
 ## [collaborative_filtering.py](collaborative_filtering.py)
     collaborative filtering algorithm
 
-# Dimensionality Reduction
+## Dimensionality Reduction
 
 ## [linear_discriminant_analysis.py](linear_discriminant_analysis.py)
     linear discriminant analysis algorithm with "eigen" solver
@@ -59,6 +59,11 @@
     
 ## [gaussian_mixed_model.py](gaussian_mixed_model.py)
     gaussian mixed model algorithm
+
+## Dimensionality Reduction
+
+## [pca.py](pca.py)
+    principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
 
 ## Others
 
@@ -119,5 +124,3 @@
     neural network algorithm including following components
     layers: conv1d, conv2d, max pool, mean pool, flatten, dense, dropout, batch normalization, rnn, relu, selu, tanh
     loss: binary crossentropy, categorical crossentropy, mse, categorical hinge
-# pca.py
-    principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
