@@ -56,6 +56,9 @@
     
 ## [k_median.py](k_median.py)
     k-median algorithm
+
+## [k_mediods.py](k_mediods.py)
+    k-mediods algorithm
     
 ## [gaussian_mixed_model.py](gaussian_mixed_model.py)
     gaussian mixed model algorithm
@@ -111,8 +114,6 @@
     discrete adaboost algorithm
 # rbf_network.py
     rbf network algorithm
-# k_mediods.py
-    k-mediods algorithm
 # spectral_clustering.py
     spectral clustering algorithm
 # decision_tree.py
