@@ -36,7 +36,7 @@
 ## [collaborative_filtering.py](collaborative_filtering.py)
     collaborative filtering algorithm
 
-# Dimensionality Reduction
+## Dimensionality Reduction
 
 ## [linear_discriminant_analysis.py](linear_discriminant_analysis.py)
     linear discriminant analysis algorithm with "eigen" solver
@@ -56,9 +56,34 @@
     
 ## [k_median.py](k_median.py)
     k-median algorithm
+
+## [k_mediods.py](k_mediods.py)
+    k-mediods algorithm
     
 ## [gaussian_mixed_model.py](gaussian_mixed_model.py)
     gaussian mixed model algorithm
+
+## [agnes.py](agnes.py)
+    agnes clustering algorithm
+    
+## [diana.py](diana.py)
+    diana clustering algorithm
+
+## [dbscan.py](dbscan.py)
+    dbscan clustering algorithm
+
+## [spectral_clustering.py](spectral_clustering.py)
+    spectral clustering algorithm
+    
+## Dimensionality Reduction
+
+## [pca.py](pca.py)
+    principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
+
+## Others
+
+## [ica.py](ica.py)
+    independent component analysis algorithm
     
 # Tools
 
@@ -80,6 +105,9 @@
 ## [metrics.py](metrics.py)
     scores including accuracy, precision, recall, f-score, R2 score, confusion matrix, pr curve, roc curve, auc, silhouette coefficient, 2d feature scatter, learning curve
     
+## [optimizer.py](optimizer.py)
+    optimizer algorithm including following components
+    gradient descent: momentum，nesterov, adagrad，rmsprop，adam
 # ---------------------------------------------------
 # naive_bayesian_for_text.py
     naive bayesian algorithm for text
@@ -89,16 +117,6 @@
     discrete adaboost algorithm
 # rbf_network.py
     rbf network algorithm
-# k_mediods.py
-    k-mediods algorithm
-# agnes.py
-    agnes clustering algorithm
-# diana.py
-    diana clustering algorithm
-# dbscan.py
-    dbscan clustering algorithm
-# spectral_clustering.py
-    spectral clustering algorithm
 # decision_tree.py
     decision tree algorithm including ID3, C4.5, CART, CCP prune
 # random_forest.py
@@ -111,11 +129,3 @@
     neural network algorithm including following components
     layers: conv1d, conv2d, max pool, mean pool, flatten, dense, dropout, batch normalization, rnn, relu, selu, tanh
     loss: binary crossentropy, categorical crossentropy, mse, categorical hinge
-# pca.py
-    principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
-# ica.py
-    independent component correlation algorithm
-# optimizer.py
-    optimizer algorithm including following components
-    gradient descent: momentum，adagrad，rmsprop，adam
-    conjugate gradient: prp, fr
