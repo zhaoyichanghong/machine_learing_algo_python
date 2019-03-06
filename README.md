@@ -71,6 +71,9 @@
 
 ## [dbscan.py](dbscan.py)
     dbscan clustering algorithm
+
+## [spectral_clustering.py](spectral_clustering.py)
+    spectral clustering algorithm
     
 ## Dimensionality Reduction
 
@@ -114,8 +117,6 @@
     discrete adaboost algorithm
 # rbf_network.py
     rbf network algorithm
-# spectral_clustering.py
-    spectral clustering algorithm
 # decision_tree.py
     decision tree algorithm including ID3, C4.5, CART, CCP prune
 # random_forest.py
