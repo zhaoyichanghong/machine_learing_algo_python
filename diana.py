@@ -1,5 +1,5 @@
 import numpy as np
-import distance
+from scipy.spatial.distance import pdist, squareform
 
 class Diana:
     def fit(self, X, cluster_number):
@@ -16,7 +16,7 @@ class Diana:
             Predicted cluster label per sample.
         '''
         data_number, feature_number = X.shape
-        distances = np.apply_along_axis(distance.euclidean_distance, 1, X, X)
+        distances = squareform(pdist(X))
 
         clusters = [list(range(data_number))]
         while True:

@@ -3,37 +3,48 @@ import text_preprocess
 
 class NaiveBayesianForText:
     def fit(self, X, y):
-        data_number = X.shape[0]
-
+        '''
+        Parameters
+        ----------
+        X : shape (corpus_number, text_length)
+            Training corpus
+        y : shape (corpus_number,)
+            Target values
+        '''
         self.__classes = np.unique(y)
         classes_number = len(self.__classes)
-        self.__p_classes = np.zeros(classes_number)
-        for i in range(classes_number):
-            self.__p_classes[i] = np.mean(y == self.__classes[i])
+        self.__p_classes = [np.mean(y == label) for label in self.__classes]
 
         self.__model = text_preprocess.Tfidf()
         word_vector = self.__model.fit_transform(X)
-        word_vector_len = word_vector.shape[1]
 
-        word_of_classes = np.ones((classes_number, word_vector_len))
+        word_of_classes = np.ones((classes_number, len(self.__model.word_dictionary)))
         word_of_classes_total = np.full(classes_number, classes_number)
-        for i in range(data_number):
-            for j in range(classes_number):
-                if y[i] == self.__classes[j]:
-                    word_of_classes[j] += word_vector[i]
-                    word_of_classes_total[j] += np.sum(word_vector[i])
+        for i in range(classes_number):
+            word_of_classes[i] += np.sum(word_vector[np.flatnonzero(y == self.__classes[i])], axis=0)
+            word_of_classes_total[i] += np.sum(word_of_classes[i])
 
         self.__p_word_of_classes = word_of_classes / word_of_classes_total.reshape((-1, 1))
 
     def predict(self, X):
-        data_number = X.shape[0]
-        word_dictionary_len = len(self.__model.word_dictionary)
+        '''
+        Parameters
+        ----------
+        X : shape (corpus_number, text_length)
+            Predicting corpus
 
-        word_vec = np.zeros((data_number, word_dictionary_len))
+        Returns
+        -------
+        y : shape (corpus_number,)
+            Predicted class label per sample
+        '''
+        data_number = len(X)
+
+        word_vector = np.zeros((data_number, len(self.__model.word_dictionary)))
         for i in range(data_number):
             _, indexes, _ = np.intersect1d(self.__model.word_dictionary, X[i], return_indices=True)
-            word_vec[i, indexes] = 1
+            word_vector[i, indexes] = 1
 
-        p_class_of_doc = word_vec.dot(np.log(self.__p_word_of_classes).T) + np.log(self.__p_classes)
+        p_class_of_doc = word_vector.dot(np.log(self.__p_word_of_classes).T) + np.log(self.__p_classes)
 
         return self.__classes[np.argmax(p_class_of_doc, axis=1)]
