@@ -65,6 +65,9 @@
     
 ## [diana.py](diana.py)
     diana clustering algorithm
+
+## [dbscan.py](dbscan.py)
+    dbscan clustering algorithm
     
 ## Dimensionality Reduction
 
@@ -110,8 +113,6 @@
     rbf network algorithm
 # k_mediods.py
     k-mediods algorithm
-# dbscan.py
-    dbscan clustering algorithm
 # spectral_clustering.py
     spectral clustering algorithm
 # decision_tree.py
