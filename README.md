@@ -24,6 +24,15 @@
     support vector machine algorithm including following components
     kernel: linear, rbf
     solver: smo, quadratic programming
+
+## [discrete_adaboost.py](discrete_adaboost.py)
+    discrete adaboost algorithm
+    
+## [naive_bayesian_for_text.py](naive_bayesian_for_text.py)
+    naive bayesian algorithm for text classification
+
+## [rbf_network.py](rbf_network.py)
+    rbf network algorithm
     
 ## Regression
 
@@ -80,6 +89,12 @@
 ## [pca.py](pca.py)
     principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
 
+## [mltidimensional_scaling.py](mltidimensional_scaling.py)
+    mltidimensional scaling algorithm
+    
+## [locally_linear_embedding.py](locally_linear_embedding.py)
+    locally linear embedding algorithm
+    
 ## Others
 
 ## [ica.py](ica.py)
@@ -90,6 +105,9 @@
 ## [image_preprocess.py](image_preprocess.py)
     image preprocess algorithms including rgb2gray
 
+## [text_preprocess.py](text_preprocess.py)
+    text preprocess algorithms
+    
 ## [distance.py](distance.py)
     distance algorithms including euclidean distance, manhattan distance, chebyshev distance, mahalanobis distance, cosine distance
 
@@ -104,19 +122,13 @@
     
 ## [metrics.py](metrics.py)
     scores including accuracy, precision, recall, f-score, R2 score, confusion matrix, pr curve, roc curve, auc, silhouette coefficient, 2d feature scatter, learning curve
-    
+
 ## [optimizer.py](optimizer.py)
     optimizer algorithm including following components
     gradient descent: momentum，nesterov, adagrad，rmsprop，adam
 # ---------------------------------------------------
-# naive_bayesian_for_text.py
-    naive bayesian algorithm for text
 # hog.py
     histogram of oriented gradient
-# discrete_adaboost.py
-    discrete adaboost algorithm
-# rbf_network.py
-    rbf network algorithm
 # decision_tree.py
     decision tree algorithm including ID3, C4.5, CART, CCP prune
 # random_forest.py
