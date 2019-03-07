@@ -24,6 +24,9 @@
     support vector machine algorithm including following components
     kernel: linear, rbf
     solver: smo, quadratic programming
+
+## [naive_bayesian_for_text.py](naive_bayesian_for_text.py)
+    naive bayesian algorithm for text classification
     
 ## Regression
 
@@ -90,6 +93,9 @@
 ## [image_preprocess.py](image_preprocess.py)
     image preprocess algorithms including rgb2gray
 
+## [text_preprocess.py](text_preprocess.py)
+    text preprocess algorithms
+    
 ## [distance.py](distance.py)
     distance algorithms including euclidean distance, manhattan distance, chebyshev distance, mahalanobis distance, cosine distance
 
@@ -104,13 +110,11 @@
     
 ## [metrics.py](metrics.py)
     scores including accuracy, precision, recall, f-score, R2 score, confusion matrix, pr curve, roc curve, auc, silhouette coefficient, 2d feature scatter, learning curve
-    
+
 ## [optimizer.py](optimizer.py)
     optimizer algorithm including following components
     gradient descent: momentum，nesterov, adagrad，rmsprop，adam
 # ---------------------------------------------------
-# naive_bayesian_for_text.py
-    naive bayesian algorithm for text
 # hog.py
     histogram of oriented gradient
 # discrete_adaboost.py
