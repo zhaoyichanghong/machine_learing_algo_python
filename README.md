@@ -86,6 +86,9 @@
 ## [mltidimensional_scaling.py](mltidimensional_scaling.py)
     mltidimensional scaling algorithm
     
+## [locally_linear_embedding.py](locally_linear_embedding.py)
+    locally linear embedding algorithm
+    
 ## Others
 
 ## [ica.py](ica.py)
