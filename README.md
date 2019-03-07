@@ -25,6 +25,9 @@
     kernel: linear, rbf
     solver: smo, quadratic programming
 
+## [discrete_adaboost.py](discrete_adaboost.py)
+    discrete adaboost algorithm
+    
 ## [naive_bayesian_for_text.py](naive_bayesian_for_text.py)
     naive bayesian algorithm for text classification
     
@@ -123,8 +126,6 @@
 # ---------------------------------------------------
 # hog.py
     histogram of oriented gradient
-# discrete_adaboost.py
-    discrete adaboost algorithm
 # rbf_network.py
     rbf network algorithm
 # decision_tree.py
