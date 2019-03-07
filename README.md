@@ -83,6 +83,9 @@
 ## [pca.py](pca.py)
     principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
 
+## [mltidimensional_scaling.py](mltidimensional_scaling.py)
+    mltidimensional scaling algorithm
+    
 ## Others
 
 ## [ica.py](ica.py)
