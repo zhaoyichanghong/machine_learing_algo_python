@@ -30,6 +30,9 @@
     
 ## [naive_bayesian_for_text.py](naive_bayesian_for_text.py)
     naive bayesian algorithm for text classification
+
+## [rbf_network.py](rbf_network.py)
+    rbf network algorithm
     
 ## Regression
 
@@ -126,8 +129,6 @@
 # ---------------------------------------------------
 # hog.py
     histogram of oriented gradient
-# rbf_network.py
-    rbf network algorithm
 # decision_tree.py
     decision tree algorithm including ID3, C4.5, CART, CCP prune
 # random_forest.py
