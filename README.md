@@ -1,14 +1,14 @@
 # Contents
-- [Supervised Learning](Supervised-Learning)
-  - [Classification](Classification)
-  - [Regression](Regression)
-  - [Classification and Regression](Classification-and-Regression)
-  - [Dimensionality Reduction](Dimensionality-Reduction)
-- [Unsupervised Learning](Unsupervised-Learning)
-  - [Clustering](Clustering)
-  - [Dimensionality Reduction](Dimensionality-Reduction) 
-  - [Others](Others)
- - [Tools](Tools)
+- [Supervised Learning](#supervised-learning)
+  - [Classification](#classification)
+  - [Regression](#regression)
+  - [Classification and Regression](#classification-and-regression)
+  - [Dimensionality Reduction](#dimensionality-reduction)
+- [Unsupervised Learning](#unsupervised-learning)
+  - [Clustering](#clustering)
+  - [Dimensionality Reduction](#dimensionality-reduction) 
+  - [Others](#others)
+ - [Tools](#tools)
  
 # Supervised Learning
 
