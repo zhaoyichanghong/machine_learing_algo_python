@@ -17,101 +17,101 @@
 ### [pla.py](pla.py)
     perceptron algorithm
     
-## [pocket.py](pocket.py)
+### [pocket.py](pocket.py)
     pocket algorithm
     
-## [logistic_regression.py](logistic_regression.py)
+### [logistic_regression.py](logistic_regression.py)
     logistic regression algorithm including gradient descent, newton
     
-## [softmax_regression.py](softmax_regression.py)
+### [softmax_regression.py](softmax_regression.py)
     softmax regression algorithm
 
-## [knn.py](knn.py)
+### [knn.py](knn.py)
     k-NearestNeighbor algorithm
 
-## [gaussian_discriminant_analysis.py](gaussian_discriminant_analysis.py)
+### [gaussian_discriminant_analysis.py](gaussian_discriminant_analysis.py)
     gaussian discriminant analysis algorithm
 
-## [svm.py](svm.py)
+### [svm.py](svm.py)
     support vector machine algorithm including following components
     kernel: linear, rbf
     solver: smo, quadratic programming
 
-## [discrete_adaboost.py](discrete_adaboost.py)
+### [discrete_adaboost.py](discrete_adaboost.py)
     discrete adaboost algorithm
     
-## [naive_bayesian_for_text.py](naive_bayesian_for_text.py)
+### [naive_bayesian_for_text.py](naive_bayesian_for_text.py)
     naive bayesian algorithm for text classification
     
 ## Regression
 
-## [linear_regression.py](linear_regression.py)
+### [linear_regression.py](linear_regression.py)
     linear regression algorithm including gradient descent, newton, equation
     
-## [linear_regression_locally_weight.py](linear_regression_locally_weight.py)
+### [linear_regression_locally_weight.py](linear_regression_locally_weight.py)
     locally weight linear regression algorithm
     
-## [collaborative_filtering.py](collaborative_filtering.py)
+### [collaborative_filtering.py](collaborative_filtering.py)
     collaborative filtering algorithm
 
 ## Classification and Regression
 
-## [rbf_network.py](rbf_network.py)
+### [rbf_network.py](rbf_network.py)
     rbf network algorithm
 
 ## Dimensionality Reduction
 
-## [linear_discriminant_analysis.py](linear_discriminant_analysis.py)
+### [linear_discriminant_analysis.py](linear_discriminant_analysis.py)
     linear discriminant analysis algorithm with "eigen" solver
  
 # Unsupervised Learning
 
 ## Clustering
 
-## [k_means.py](k_means.py)
+### [k_means.py](k_means.py)
     k-means algorithm
     
-## [k_means_plus.py](k_means_plus.py)
+### [k_means_plus.py](k_means_plus.py)
     k-means++ algorithm
     
-## [bisecting_kmeans.py](bisecting_kmeans.py)
+### [bisecting_kmeans.py](bisecting_kmeans.py)
     bisecting k-means algorithm
     
-## [k_median.py](k_median.py)
+### [k_median.py](k_median.py)
     k-median algorithm
 
-## [k_mediods.py](k_mediods.py)
+### [k_mediods.py](k_mediods.py)
     k-mediods algorithm
     
-## [gaussian_mixed_model.py](gaussian_mixed_model.py)
+### [gaussian_mixed_model.py](gaussian_mixed_model.py)
     gaussian mixed model algorithm
 
-## [agnes.py](agnes.py)
+### [agnes.py](agnes.py)
     agnes clustering algorithm
     
-## [diana.py](diana.py)
+### [diana.py](diana.py)
     diana clustering algorithm
 
-## [dbscan.py](dbscan.py)
+### [dbscan.py](dbscan.py)
     dbscan clustering algorithm
 
-## [spectral_clustering.py](spectral_clustering.py)
+### [spectral_clustering.py](spectral_clustering.py)
     spectral clustering algorithm
     
 ## Dimensionality Reduction
 
-## [pca.py](pca.py)
+### [pca.py](pca.py)
     principal Component Analysis algorithm including whiten, zero-phase component analysis whiten, kernel pca
 
-## [mltidimensional_scaling.py](mltidimensional_scaling.py)
+### [mltidimensional_scaling.py](mltidimensional_scaling.py)
     mltidimensional scaling algorithm
     
-## [locally_linear_embedding.py](locally_linear_embedding.py)
+### [locally_linear_embedding.py](locally_linear_embedding.py)
     locally linear embedding algorithm
     
 ## Others
 
-## [ica.py](ica.py)
+### [ica.py](ica.py)
     independent component analysis algorithm
     
 # Tools
