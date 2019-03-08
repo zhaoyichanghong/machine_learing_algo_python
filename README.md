@@ -117,7 +117,7 @@
 # Tools
 
 ## [image_preprocess.py](image_preprocess.py)
-    image preprocess algorithms including rgb2gray
+    image preprocess algorithms including rgb2gray, histogram of oriented gradient
 
 ## [text_preprocess.py](text_preprocess.py)
     text preprocess algorithms
@@ -141,8 +141,6 @@
     optimizer algorithm including following components
     gradient descent: momentum，nesterov, adagrad，rmsprop，adam
 # ---------------------------------------------------
-# hog.py
-    histogram of oriented gradient
 # decision_tree.py
     decision tree algorithm including ID3, C4.5, CART, CCP prune
 # random_forest.py
