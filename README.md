@@ -1,3 +1,15 @@
+# Contents
+- [Supervised Learning](Supervised-Learning)
+  - [Classification](Classification)
+  - [Regression](Regression)
+  - [Classification and Regression](Classification-and-Regression)
+  - [Dimensionality Reduction](Dimensionality-Reduction)
+- [Unsupervised Learning](Unsupervised-Learning)
+  - [Clustering](Clustering)
+  - [Dimensionality Reduction](Dimensionality-Reduction) 
+  - [Others](Others)
+ - [Tools](Tools)
+ 
 # Supervised Learning
 
 ## Classification
