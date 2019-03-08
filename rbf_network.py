@@ -5,8 +5,9 @@ import k_means_plus
 import kernel
 
 class RbfNet:
-    def __init__(self, debug=True):
+    def __init__(self, debug=True, mode='classification'):
         self.__debug = debug
+        self.__mode = mode
 
     def fit(self, X, y, units, epochs, optimizer):
         '''
@@ -58,13 +59,15 @@ class RbfNet:
             if self.__debug:
                 h = self.score(X)
                 loss.append(np.mean((h - y) ** 2))
-                accuracy.append(metrics.accuracy(y, np.around(h)))
+                if self.__mode == 'classification':
+                    accuracy.append(metrics.accuracy(y, np.around(h)))
 
         if self.__debug:
             _, ax_loss = plt.subplots()
             ax_loss.plot(loss, 'b')
-            ax_accuracy = ax_loss.twinx()
-            ax_accuracy.plot(accuracy, 'r')
+            if self.__mode == 'classification':
+                ax_accuracy = ax_loss.twinx()
+                ax_accuracy.plot(accuracy, 'r')
             plt.show()
 
     def score(self, X):
@@ -87,4 +90,7 @@ class RbfNet:
         y : shape (data_number, 1)
             Predicted class label per sample, 1 or 0
         '''
-        return np.around(self.score(X))
+        if self.__mode == 'classification':
+            return np.around(self.score(X))
+        else:
+            return self.score(X)
