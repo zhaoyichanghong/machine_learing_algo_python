@@ -30,9 +30,6 @@
     
 ## [naive_bayesian_for_text.py](naive_bayesian_for_text.py)
     naive bayesian algorithm for text classification
-
-## [rbf_network.py](rbf_network.py)
-    rbf network algorithm
     
 ## Regression
 
@@ -44,6 +41,11 @@
     
 ## [collaborative_filtering.py](collaborative_filtering.py)
     collaborative filtering algorithm
+
+## Classification and Regression
+
+## [rbf_network.py](rbf_network.py)
+    rbf network algorithm
 
 ## Dimensionality Reduction
 
