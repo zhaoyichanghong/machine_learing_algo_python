@@ -43,6 +43,12 @@
 ### [naive_bayesian_for_text.py](naive_bayesian_for_text.py)
     naive bayesian algorithm for text classification
     
+### [decision_tree_id3.py](decision_tree_id3.py)
+    decision tree id3 algorithm
+
+### [decision_tree_c45.py](decision_tree_c45.py)
+    decision tree c45 algorithm
+    
 ## Regression
 
 ### [linear_regression.py](linear_regression.py)

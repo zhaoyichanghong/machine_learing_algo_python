@@ -6,7 +6,7 @@ class ID3():
     def __init__(self):
         self.__tree = treelib.Tree()
 
-    def _get_entropy(self, y):
+    def __get_entropy(self, y):
         _, counts = np.unique(y, return_counts=True)
         prob_classes = counts / np.sum(counts)
         return scipy.stats.entropy(prob_classes)
@@ -34,7 +34,7 @@ class ID3():
             self.__create_tree(node, X[np.flatnonzero(X[:, feature_split] == feature_label)], y[np.flatnonzero(X[:, feature_split] == feature_label)])
 
     def __get_info_gain(self, y_subs, y):
-        return self._get_entropy(y) - sum([self._get_entropy(y_sub) * len(y_sub) for y_sub in y_subs]) / len(y)
+        return self.__get_entropy(y) - sum([self.__get_entropy(y_sub) * len(y_sub) for y_sub in y_subs]) / len(y)
 
     def fit(self, X, y):
         '''
