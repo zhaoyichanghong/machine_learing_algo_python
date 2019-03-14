@@ -14,12 +14,18 @@ class ID3():
     def __create_tree(self, parent, X, y):
         data_number, feature_number = X.shape
 
-        if data_number == 0 or len(np.unique(y)) == 1 or (X == X[0]).all():
+        if data_number == 0:
+            return
+
+        if len(np.unique(y)) == 1 or (X == X[0]).all():
             self.__tree.update_node(parent.identifier, data=max(set(y), key=y.tolist().count))
             return
 
         info_gain_max = -np.inf
         for i in range(feature_number):
+            if len(np.unique(X[:, i])) == 1:
+                continue
+
             y_subs = [y[np.flatnonzero(X[:, i] == feature_label)] for feature_label in np.unique(X[:, i])]
 
             info_gain = self.__get_info_gain(y_subs, y)

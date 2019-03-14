@@ -42,13 +42,19 @@
     
 ### [naive_bayesian_for_text.py](naive_bayesian_for_text.py)
     naive bayesian algorithm for text classification
+
+### [decision_tree_id3.py](decision_tree_id3.py)
+    decision tree id3 algorithm
     
 ### [decision_tree_id3.py](decision_tree_id3.py)
     decision tree id3 algorithm
 
 ### [decision_tree_c45.py](decision_tree_c45.py)
     decision tree c45 algorithm
-    
+
+### [decision_tree_cart.py](decision_tree_cart.py)
+    decision tree cart algorithm
+
 ## Regression
 
 ### [linear_regression.py](linear_regression.py)
@@ -147,8 +153,6 @@
     optimizer algorithm including following components
     gradient descent: momentum，nesterov, adagrad，rmsprop，adam
 # ---------------------------------------------------
-# decision_tree.py
-    decision tree algorithm including ID3, C4.5, CART, CCP prune
 # random_forest.py
     random_forest algorithm including bagging, random features, oob verification, feature selection
 # gbdt.py
