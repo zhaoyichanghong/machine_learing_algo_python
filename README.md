@@ -52,9 +52,6 @@
 ### [decision_tree_c45.py](decision_tree_c45.py)
     decision tree c45 algorithm
 
-### [decision_tree_cart.py](decision_tree_cart.py)
-    decision tree cart algorithm
-
 ## Regression
 
 ### [linear_regression.py](linear_regression.py)
@@ -71,6 +68,9 @@
 ### [rbf_network.py](rbf_network.py)
     rbf network algorithm
 
+### [decision_tree_cart.py](decision_tree_cart.py)
+    decision tree cart algorithm
+    
 ## Dimensionality Reduction
 
 ### [linear_discriminant_analysis.py](linear_discriminant_analysis.py)
