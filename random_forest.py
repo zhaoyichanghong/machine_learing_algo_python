@@ -2,10 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import preprocess
 import metrics
+import decision_tree_cart
 
 class RandomForest:
-    def __init__(self, tree_model, mode='classification', debug=True):
-        self.__model = tree_model
+    def __init__(self, mode='classification', debug=True):
         self.__trees = []
         self.__mode = mode
         self.__debug = debug
@@ -24,7 +24,7 @@ class RandomForest:
             X_bag = X[self.__indexs[i]][:, features]
             y_bag = y[self.__indexs[i]]
 
-            tree = self.__model(self.__mode)
+            tree = decision_tree_cart.CART(self.__mode)
             tree.fit(X_bag, y_bag)
 
             self.__trees.append({'features':features, 'model':tree})
@@ -40,22 +40,22 @@ class RandomForest:
         data_number = X.shape[0]
         trees_number = len(self.__trees)
 
-        results = np.full((data_number, trees_number), np.inf)
+        results = np.full((data_number, trees_number), None)
         for i in range(trees_number):
             tree = self.__trees[i]['model']
             features = self.__trees[i]['features']
             X_bag_oob = X[self.__indexs_oob[i]][:, features]
-            results[self.__indexs_oob[i], i] = tree.predict(X_bag_oob).ravel()
+            results[self.__indexs_oob[i], i] = tree.predict(X_bag_oob)
 
         y_pred = np.full_like(y, np.inf)
         for i in range(data_number):
-            if (results[i] == np.inf).all():
+            if (results[i] == None).all():
                 continue
 
             if self.__mode == 'regression':
-                y_pred[i] = np.mean(results[i, np.flatnonzero(results[i] != np.inf)])
+                y_pred[i] = np.mean(results[i, np.flatnonzero(results[i] != None)])
             else:
-                y_pred[i] = np.argmax(np.bincount(results[i][np.flatnonzero(results[i] != np.inf)].astype(int)))
+                y_pred[i] = max(set(results[i, np.flatnonzero(results[i] != None)]), key=results[i, np.flatnonzero(results[i] != None)].tolist().count)
 
         if self.__mode == 'regression':
             return metrics.r2_score(y, y_pred)
@@ -72,8 +72,8 @@ class RandomForest:
         if self.__mode == 'regression':
             y_pred = np.mean(results, axis=1, keepdims=True)
         elif self.__mode == 'classification':
-            pred = lambda result: np.argmax(np.bincount(result.astype(int)))
-            y_pred = np.apply_along_axis(pred, 1, results).reshape((-1, 1))
+            pred = lambda result: max(set(result), key=result.tolist().count)
+            y_pred = np.apply_along_axis(pred, 1, results)
 
         return y_pred
 

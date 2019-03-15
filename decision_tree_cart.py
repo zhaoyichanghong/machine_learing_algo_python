@@ -46,10 +46,7 @@ class CART():
     def __process_continuous(self, x, y):
         score_max = -np.inf
         x_sort = np.unique(np.sort(x))
-        for j in range(len(x_sort) - 1):
-            if y[j] == y[j+1]:
-                continue
-                
+        for j in range(len(x_sort) - 1):              
             threshold = (x_sort[j] + x_sort[j + 1]) / 2
 
             less_items = np.flatnonzero(x < threshold)
@@ -130,7 +127,7 @@ class CART():
         '''
         root = self.__tree.create_node('root')
         self.__create_tree(root, X, y)
-        self.__tree.show()
+        #self.__tree.show()
 
     def prune_ccp(self):
         self.__tree.show()                        

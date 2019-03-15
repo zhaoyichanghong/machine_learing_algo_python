@@ -70,7 +70,10 @@
 
 ### [decision_tree_cart.py](decision_tree_cart.py)
     decision tree cart algorithm
-    
+
+### [random_forest.py](random_forest.py)
+    random_forest algorithm including bagging, random features, oob verification, feature selection
+
 ## Dimensionality Reduction
 
 ### [linear_discriminant_analysis.py](linear_discriminant_analysis.py)
@@ -153,8 +156,7 @@
     optimizer algorithm including following components
     gradient descent: momentum，nesterov, adagrad，rmsprop，adam
 # ---------------------------------------------------
-# random_forest.py
-    random_forest algorithm including bagging, random features, oob verification, feature selection
+
 # gbdt.py
     gradient boost decision tree algorithm including mse, binary_crossentropy, categorical_crossentropy
 # weights_initializer.py

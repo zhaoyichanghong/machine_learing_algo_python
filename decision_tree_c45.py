@@ -37,9 +37,6 @@ class C45():
         info_gain_max = -np.inf
         x_sort = np.unique(np.sort(x))
         for j in range(len(x_sort) - 1):
-            if y[j] == y[j+1]:
-                continue
-                
             threshold = (x_sort[j] + x_sort[j + 1]) / 2
 
             less_items = np.flatnonzero(x < threshold)
