@@ -62,7 +62,7 @@ class StandardScaler:
         X : shape (data_number, feature_number)
             The Predicting data standard scaler encoded.
         '''
-        return (X - self.__mean) / self.__std
+        return (X - self.__mean) / (self.__std + 1e-8)
 
 class OneHot:
     @property

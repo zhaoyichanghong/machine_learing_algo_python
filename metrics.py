@@ -177,9 +177,9 @@ def r2_score(y_true, y_pred):
     Parameters
     ----------
     y_true : shape (data_number, 1)
-             True label
+             True value
     y_pred : shape (data_number, 1)
-             Predicting label
+             Predicting value
     
     Returns
     -------

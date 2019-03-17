@@ -10,15 +10,25 @@ class RandomForest:
         self.__mode = mode
         self.__debug = debug
 
-    def fit(self, X, y, trees_number, pick_feature_number):
+    def fit(self, X, y, n_trees, pick_feature_number):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Training data
+        y : shape (data_number, 1)
+            Target values, 1 or 0
+        n_trees : The number of trees in the forest.
+        pick_feature_number : The number of features picked randomly
+        '''
         data_number, feature_number = X.shape
 
-        self.__indexs, self.__indexs_oob = preprocess.bagging(data_number, trees_number)
+        self.__indexs, self.__indexs_oob = preprocess.bagging(data_number, n_trees)
         
         if self.__debug:
             accuracy = []
 
-        for i in range(trees_number):
+        for i in range(n_trees):
             features = np.random.choice(feature_number, pick_feature_number, replace=False)
 
             X_bag = X[self.__indexs[i]][:, features]
@@ -38,10 +48,10 @@ class RandomForest:
 
     def __oob_verification(self, X, y):
         data_number = X.shape[0]
-        trees_number = len(self.__trees)
+        n_trees = len(self.__trees)
 
-        results = np.full((data_number, trees_number), None)
-        for i in range(trees_number):
+        results = np.full((data_number, n_trees), None)
+        for i in range(n_trees):
             tree = self.__trees[i]['model']
             features = self.__trees[i]['features']
             X_bag_oob = X[self.__indexs_oob[i]][:, features]
@@ -63,6 +73,17 @@ class RandomForest:
             return metrics.accuracy(y, y_pred)
 
     def predict(self, X):
+        '''
+        Parameters
+        ----------
+        X : shape (data_number, feature_number)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (data_number, 1)
+            Predicted value per sample
+        '''
         data_number = X.shape[0]
 
         results = np.empty((data_number, 0))

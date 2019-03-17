@@ -47,9 +47,9 @@ class ID3():
         Parameters
         ----------
         X : shape (data_number, feature_number)
-            Training data
+            Training data, must be discrete value
         y : shape (data_number)
-            Target values, discrete value
+            Target values
         '''
         root = self.__tree.create_node('root')
         self.__create_tree(root, X, y)
@@ -69,7 +69,7 @@ class ID3():
         Parameters
         ----------
         X : shape (data_number, feature_number)
-            Predicting data
+            Predicting data, must be discrete value
 
         Returns
         -------
