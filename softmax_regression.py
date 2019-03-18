@@ -79,4 +79,5 @@ class SoftmaxRegression:
         y : shape (data_number, class_number)
             Predicted score of class per sample.
         '''
-        return scipy.special.softmax(X.dot(self.__W) + self.__b, axis=1)
+        out = X.dot(self.__W) + self.__b
+        return scipy.special.softmax(out - np.max(out), axis=1)

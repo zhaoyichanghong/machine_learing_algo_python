@@ -267,3 +267,45 @@ def learning_curve(train_X, train_y, train_ratios, test_X, test_y, fit, accuracy
     plt.plot(accuracy_train, 'r')
     plt.plot(accuracy_test, 'b')
     plt.show()
+
+def information_value(X, y):
+    '''
+    Parameters
+    ----------
+    X : shape (data_number, feature_number)
+              Training data
+    y : shape (data_number, 1)
+              Target label
+
+    Returns
+    -------
+    information values of each feature
+    '''
+    feature_number = X.shape[1]
+
+    n_positive_total = sum(y == 1)
+    n_negative_total = sum(y == 0)
+
+    ivs = []
+    for i in range(feature_number):
+        iv = 0
+        feature_labels = np.unique(X[:, i])
+        for feature_label in feature_labels:
+            indexes = np.flatnonzero(X[:, i] == feature_label)
+
+            n_positive = sum(y[indexes] == 1)
+            n_negative = sum(y[indexes] == 0)
+
+            p_positive = n_positive / n_positive_total
+            p_negative = n_negative / n_negative_total
+
+            iv += (p_positive - p_negative) * np.log(p_positive + 1e-8 / p_negative + 1e-8)
+        
+        ivs.append(iv)
+
+    return ivs
+
+            
+
+    
+    

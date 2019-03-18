@@ -150,7 +150,7 @@
     regularizer algorithm including L1, L2, elastic-net
     
 ## [metrics.py](metrics.py)
-    scores including accuracy, precision, recall, f-score, R2 score, confusion matrix, pr curve, roc curve, auc, silhouette coefficient, 2d feature scatter, learning curve
+    scores including accuracy, precision, recall, f-score, R2 score, confusion matrix, pr curve, roc curve, auc, silhouette coefficient, 2d feature scatter, learning curve, information value
 
 ## [optimizer.py](optimizer.py)
     optimizer algorithm including following components
