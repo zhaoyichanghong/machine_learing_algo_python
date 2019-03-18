@@ -5,7 +5,7 @@ class Dbscan:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
         radius : The maximum distance between two samples for them to be considered as in the same neighborhood
         min_points : The number of samples in a neighborhood for a point to be considered as a core point
@@ -13,16 +13,16 @@ class Dbscan:
 
         Returns
         -------
-        y : shape (data_number,)
+        y : shape (n_samples,)
             Predicted cluster label per sample.
         '''
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
         kernel = set()
-        data = set(range(data_number))
+        data = set(range(n_samples))
         clusters = []
         distances = np.apply_along_axis(distance, 1, X, X)
         
-        for i in range(data_number):
+        for i in range(n_samples):
             if np.sum(distances[i] < radius) >= min_points:
                 kernel.add(i)
 
@@ -44,7 +44,7 @@ class Dbscan:
             clusters.append(list(cluster))
             kernel -= cluster
         
-        y = np.full(data_number, -1)
+        y = np.full(n_samples, -1)
         for i in range(len(clusters)):
             y[clusters[i]] = i
 

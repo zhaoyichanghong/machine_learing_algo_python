@@ -10,9 +10,9 @@ def accuracy(y_true, y_pred):
     '''
     Parameters
     ----------
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              True label
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              Predicting label
 
     Returns
@@ -25,9 +25,9 @@ def precision(y_true, y_pred):
     '''
     Parameters
     ----------
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              True label
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              Predicting label
 
     Returns
@@ -43,9 +43,9 @@ def recall(y_true, y_pred):
     '''
     Parameters
     ----------
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              True label
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              Predicting label
 
     Returns
@@ -61,9 +61,9 @@ def f_score(y_true, y_pred, beta=1):
     '''
     Parameters
     ----------
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              True label
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              Predicting label
     beta : Weight of precision in harmonic mean
 
@@ -82,21 +82,21 @@ def confusion_matrix(y_true, y_pred):
     '''
     Parameters
     ----------
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              True label
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              Predicting label
 
     Returns
     -------
-    confusion matrix : shape (class_number, class_number)
+    confusion matrix : shape (n_classes, n_classes)
     '''
     classes = np.unique(y_true)
-    class_number = len(classes)
+    n_classes = len(classes)
 
-    matrix = np.zeros((class_number, class_number))
-    for r in range(class_number):
-        for c in range(class_number):
+    matrix = np.zeros((n_classes, n_classes))
+    for r in range(n_classes):
+        for c in range(n_classes):
             matrix[r, c] = np.sum(y_pred[np.flatnonzero(y_true == classes[r])] == classes[c])
 
     return matrix
@@ -105,9 +105,9 @@ def pr_curve(y_true, y_score):
     '''
     Parameters
     ----------
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              True label
-    y_score : shape (data_number, 1)
+    y_score : shape (n_samples,)
              Predicting score
     '''
     p = []
@@ -127,9 +127,9 @@ def roc_curve(y_true, y_score):
     '''
     Parameters
     ----------
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              True label
-    y_score : shape (data_number, 1)
+    y_score : shape (n_samples,)
              Predicting score
     '''
     TPR = []
@@ -153,32 +153,32 @@ def auc(y_true, y_score):
     '''
     Parameters
     ----------
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              True label
-    y_score : shape (data_number, 1)
+    y_score : shape (n_samples,)
              Predicting score
     
     Returns
     -------
     auc
     '''
-    data_number = y_true.shape[0]
+    n_samples = y_true.shape[0]
 
     rank = y_score.ravel().argsort()
     positives = np.flatnonzero(y_true == 1)
     rank_sum = np.sum([np.flatnonzero(rank == positive) + 1 for positive in positives])
 
-    positive_number = len(positives)
+    n_positive = len(positives)
     
-    return (rank_sum - positive_number * (positive_number + 1) / 2) / (positive_number * (data_number - positive_number))
+    return (rank_sum - n_positive * (n_positive + 1) / 2) / (n_positive * (n_samples - n_positive))
 
 def r2_score(y_true, y_pred):
     '''
     Parameters
     ----------
-    y_true : shape (data_number, 1)
+    y_true : shape (n_samples,)
              True value
-    y_pred : shape (data_number, 1)
+    y_pred : shape (n_samples,)
              Predicting value
     
     Returns
@@ -191,9 +191,9 @@ def silhouette_coefficient(X, y, distance):
     '''
     Parameters
     ----------
-    X : shape (data_number, feature_number)
+    X : shape (n_samples, n_features)
         Training data
-    y : shape (data_number, 1)
+    y : shape (n_samples,)
         Target values
     distance : Distance algorithm, see also distance.py
 
@@ -201,10 +201,10 @@ def silhouette_coefficient(X, y, distance):
     -------
     silhouette coefficient
     '''
-    data_number = X.shape[0]
+    n_samples = X.shape[0]
 
     s = []
-    for i in range(data_number):
+    for i in range(n_samples):
         distances = distance(X[i], X)
         
         bs = []
@@ -223,9 +223,9 @@ def scatter_feature(X, y=None):
     '''
     Parameters
     ----------
-    X : shape (data_number, feature_number)
+    X : shape (n_samples, n_features)
         Training data
-    y : shape (data_number, 1)
+    y : shape (n_samples,)
         Target values
     '''
     if y is None:
@@ -243,23 +243,23 @@ def learning_curve(train_X, train_y, train_ratios, test_X, test_y, fit, accuracy
     '''
     Parameters
     ----------
-    train_X : shape (data_number, feature_number)
+    train_X : shape (n_samples, n_features)
               Training data
-    train_y : shape (data_number, 1)
+    train_y : shape (n_samples,)
               Target values
     train_ratios : Relative numbers of training examples that will be used to generate the learning curve
-    test_X : shape (data_number, feature_number)
+    test_X : shape (n_samples, n_features)
              Testing data
-    test_y : shape (data_number, 1)
+    test_y : shape (n_samples,)
              Target values
     fit : Fitting function
     accuracy : Accuracy function
     '''
-    train_data_number = train_X.shape[0]
+    n_train_samples = train_X.shape[0]
 
     accuracy_train = []
     accuracy_test = []
-    for i in (train_data_number * train_ratios).astype(int):
+    for i in (n_train_samples * train_ratios).astype(int):
         fit(train_X[:i], train_y[:i])
         accuracy_train.append(accuracy(train_X[:i], train_y[:i]))
         accuracy_test.append(accuracy(test_X, test_y))
@@ -272,22 +272,22 @@ def information_value(X, y):
     '''
     Parameters
     ----------
-    X : shape (data_number, feature_number)
+    X : shape (n_samples, n_features)
               Training data
-    y : shape (data_number, 1)
+    y : shape (n_samples,)
               Target label
 
     Returns
     -------
     information values of each feature
     '''
-    feature_number = X.shape[1]
+    n_features = X.shape[1]
 
     n_positive_total = sum(y == 1)
     n_negative_total = sum(y == 0)
 
     ivs = []
-    for i in range(feature_number):
+    for i in range(n_features):
         iv = 0
         feature_labels = np.unique(X[:, i])
         for feature_label in feature_labels:

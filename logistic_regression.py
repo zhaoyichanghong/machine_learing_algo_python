@@ -12,17 +12,17 @@ class LogisticRegressionGradientDescent:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Target values, 1 or 0
         epochs : The number of epochs
         optimizer : Optimize algorithm, see also optimizer.py
         regularizer : Regularize algorithm, see also regularizer.py
         '''
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
 
-        self.__W = np.zeros((feature_number, 1))
+        self.__W = np.zeros(n_features)
         self.__b = 0
 
         if self.__debug:
@@ -32,7 +32,7 @@ class LogisticRegressionGradientDescent:
         for _ in range(epochs):
             h = self.score(X)
 
-            g_W = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
+            g_W = X.T.dot(h - y) / n_samples + regularizer.regularize(self.__W)
             g_b = np.mean(h - y)
             g_W, g_b = optimizer.optimize([g_W, g_b])
             self.__W -= g_W
@@ -54,12 +54,12 @@ class LogisticRegressionGradientDescent:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted class label per sample, 1 or 0
         '''
         return np.around(self.score(X))
@@ -68,12 +68,12 @@ class LogisticRegressionGradientDescent:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted score per sample.
         '''
         return scipy.special.expit(X.dot(self.__W) + self.__b)
@@ -86,15 +86,15 @@ class LogisticRegressionNewton:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Target values, 1 or 0
         epochs : The number of epochs
         '''
-        feature_number = X.shape[1]
+        n_features = X.shape[1]
 
-        self.__W = np.zeros((feature_number, 1))
+        self.__W = np.zeros(n_features)
         self.__b = 0
 
         if self.__debug:
@@ -129,12 +129,12 @@ class LogisticRegressionNewton:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted class label per sample, 1 or 0
         '''
         return np.around(self.score(X))
@@ -143,12 +143,12 @@ class LogisticRegressionNewton:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted score per sample.
         '''
         return scipy.special.expit(X.dot(self.__W) + self.__b)

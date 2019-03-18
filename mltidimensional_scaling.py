@@ -6,20 +6,20 @@ class MultidimensionalScaling:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
         n_components : Number of components to keep
 
         Returns
         -------
-        X : shape (data_number, n_components)
+        X : shape (n_samples, n_components)
             The data of dimensionality reduction
         '''
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
 
         D = squareform(pdist(X))
 
-        J = np.eye(data_number) - np.full_like(D, 1 / data_number)
+        J = np.eye(n_samples) - np.full_like(D, 1 / n_samples)
         B = -J.dot(D).dot(J) / 2
 
         eig_values, eig_vectors = np.linalg.eigh(B)

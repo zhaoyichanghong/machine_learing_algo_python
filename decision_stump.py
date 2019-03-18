@@ -21,15 +21,15 @@ class DecisionStump():
                 self.__update_parameter(h, feature_index, threshold, 'greater', err_value)
 
     def __select_threshold(self, feature_index, X, y, w):
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
 
-        for i in range(data_number):
+        for i in range(n_samples):
             self.__select_direction(feature_index, X[i, feature_index], X, y, w)
 
     def __select_feature(self, X, y, w):
-        feature_number = X.shape[1]
+        n_features = X.shape[1]
 
-        for i in range(feature_number):
+        for i in range(n_features):
             self.__select_threshold(i, X, y, w)
 
     def fit(self, X, y, w):
@@ -41,9 +41,9 @@ class DecisionStump():
         self.__select_feature(X, y, w)
 
     def predict(self, X):
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
 
-        y_pred = np.ones((data_number, 1))
+        y_pred = np.ones(n_samples)
         if self.__direction == 'greater':
             y_pred[np.flatnonzero(X[:, self.__feature_index] < self.__threshold)] = -1
         else:

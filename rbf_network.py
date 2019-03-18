@@ -13,15 +13,15 @@ class RbfNet:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number, 1)
+        y : shape (n_samples, 1)
             Target values, 1 or 0
         epochs : The number of epochs
         optimizer : Optimize algorithm, see also optimizer.py
         units : The number of unit
         '''
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
 
         self.__units = units
 
@@ -37,7 +37,7 @@ class RbfNet:
             loss = []
 
         for _ in range(epochs):
-            outs = np.zeros((data_number, self.__units))
+            outs = np.zeros((n_samples, self.__units))
             for i in range(self.__units):
                 outs[:, i] = kernel.gaussian_kernel(X, self.__centers[i].reshape(1, -1), self.__sigmas[i])
             h = outs.dot(self.__weights)
@@ -71,9 +71,9 @@ class RbfNet:
             plt.show()
 
     def score(self, X):
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
 
-        outs = np.zeros((data_number, self.__units))
+        outs = np.zeros((n_samples, self.__units))
         for i in range(self.__units):
             outs[:, i] = kernel.gaussian_kernel(X, self.__centers[i].reshape(1, -1), self.__sigmas[i])
         return outs.dot(self.__weights)
@@ -82,12 +82,12 @@ class RbfNet:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples, 1)
             Predicted class label per sample, 1 or 0
         '''
         if self.__mode == 'classification':

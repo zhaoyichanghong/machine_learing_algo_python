@@ -59,9 +59,9 @@ class CART():
         return score_max, threshold_split
 
     def __create_tree(self, parent, X, y):
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
 
-        if data_number == 0:
+        if n_samples == 0:
             return
         
         data = self.__data()
@@ -75,7 +75,7 @@ class CART():
             return
 
         score_max = -np.inf
-        for i in range(feature_number):
+        for i in range(n_features):
             if len(np.unique(X[:, i])) == 1:
                 continue
 
@@ -120,9 +120,9 @@ class CART():
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number)
+        y : shape (n_samples,)
             Target values, discrete value
         '''
         root = self.__tree.create_node('root')
@@ -154,12 +154,12 @@ class CART():
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number,)
+        y : shape (n_samples,)
             Predicted class label per sample
         '''
         return np.apply_along_axis(self.__query, 1, X, self.__tree.get_node(self.__tree.root))

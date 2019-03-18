@@ -7,8 +7,8 @@ class C45():
         def __init__(self):
             self.feature_split = None
             self.threshold_split = None
-            self.data_number = None
-            self.error_number = None
+            self.n_samples = None
+            self.n_errors = None
             self.result = None
 
     def __init__(self):
@@ -53,22 +53,22 @@ class C45():
         return info_gain_ratio, threshold_split
 
     def __create_tree(self, parent, X, y):
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
 
-        if data_number == 0:
+        if n_samples == 0:
             return
         
         data = self.__data()
-        data.data_number = data_number
+        data.n_samples = n_samples
         data.result = max(set(y), key=y.tolist().count)
-        data.error_number = sum(y != data.result)
+        data.n_errors = sum(y != data.result)
 
         if len(np.unique(y)) == 1 or (X == X[0]).all():
             self.__tree.update_node(parent.identifier, data=data)
             return
 
         info_gain_ratio_max = -np.inf
-        for i in range(feature_number):
+        for i in range(n_features):
             if len(np.unique(X[:, i])) == 1:
                 continue
 
@@ -105,9 +105,9 @@ class C45():
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number)
+        y : shape (n_samples,)
             Target values, discrete value
         '''
         root = self.__tree.create_node('root')
@@ -121,11 +121,11 @@ class C45():
                     continue
 
                 if self.__tree.level(node.identifier) == level and not node.is_leaf():
-                    leaves_number = len(self.__tree.leaves(node.identifier))
-                    leaves_error = sum([leaf.data.error_number for leaf in self.__tree.leaves(node.identifier)])
-                    error = (leaves_error + leaves_number * 0.5) / node.data.data_number
-                    std = np.sqrt(error * (1 - error) * node.data.data_number)
-                    if leaves_error + leaves_number * 0.5 + std > node.data.error_number + 0.5:
+                    n_leaves = len(self.__tree.leaves(node.identifier))
+                    leaves_error = sum([leaf.data.n_errors for leaf in self.__tree.leaves(node.identifier)])
+                    error = (leaves_error + n_leaves * 0.5) / node.data.n_samples
+                    std = np.sqrt(error * (1 - error) * node.data.n_samples)
+                    if leaves_error + n_leaves * 0.5 + std > node.data.n_errors + 0.5:
                         for child in self.__tree.children(node.identifier):
                             self.__tree.remove_node(child.identifier)
 
@@ -151,12 +151,12 @@ class C45():
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number,)
+        y : shape (n_samples,)
             Predicted class label per sample
         '''
         return np.apply_along_axis(self.__query, 1, X, self.__tree.get_node(self.__tree.root))

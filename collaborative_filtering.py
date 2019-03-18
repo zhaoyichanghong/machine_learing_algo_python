@@ -6,31 +6,31 @@ class CollaborativeFiltering:
         '''
         Parameters
         ----------
-        X : shape (data_number, 2)
+        X : shape (n_samples, 2)
             Training data, column 1 is user id, column 2 is item id
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Rating
         learning_rate : learning rate
         epochs : The number of epochs
         '''
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
         user_id = X[:, 0]
         item_id = X[:, 1]
         
         self.__user_items = np.unique(user_id)
         self.__item_items = np.unique(item_id)
 
-        user_number = len(self.__user_items)
-        item_number = len(self.__item_items)
+        n_users = len(self.__user_items)
+        n_items = len(self.__item_items)
 
-        self.__user_vector = np.random.uniform(size=(user_number, dimension))
-        self.__user_bias = np.zeros((user_number, 1))
-        self.__item_vector = np.random.uniform(size=(item_number, dimension))
-        self.__item_bias = np.zeros((item_number, 1))
+        self.__user_vector = np.random.uniform(size=(n_users, dimension))
+        self.__user_bias = np.zeros((n_users, 1))
+        self.__item_vector = np.random.uniform(size=(n_items, dimension))
+        self.__item_bias = np.zeros((n_items, 1))
 
         loss = []
         for _ in range(epochs):
-            index = np.random.randint(0, data_number)
+            index = np.random.randint(0, n_samples)
 
             user_index = np.flatnonzero(self.__user_items == user_id[index])
             item_index = np.flatnonzero(self.__item_items == item_id[index])
@@ -54,20 +54,20 @@ class CollaborativeFiltering:
         '''
         Parameters
         ----------
-        X : shape (data_number, 2)
+        X : shape (n_samples, 2)
             Predicting data, column 1 is user id, column 2 is item id
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted rating per sample.
         '''
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
         user_id = X[:, 0]
         item_id = X[:, 1]
 
-        y = np.zeros((data_number, 1))
-        for i in range(data_number):
+        y = np.zeros(n_samples)
+        for i in range(n_samples):
             user_index = np.flatnonzero(self.__user_items == user_id[i])
             item_index = np.flatnonzero(self.__item_items == item_id[i])
             y[i] = self.__user_vector[user_index].dot(self.__item_vector[item_index].T) + self.__user_bias[user_index] + self.__item_bias[item_index]

@@ -2,23 +2,23 @@ import numpy as np
 import distance
 
 class Agnes:
-    def fit(self, X, cluster_number):
+    def fit(self, X, n_clusters):
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        cluster_number : The number of clusters
+        n_clusters : The number of clusters
 
         Returns
         -------
-        y : shape (data_number,)
+        y : shape (n_samples,)
             Predicted cluster label per sample.
         '''
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
 
-        clusters = [[i] for i in range(data_number)]
-        for j in reversed(range(cluster_number, data_number)):
+        clusters = [[i] for i in range(n_samples)]
+        for j in reversed(range(n_clusters, n_samples)):
             centers = np.array([np.mean(X[cluster], axis=0).ravel() for cluster in clusters])
             distances = np.apply_along_axis(distance.euclidean_distance, 1, centers, centers)
             near_indexes = np.unravel_index(np.argmin(distances + np.diag(np.full(j + 1, np.inf))), distances.shape)
@@ -27,7 +27,7 @@ class Agnes:
             
             del clusters[near_indexes[1]]
         
-        y = np.zeros(data_number)
+        y = np.zeros(n_samples)
         for i in range(len(clusters)):
             y[clusters[i]] = i
 

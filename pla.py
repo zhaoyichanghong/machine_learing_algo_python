@@ -6,18 +6,18 @@ class Pla:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Target values, 1 or -1
         '''
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
 
-        self.__W = np.zeros((feature_number, 1))
+        self.__W = np.zeros(n_features)
         self.__b = 0
         
         while True:
-            for i in range(data_number):
+            for i in range(n_samples):
                 h = self.predict(X[i])
                 if y[i] * h <= 0:
                     self.__W += (y[i] * X[i]).reshape(self.__W.shape)
@@ -31,12 +31,12 @@ class Pla:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted class label per sample, 1 or -1
         '''
         return np.sign(X.dot(self.__W) + self.__b)

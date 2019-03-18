@@ -7,28 +7,28 @@ class Ica:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
         epochs : The number of epochs
         optimizer : Optimize algorithm, see also optimizer.py
 
         Returns
         -------
-        s : shape (data_number, feature_number)
+        s : shape (n_samples, n_features)
             Predicted source per sample.
         '''
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
 
-        pca_model = pca.PCA(feature_number, True)
+        pca_model = pca.PCA(n_features, True)
         X_whiten = pca_model.fit_transform(X)
 
-        self.__W = np.random.rand(feature_number, feature_number)
+        self.__W = np.random.rand(n_features, n_features)
 
         for _ in range(epochs):
             g_W = np.zeros_like(self.__W)
             for x in X_whiten:
                 g_W += (1 - 2 * scipy.special.expit(self.__W.dot(x.T))).dot(x) + np.linalg.inv(self.__W.T)
-            g_W /= data_number
+            g_W /= n_samples
 
             g_W = optimizer.optimize([g_W])[0]
             self.__W += g_W

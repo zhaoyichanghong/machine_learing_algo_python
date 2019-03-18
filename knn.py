@@ -5,9 +5,9 @@ class KNN:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number, class_number)
+        y : shape (n_samples, n_classes)
             Target values
         n_neighbors : Number of neighbors
         distance : Distance algorithm, see also distance.py
@@ -19,19 +19,19 @@ class KNN:
 
     def __predict(self, x):
         distances = self.__distance(x, self.__X)
-        nearest_items = np.argpartition(distances, self.__n_neighbors - 1)[:self.__n_neighbors][0]
+        nearest_items = np.argpartition(distances, self.__n_neighbors - 1)[:self.__n_neighbors]
         return np.argmax(np.bincount(self.__y[nearest_items].astype(int)))
 
     def predict(self, X):
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted class label per sample.
         '''
-        return np.apply_along_axis(self.__predict, 1, X).reshape((-1, 1))
+        return np.apply_along_axis(self.__predict, 1, X)

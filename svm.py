@@ -1,24 +1,24 @@
 import numpy as np
-#import cvxopt
+import cvxopt
 
 class SVM:
-    def __qp(self, X, y, kernel, C):
-        data_number = X.shape[0]
+    def __qp(self, X, y, kernel, C):       
+        n_samples = X.shape[0]
 
-        P = y.dot(y.T) * kernel
+        P = np.outer(y, y) * kernel
 
-        q = np.full((data_number, 1), -1.0)
+        q = np.full((n_samples, 1), -1.0)
 
-        G = np.vstack((-np.eye(data_number), np.eye(data_number)))
+        G = np.vstack((-np.eye(n_samples), np.eye(n_samples)))
 
-        h = np.hstack((np.zeros(data_number), np.full(data_number, C)))
+        h = np.hstack((np.zeros(n_samples), np.full(n_samples, C)))
 
-        A = y.T
+        A = y.reshape((1, -1))
 
         b = np.zeros(1)
 
         res = cvxopt.solvers.qp(cvxopt.matrix(P), cvxopt.matrix(q), cvxopt.matrix(G), cvxopt.matrix(h), cvxopt.matrix(A), cvxopt.matrix(b))
-        alpha = np.array(res['x'])
+        alpha = np.array(res['x']).ravel()
 
         support_items = np.flatnonzero(alpha > 1e-6)
         self.__X_support = X[support_items]
@@ -32,14 +32,14 @@ class SVM:
         self.__bias = y_free[0] - (self.__a_support * self.__y_support).T.dot(kernel[support_items, free_items[0]])
 
     def __smo(self, X, y, kernel, C, epochs):
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
 
-        alpha = np.zeros((data_number, 1))
+        alpha = np.zeros(n_samples)
         self.__bias = 0
         e = -y
 
         for _ in range(epochs):
-            for i in range(data_number):
+            for i in range(n_samples):
                 hi = kernel[i].dot(alpha * y) + self.__bias
                 if (y[i] * hi < 1 and alpha[i] < C) or (y[i] * hi > 1 and alpha[i] > 0):
                     j = np.argmax(np.abs(e - e[i]))
@@ -91,9 +91,9 @@ class SVM:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : One-hot encoder, shape (data_number, class_number)
+        y : One-hot encoder, shape (n_samples,)
             Target values, 1 or -1
         kernel_func : kernel algorithm see also kernel.py
         C : Penalty parameter C of the error term
@@ -115,12 +115,12 @@ class SVM:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted class label per sample, 1 or -1
         '''
         return np.sign(self.score(X))
@@ -129,13 +129,13 @@ class SVM:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted score of class per sample.
         '''
         kernel = self.__kernel_func(X, self.__X_support, self.__sigma)
-        return kernel.T.dot(self.__a_support * self.__y_support) + self.__bias
+        return (self.__a_support * self.__y_support).dot(kernel) + self.__bias

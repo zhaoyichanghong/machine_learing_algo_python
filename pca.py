@@ -20,15 +20,15 @@ class PCA:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
 
         Returns
         -------
-        X : shape (data_number, n_components)
+        X : shape (n_samples, n_components)
             The data of dimensionality reduction
         '''
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
 
         self.__mean = np.mean(X, axis=0)
         X_sub_mean = X - self.__mean
@@ -44,7 +44,7 @@ class PCA:
             self.__eig_vectors = eig_vectors[:, ::-1][:, :self.__n_components]
         
         if self.__whiten:
-            self.__std = np.sqrt(self.__eig_values.reshape((1, -1)) / (data_number - 1))
+            self.__std = np.sqrt(self.__eig_values.reshape((1, -1)) / (n_samples - 1))
 
         return self.transform(X)
         
@@ -52,12 +52,12 @@ class PCA:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        X : shape (data_number, n_components)
+        X : shape (n_samples, n_components)
             The data of dimensionality reduction
         '''
         X_sub_mean = X - self.__mean
@@ -91,22 +91,22 @@ class KernelPCA:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
 
         Returns
         -------
-        X : shape (data_number, n_components)
+        X : shape (n_samples, n_components)
             The data of dimensionality reduction
         '''
         self.__X = X
-        data_number = self.__X.shape[0]
+        n_samples = self.__X.shape[0]
         
         K = self.__kernel_func(self.__X, self.__X, self.__sigma)
         self.__K_row_mean = np.mean(K, axis=0)
         self.__K_mean = np.mean(self.__K_row_mean)
 
-        I = np.full((data_number, data_number), 1 / data_number)
+        I = np.full((n_samples, n_samples), 1 / n_samples)
         K_hat = K - I.dot(K) - K.dot(I) + I.dot(K).dot(I)
 
         eig_values, eig_vectors = np.linalg.eigh(K_hat)
@@ -129,12 +129,12 @@ class KernelPCA:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        X : shape (data_number, n_components)
+        X : shape (n_samples, n_components)
             The data of dimensionality reduction
         '''
         kernel = self.__kernel_func(self.__X, X, self.__sigma)
@@ -159,15 +159,15 @@ class ZCAWhiten:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
 
         Returns
         -------
-        X : shape (data_number, n_components)
+        X : shape (n_samples, n_components)
             The data whitened
         '''
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
 
         self.__mean = np.mean(X, axis=0)
         X_sub_mean = X - self.__mean
@@ -182,7 +182,7 @@ class ZCAWhiten:
             self.__eig_values = eig_values[::-1]
             self.__eig_vectors = eig_vectors[:, ::-1]
 
-        self.__std = np.sqrt(self.__eig_values.reshape((1, -1)) / (data_number - 1))
+        self.__std = np.sqrt(self.__eig_values.reshape((1, -1)) / (n_samples - 1))
 
         return self.transform(X)
 
@@ -190,12 +190,12 @@ class ZCAWhiten:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        X : shape (data_number, n_components)
+        X : shape (n_samples, n_components)
             The data whitened
         '''
         X_sub_mean = X - self.__mean

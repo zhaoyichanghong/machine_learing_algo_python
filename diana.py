@@ -2,23 +2,23 @@ import numpy as np
 from scipy.spatial.distance import pdist, squareform
 
 class Diana:
-    def fit(self, X, cluster_number):
+    def fit(self, X, n_clusters):
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        cluster_number : The number of clusters
+        n_clusters : The number of clusters
 
         Returns
         -------
-        y : shape (data_number,)
+        y : shape (n_samples,)
             Predicted cluster label per sample.
         '''
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
         distances = squareform(pdist(X))
 
-        clusters = [list(range(data_number))]
+        clusters = [list(range(n_samples))]
         while True:
             cluster_diameters = [np.max(distances[cluster][:, cluster]) for cluster in clusters]
             max_diameter_cluster = np.argmax(cluster_diameters)
@@ -46,10 +46,10 @@ class Diana:
             clusters.append(splinter_group)
             clusters.append(old_party)
 
-            if len(clusters) == cluster_number:
+            if len(clusters) == n_clusters:
                 break
 
-        y = np.zeros(data_number)
+        y = np.zeros(n_samples)
         for i in range(len(clusters)):
             y[clusters[i]] = i
 

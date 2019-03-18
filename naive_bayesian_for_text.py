@@ -6,21 +6,21 @@ class NaiveBayesianForText:
         '''
         Parameters
         ----------
-        X : shape (corpus_number, text_length)
+        X : shape (n_corpus, text_length)
             Training corpus
-        y : shape (corpus_number,)
+        y : shape (n_corpus,)
             Target values
         '''
         self.__classes = np.unique(y)
-        classes_number = len(self.__classes)
+        n_classes = len(self.__classes)
         self.__p_classes = [np.mean(y == label) for label in self.__classes]
 
         self.__model = text_preprocess.Tfidf()
         word_vector = self.__model.fit_transform(X)
 
-        word_of_classes = np.ones((classes_number, len(self.__model.word_dictionary)))
-        word_of_classes_total = np.full(classes_number, classes_number)
-        for i in range(classes_number):
+        word_of_classes = np.ones((n_classes, len(self.__model.word_dictionary)))
+        word_of_classes_total = np.full(n_classes, n_classes)
+        for i in range(n_classes):
             word_of_classes[i] += np.sum(word_vector[np.flatnonzero(y == self.__classes[i])], axis=0)
             word_of_classes_total[i] += np.sum(word_of_classes[i])
 
@@ -30,18 +30,18 @@ class NaiveBayesianForText:
         '''
         Parameters
         ----------
-        X : shape (corpus_number, text_length)
+        X : shape (n_corpus, text_length)
             Predicting corpus
 
         Returns
         -------
-        y : shape (corpus_number,)
+        y : shape (n_corpus,)
             Predicted class label per sample
         '''
-        data_number = len(X)
+        n_samples = len(X)
 
-        word_vector = np.zeros((data_number, len(self.__model.word_dictionary)))
-        for i in range(data_number):
+        word_vector = np.zeros((n_samples, len(self.__model.word_dictionary)))
+        for i in range(n_samples):
             _, indexes, _ = np.intersect1d(self.__model.word_dictionary, X[i], return_indices=True)
             word_vector[i, indexes] = 1
 

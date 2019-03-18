@@ -6,15 +6,15 @@ class Pocket:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Target values, 1 or -1
         epochs : The number of epochs
         '''
-        feature_number = X.shape[1]
+        n_features = X.shape[1]
 
-        self.__W = np.zeros((feature_number, 1))
+        self.__W = np.zeros(n_features)
         self.__b = 0
 
         accuracy = 0
@@ -36,12 +36,12 @@ class Pocket:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted class label per sample, 1 or -1
         '''
         return np.sign(X.dot(self.__W) + self.__b)

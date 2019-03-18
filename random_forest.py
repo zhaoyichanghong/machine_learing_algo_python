@@ -10,26 +10,26 @@ class RandomForest:
         self.__mode = mode
         self.__debug = debug
 
-    def fit(self, X, y, n_trees, pick_feature_number):
+    def fit(self, X, y, n_trees, pick_n_features):
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number, 1)
+        y : shape (n_samples, 1)
             Target values, 1 or 0
         n_trees : The number of trees in the forest.
-        pick_feature_number : The number of features picked randomly
+        pick_n_features : The number of features picked randomly
         '''
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
 
-        self.__indexs, self.__indexs_oob = preprocess.bagging(data_number, n_trees)
+        self.__indexs, self.__indexs_oob = preprocess.bagging(n_samples, n_trees)
         
         if self.__debug:
             accuracy = []
 
         for i in range(n_trees):
-            features = np.random.choice(feature_number, pick_feature_number, replace=False)
+            features = np.random.choice(n_features, pick_n_features, replace=False)
 
             X_bag = X[self.__indexs[i]][:, features]
             y_bag = y[self.__indexs[i]]
@@ -47,10 +47,10 @@ class RandomForest:
             plt.show()
 
     def __oob_verification(self, X, y):
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
         n_trees = len(self.__trees)
 
-        results = np.full((data_number, n_trees), None)
+        results = np.full((n_samples, n_trees), None)
         for i in range(n_trees):
             tree = self.__trees[i]['model']
             features = self.__trees[i]['features']
@@ -58,7 +58,7 @@ class RandomForest:
             results[self.__indexs_oob[i], i] = tree.predict(X_bag_oob)
 
         y_pred = np.full_like(y, np.inf)
-        for i in range(data_number):
+        for i in range(n_samples):
             if (results[i] == None).all():
                 continue
 
@@ -76,22 +76,22 @@ class RandomForest:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples, 1)
             Predicted value per sample
         '''
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
 
-        results = np.empty((data_number, 0))
+        results = np.empty((n_samples, 0))
         for tree in self.__trees:
             results = np.column_stack((results, tree['model'].predict(X[:, tree['features']])))
         
         if self.__mode == 'regression':
-            y_pred = np.mean(results, axis=1, keepdims=True)
+            y_pred = np.mean(results, axis=1)
         elif self.__mode == 'classification':
             pred = lambda result: max(set(result), key=result.tolist().count)
             y_pred = np.apply_along_axis(pred, 1, results)
@@ -99,13 +99,13 @@ class RandomForest:
         return y_pred
 
     def feature_selection(self, X, y):
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
 
         model_score = self.__oob_verification(X, y)
 
-        permutation = np.random.permutation(data_number)
-        scores = np.zeros(feature_number)
-        for i in range(feature_number):
+        permutation = np.random.permutation(n_samples)
+        scores = np.zeros(n_features)
+        for i in range(n_features):
             X_tmp = X.copy()
             X_tmp[:, i] = X[permutation, i]
             scores[i] = self.__oob_verification(X_tmp, y)

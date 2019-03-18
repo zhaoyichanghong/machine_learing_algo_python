@@ -12,19 +12,19 @@ class SoftmaxRegression:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : One-hot encoder, shape (data_number, class_number)
+        y : One-hot encoder, shape (n_samples, n_classes)
             Target values 
         epochs : The number of epochs
         optimizer : Optimize algorithm, see also optimizer.py
         regularizer : Regularize algorithm, see also regularizer.py
         '''
-        data_number, feature_number = X.shape
-        class_number = y.shape[1]
+        n_samples, n_features = X.shape
+        n_classes = y.shape[1]
 
-        self.__W = np.zeros((feature_number, class_number))
-        self.__b = np.zeros((1, class_number))
+        self.__W = np.zeros((n_features, n_classes))
+        self.__b = np.zeros((1, n_classes))
 
         if self.__debug:
             accuracy = []
@@ -33,7 +33,7 @@ class SoftmaxRegression:
         for _ in range(epochs):
             h = self.score(X)
 
-            g_W = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
+            g_W = X.T.dot(h - y) / n_samples + regularizer.regularize(self.__W)
             g_b = np.mean(h - y, axis=0)
             g_W, g_b = optimizer.optimize([g_W, g_b])
             self.__W -= g_W
@@ -55,28 +55,28 @@ class SoftmaxRegression:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
-        classes : shape (class_number,)
+        classes : shape (n_classes,)
             The all labels
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted class label per sample.
         '''
-        return classes[np.argmax(self.score(X), axis=1)].reshape((-1, 1))
+        return classes[np.argmax(self.score(X), axis=1)]
 
     def score(self, X):
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, class_number)
+        y : shape (n_samples, n_classes)
             Predicted score of class per sample.
         '''
         out = X.dot(self.__W) + self.__b

@@ -11,17 +11,17 @@ class LinearRegressionGradientDescent:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Target values
         epochs : The number of epochs
         optimizer : Optimize algorithm, see also optimizer.py
         regularizer : Regularize algorithm, see also regularizer.py
         '''
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
 
-        self.__W = np.zeros((feature_number, 1))
+        self.__W = np.zeros(n_features)
         self.__b = 0
 
         if self.__debug:
@@ -30,7 +30,7 @@ class LinearRegressionGradientDescent:
         for _ in range(epochs):
             h = self.predict(X)
 
-            g_W = X.T.dot(h - y) / data_number + regularizer.regularize(self.__W)
+            g_W = X.T.dot(h - y) / n_samples + regularizer.regularize(self.__W)
             g_b = np.mean(h - y)
             g_W, g_b = optimizer.optimize([g_W, g_b])
             self.__W -= g_W
@@ -48,12 +48,12 @@ class LinearRegressionGradientDescent:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted value per sample.
         '''
         return X.dot(self.__W) + self.__b
@@ -66,15 +66,15 @@ class LinearRegressionNewton:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Target values
         epochs : The number of epochs
         '''
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
 
-        self.__W = np.zeros((feature_number, 1))
+        self.__W = np.zeros(n_features)
         self.__b = 0
 
         if self.__debug: 
@@ -101,12 +101,12 @@ class LinearRegressionNewton:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted value per sample.
         '''
         return X.dot(self.__W) + self.__b
@@ -116,9 +116,9 @@ class LinearRegressionEquation:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Target values
         '''
         X_with_b = np.insert(X, 0, 1, axis=1)
@@ -128,12 +128,12 @@ class LinearRegressionEquation:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted value per sample.
         '''
         X_with_b = np.insert(X, 0, 1, axis=1)

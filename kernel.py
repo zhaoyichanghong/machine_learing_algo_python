@@ -4,8 +4,8 @@ def gaussian_kernel(X1, X2, sigma):
     '''
     Parameters
     ----------
-    X1 : shape (data_number, feature_number)
-    X2 : shape (data_number, feature_number)
+    X1 : shape (n_samples, n_features)
+    X2 : shape (n_samples, n_features)
     sigma : Parameter for gaussian kernel
 
     Returns
@@ -18,8 +18,8 @@ def linear_kernel(X1, X2, *args):
     '''
     Parameters
     ----------
-    X1 : shape (data_number, feature_number)
-    X2 : shape (data_number, feature_number)
+    X1 : shape (n_samples, n_features)
+    X2 : shape (n_samples, n_features)
     *args : ignore
 
     Returns

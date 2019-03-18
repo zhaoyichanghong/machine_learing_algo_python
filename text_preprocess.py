@@ -7,23 +7,23 @@ class Tfidf:
         return self.__word_dictionary
 
     def __create_idf(self, corpus):
-        word_number = np.zeros_like(self.__word_dictionary, dtype=int)
+        n_words = np.zeros_like(self.__word_dictionary, dtype=int)
         for row in corpus:
             _, indexes, _ = np.intersect1d(self.word_dictionary, row, return_indices=True)
-            word_number[indexes] += 1
+            n_words[indexes] += 1
 
-        return np.log(len(corpus) / (word_number + 1))
+        return np.log(len(corpus) / (n_words + 1))
 
     def fit_transform(self, X):
         '''
         Parameters
         ----------
-        X : shape (corpus_number, text_length)
+        X : shape (n_corpus, text_length)
             Training corpus
 
         Returns
         -------
-        Tf-idf matrix : shape (corpus_number, dictionary_length)
+        Tf-idf matrix : shape (n_corpus, dictionary_length)
                         Tf-idf-weighted document-term matrix
         '''
         self.__word_dictionary = reduce(np.union1d, X)
@@ -35,12 +35,12 @@ class Tfidf:
         '''
         Parameters
         ----------
-        X : shape (corpus_number, text_length)
+        X : shape (n_corpus, text_length)
             Predicting corpus
 
         Returns
         -------
-        Tf-idf matrix : shape (corpus_number, dictionary_length)
+        Tf-idf matrix : shape (n_corpus, dictionary_length)
                         Tf-idf-weighted document-term matrix
         '''  
         tf = np.zeros((len(X), len(self.__word_dictionary)))

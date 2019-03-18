@@ -6,18 +6,18 @@ class DiscreteAdaboost:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Target values, 1 or -1
         n_estimators : The number of estimators at which boosting is terminated
         '''
-        data_number = X.shape[0] 
+        n_samples = X.shape[0] 
 
-        self.__alpha = np.zeros((n_estimators, 1))
+        self.__alpha = np.zeros(n_estimators)
         self.__estimators = []
         
-        w = np.full(data_number, 1 / data_number)
+        w = np.full(n_samples, 1 / n_samples)
         for i in range(n_estimators):
             model = decision_stump.DecisionStump()
             model.fit(X, y, w)
@@ -35,12 +35,12 @@ class DiscreteAdaboost:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Predicted class label per sample, 1 or -1
         '''
         h = self.score(X)

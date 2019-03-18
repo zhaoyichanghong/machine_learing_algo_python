@@ -1,30 +1,30 @@
 import numpy as np
 
 class KMediods:
-    def fit(self, X, cluster_number, distance):
+    def fit(self, X, n_clusters, distance):
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        cluster_number : The number of clusters
+        n_clusters : The number of clusters
         distance : Distance algorithm, see also distance.py
 
         Returns
         -------
-        y : shape (data_number,)
+        y : shape (n_samples,)
             Predicted cluster label per sample.
         '''
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
         self.__distance = distance
         distances = np.apply_along_axis(self.__distance, 1, X, X)
         
-        centers = np.random.choice(data_number, cluster_number)
+        centers = np.random.choice(n_samples, n_clusters)
         while True:
             y = np.argmin(distances[centers], axis=0)
 
             centers_tmp = np.zeros_like(centers)
-            for i in range(cluster_number):
+            for i in range(n_clusters):
                 indexes = np.flatnonzero(y == i)
                 errors = np.sum(distances[indexes][:, indexes], axis=0)
                 centers_tmp[i] = indexes[np.argmin(errors)]
@@ -41,12 +41,12 @@ class KMediods:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        y : shape (data_number,)
+        y : shape (n_samples,)
             Predicted cluster label per sample.
         '''
         distances = np.apply_along_axis(self.__distance, 1, self.__centers, X).T

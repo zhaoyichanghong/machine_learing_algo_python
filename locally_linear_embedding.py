@@ -6,22 +6,22 @@ class LLE:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
         n_neighbors : number of neighbors to consider for each point
         n_components: number of coordinates for the manifold
 
         Returns
         -------
-        X : shape (data_number, n_components)
+        X : shape (n_samples, n_components)
             The data of dimensionality reduction
         '''
-        data_number = X.shape[0]
+        n_samples = X.shape[0]
         
-        W = np.zeros((data_number, data_number))
+        W = np.zeros((n_samples, n_samples))
         distances = squareform(pdist(X))
-        distances[range(data_number), range(data_number)] = np.inf
-        for i in range(data_number):
+        distances[range(n_samples), range(n_samples)] = np.inf
+        for i in range(n_samples):
             nearest_item = np.argpartition(distances[i], n_neighbors)[:n_neighbors]
 
             Z = (X[i] - X[nearest_item]).dot((X[i] - X[nearest_item]).T)
@@ -30,7 +30,7 @@ class LLE:
             
             W[nearest_item, i] = np.sum(Z_inv, axis=1) / np.sum(Z_inv)
         
-        M = (np.eye(data_number) - W).dot((np.eye(data_number) - W).T)
+        M = (np.eye(n_samples) - W).dot((np.eye(n_samples) - W).T)
         eig_values, eig_vectors = np.linalg.eigh(M)
         
         return eig_vectors[:, 1:n_components+1]

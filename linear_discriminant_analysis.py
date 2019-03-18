@@ -14,26 +14,25 @@ class LDA:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Training data
-        y : shape (data_number, 1)
+        y : shape (n_samples,)
             Data label
 
         Returns
         -------
-        X : shape (data_number, n_components)
+        X : shape (n_samples, n_components)
             The data of dimensionality reduction
         '''
-        data_number, feature_number = X.shape
+        n_samples, n_features = X.shape
         classes = np.unique(y)
-        class_number = len(classes)
+        n_classes = len(classes)
 
-        s_t = np.cov(X.T) * (data_number - 1)
+        s_t = np.cov(X.T) * (n_samples - 1)
         s_w = 0
-        for i in range(class_number):
-            items = np.flatnonzero(y == classes[i])
-            number = len(items)           
-            s_w += np.cov(X[items].T) * (number - 1)
+        for i in range(n_classes):
+            items = np.flatnonzero(y == classes[i])  
+            s_w += np.cov(X[items].T) * (len(items)  - 1)
 
         s_b = s_t - s_w
         eig_values, eig_vectors = np.linalg.eigh(np.linalg.pinv(s_w).dot(s_b))
@@ -50,12 +49,12 @@ class LDA:
         '''
         Parameters
         ----------
-        X : shape (data_number, feature_number)
+        X : shape (n_samples, n_features)
             Predicting data
 
         Returns
         -------
-        X : shape (data_number, n_components)
+        X : shape (n_samples, n_components)
             The data of dimensionality reduction
         '''
         return X.dot(self.__eig_vectors)
