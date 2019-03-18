@@ -39,7 +39,7 @@ class C45():
         for j in range(len(x_sort) - 1):
             threshold = (x_sort[j] + x_sort[j + 1]) / 2
 
-            less_items = np.flatnonzero(x < threshold)
+            less_items = np.flatnonzero(x <= threshold)
             greater_items = np.flatnonzero(x > threshold)
             y_subs = [y[less_items], y[greater_items]]
             X_subs = np.append(np.zeros(len(less_items)), np.ones(len(greater_items)))
@@ -88,7 +88,7 @@ class C45():
         if data.threshold_split:
             feature = X[:, data.feature_split].astype(float)
 
-            less_items = np.flatnonzero(feature < data.threshold_split)
+            less_items = np.flatnonzero(feature <= data.threshold_split)
             greater_items = np.flatnonzero(feature > data.threshold_split)
 
             node = self.__tree.create_node('less ' + str(data.threshold_split), parent=parent)
@@ -142,7 +142,7 @@ class C45():
                 if x[node.data.feature_split] == child.tag:
                     return self.__query(x, child)
             else:
-                if feature < node.data.threshold_split and child.tag == 'less ' + str(node.data.threshold_split):
+                if feature <= node.data.threshold_split and child.tag == 'less ' + str(node.data.threshold_split):
                     return self.__query(x, child)
                 elif feature > node.data.threshold_split and child.tag == 'greater ' + str(node.data.threshold_split):
                     return self.__query(x, child)

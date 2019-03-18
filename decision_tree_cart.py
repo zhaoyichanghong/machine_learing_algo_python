@@ -49,7 +49,7 @@ class CART():
         for j in range(len(x_sort) - 1):              
             threshold = (x_sort[j] + x_sort[j + 1]) / 2
 
-            less_items = np.flatnonzero(x < threshold)
+            less_items = np.flatnonzero(x <= threshold)
             greater_items = np.flatnonzero(x > threshold)
             score = self.__get_score(y[less_items], y[greater_items])
             if score > score_max:
@@ -98,7 +98,7 @@ class CART():
         if data.threshold_split:
             feature = X[:, data.feature_split].astype(float)
 
-            less_items = np.flatnonzero(feature < data.threshold_split)
+            less_items = np.flatnonzero(feature <= data.threshold_split)
             greater_items = np.flatnonzero(feature > data.threshold_split)
 
             node = self.__tree.create_node('less ' + str(data.threshold_split), parent=parent)
@@ -145,7 +145,7 @@ class CART():
                 elif x[node.data.feature_split] != node.data.feature_label_split and child.tag == 'not ' + str(node.data.feature_label_split):
                     return self.__query(x, child)
             else:
-                if feature < node.data.threshold_split and child.tag == 'less ' + str(node.data.threshold_split):
+                if feature <= node.data.threshold_split and child.tag == 'less ' + str(node.data.threshold_split):
                     return self.__query(x, child)
                 elif feature > node.data.threshold_split and child.tag == 'greater ' + str(node.data.threshold_split):
                     return self.__query(x, child)
