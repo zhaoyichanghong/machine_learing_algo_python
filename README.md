@@ -7,6 +7,7 @@
 - [Unsupervised Learning](#unsupervised-learning)
   - [Clustering](#clustering)
   - [Dimensionality Reduction](#dimensionality-reduction) 
+  - [Abnormal Detection](#abnormal-detection)
   - [Others](#others)
  - [Tools](#tools)
  
@@ -43,9 +44,6 @@
 ### [naive_bayesian_for_text.py](naive_bayesian_for_text.py)
     naive bayesian algorithm for text classification
 
-### [decision_tree_id3.py](decision_tree_id3.py)
-    decision tree id3 algorithm
-    
 ### [decision_tree_id3.py](decision_tree_id3.py)
     decision tree id3 algorithm
 
@@ -123,7 +121,12 @@
     
 ### [locally_linear_embedding.py](locally_linear_embedding.py)
     locally linear embedding algorithm
-    
+
+## abnormal detection
+
+### [support_vector_data_description.py](support_vector_data_description.py)
+    support vector data description algorithm
+
 ## Others
 
 ### [ica.py](ica.py)

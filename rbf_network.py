@@ -15,7 +15,7 @@ class RbfNet:
         ----------
         X : shape (n_samples, n_features)
             Training data
-        y : shape (n_samples, 1)
+        y : shape (n_samples,)
             Target values, 1 or 0
         epochs : The number of epochs
         optimizer : Optimize algorithm, see also optimizer.py
@@ -29,8 +29,8 @@ class RbfNet:
         model.fit(X, self.__units, 10)        
         self.__centers = model.centers
         
-        self.__sigmas = np.ones((self.__units, 1))
-        self.__weights = np.random.randn(self.__units, 1)
+        self.__sigmas = np.ones(self.__units)
+        self.__weights = np.random.randn(self.__units)
         
         if self.__debug:
             accuracy = []
@@ -47,9 +47,9 @@ class RbfNet:
             g_sigmas = np.zeros_like(self.__sigmas)
             g_weights = np.zeros_like(self.__weights)
             for i in range(self.__units):
-                g_centers[i] = self.__weights[i] * np.mean(residual * outs[:, i].reshape((-1, 1)) * (X - self.__centers[i]), axis=0) / (self.__sigmas[i] ** 2)
-                g_sigmas[i] = self.__weights[i] * np.mean(residual * outs[:, i].reshape((-1, 1)) * (np.linalg.norm(X - self.__centers[i], axis=1).reshape((-1, 1)) ** 2), axis=0) / (self.__sigmas[i] ** 3)
-                g_weights[i] = np.mean(residual * outs[:, i].reshape((-1, 1)), axis=0)
+                g_centers[i] = self.__weights[i] * np.mean((residual * outs[:, i]).reshape((-1, 1)) * (X - self.__centers[i]), axis=0) / (self.__sigmas[i] ** 2)
+                g_sigmas[i] = self.__weights[i] * np.mean(residual * outs[:, i] * (np.linalg.norm(X - self.__centers[i], axis=1) ** 2), axis=0) / (self.__sigmas[i] ** 3)
+                g_weights[i] = np.mean(residual * outs[:, i], axis=0)
             
             g_centers, g_sigmas, g_weights = optimizer.optimize([g_centers, g_sigmas, g_weights])
             self.__centers -= g_centers
@@ -87,7 +87,7 @@ class RbfNet:
 
         Returns
         -------
-        y : shape (n_samples, 1)
+        y : shape (n_samples,)
             Predicted class label per sample, 1 or 0
         '''
         if self.__mode == 'classification':

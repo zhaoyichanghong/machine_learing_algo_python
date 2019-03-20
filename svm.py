@@ -20,12 +20,12 @@ class SVM:
         res = cvxopt.solvers.qp(cvxopt.matrix(P), cvxopt.matrix(q), cvxopt.matrix(G), cvxopt.matrix(h), cvxopt.matrix(A), cvxopt.matrix(b))
         alpha = np.array(res['x']).ravel()
 
-        support_items = np.flatnonzero(alpha > 1e-6)
+        support_items = np.flatnonzero(np.isclose(alpha, 0) == False)
         self.__X_support = X[support_items]
         self.__y_support = y[support_items]
         self.__a_support = alpha[support_items]
 
-        free_items = np.flatnonzero(self.__a_support < (C - 1e-6))
+        free_items = np.flatnonzero(self.__a_support < C)
         X_free = X[free_items]
         y_free = y[free_items]
 
