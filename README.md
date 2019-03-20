@@ -45,9 +45,6 @@
 
 ### [decision_tree_id3.py](decision_tree_id3.py)
     decision tree id3 algorithm
-    
-### [decision_tree_id3.py](decision_tree_id3.py)
-    decision tree id3 algorithm
 
 ### [decision_tree_c45.py](decision_tree_c45.py)
     decision tree c45 algorithm
