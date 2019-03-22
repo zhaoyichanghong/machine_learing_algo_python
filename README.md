@@ -72,6 +72,9 @@
 ### [random_forest.py](random_forest.py)
     random_forest algorithm including bagging, random features, oob verification, feature selection
 
+### [gbdt.py](gbdt.py)
+    gradient boost decision tree algorithm
+
 ## Dimensionality Reduction
 
 ### [linear_discriminant_analysis.py](linear_discriminant_analysis.py)

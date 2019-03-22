@@ -26,7 +26,6 @@ class SVM:
         self.__a_support = alpha[support_items]
 
         free_items = np.flatnonzero(self.__a_support < C)
-        X_free = X[free_items]
         y_free = y[free_items]
 
         self.__bias = y_free[0] - (self.__a_support * self.__y_support).T.dot(kernel[support_items, free_items[0]])

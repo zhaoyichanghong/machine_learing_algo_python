@@ -1,24 +1,29 @@
 import numpy as np
-import decision_tree
+import decision_tree_cart
+import scipy
 
 class GBDT:
-    def __sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
-
-    def __softmax(self, x):
-        return np.exp(x) / np.sum(np.exp(x), axis=1, keepdims=True)
-
     def __init__(self, loss):
         self.__models = []
         self.__alpha = []
         self.__loss = loss
 
     def fit(self, X, y, epochs, learning_rate):
+        '''
+        Parameters
+        ----------
+        X : shape (n_samples, n_features)
+            Training data
+        y : shape (n_samples,)
+            Target values 
+        epochs : The number of epochs
+        learning_rate : Learning rate
+        '''
         self.__learning_rate = learning_rate
 
         residual = y
         for _ in range(epochs):
-            model = decision_tree.Cart('regression')
+            model = decision_tree_cart.CART('regression')
             model.fit(X, residual)
             self.__models.append(model)
 
@@ -27,23 +32,23 @@ class GBDT:
 
             residual = y - self.score(X)
 
-    def predict(self, X, classes=None):
-        if self.__loss == 'mse':
+    def predict(self, X):
+        '''
+        Parameters
+        ----------
+        X : shape (n_samples, n_features)
+            Predicting data
+
+        Returns
+        -------
+        y : shape (n_samples,)
+            Predicted value per sample.
+        '''
+        if self.__loss == 'regression':
             return self.score(X)
-        elif self.__loss == 'binary_crossentropy':
+        elif self.__loss == 'classification':
             return np.around(self.score(X))
-        elif self.__loss == 'categorical_crossentropy':
-            return classes[np.argmax(self.score(X), axis=1)].reshape((-1, 1))
 
     def score(self, X):
-        h = 0
-        for alpha, model in zip(self.__alpha, self.__models):
-            h += self.__learning_rate * model.predict(X) * alpha
-
-        if self.__loss == 'mse':
-            return h
-        elif self.__loss == 'binary_crossentropy':
-            return self.__sigmoid(h)
-        elif self.__loss == 'categorical_crossentropy':
-            return self.__softmax(h)
+        return self.__learning_rate * sum([model.predict(X) * alpha for alpha, model in zip(self.__alpha, self.__models)])
         

@@ -34,7 +34,10 @@ class SVDD:
         self.__a_support = alpha[support_items]
 
         free_items = np.flatnonzero(self.__a_support < C)
-        self.__X_free = self.__X_support[free_items]
+        X_free = self.__X_support[free_items]
+        
+        self.__center = self.__a_support.dot(self.__X_support)
+        self.__radius = np.mean(distance.euclidean_distance(self.__center, X_free))
 
     def fit(self, X, kernel_func, C, sigma=1):
         '''
@@ -51,8 +54,6 @@ class SVDD:
 
         kernel = self.__kernel_func(X, X, self.__sigma)
         self.__qp(X, kernel, C)
-        self.__center = self.__a_support.dot(self.__X_support)
-        self.__radius = np.mean(distance.euclidean_distance(self.__center, self.__X_free))
         
     def predict(self, X):
         '''
