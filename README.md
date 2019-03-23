@@ -130,6 +130,9 @@
 ### [support_vector_data_description.py](support_vector_data_description.py)
     support vector data description algorithm
 
+### [isolate_forest.py](isolate_forest.py)
+    isolate forest algorithm
+
 ## Others
 
 ### [ica.py](ica.py)
