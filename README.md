@@ -162,9 +162,6 @@
     optimizer algorithm including following components
     gradient descent: momentum，nesterov, adagrad，rmsprop，adam
 # ---------------------------------------------------
-
-# gbdt.py
-    gradient boost decision tree algorithm including mse, binary_crossentropy, categorical_crossentropy
 # weights_initializer.py
     weights initialization algo
 # nnet.py
