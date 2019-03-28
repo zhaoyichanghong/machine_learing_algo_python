@@ -141,7 +141,7 @@
     image preprocess algorithms including rgb2gray, histogram of oriented gradient
 
 ## [text_preprocess.py](text_preprocess.py)
-    text preprocess algorithms
+    text preprocess algorithms including tf-idf
     
 ## [distance.py](distance.py)
     distance algorithms including euclidean distance, manhattan distance, chebyshev distance, mahalanobis distance, cosine distance
