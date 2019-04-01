@@ -27,6 +27,9 @@
 ### [softmax_regression.py](softmax_regression.py)
     softmax regression algorithm
 
+### [learning_vector_quantization.py](learning_vector_quantization.py)
+    learning vector quantization algorithm
+    
 ### [knn.py](knn.py)
     k-NearestNeighbor algorithm
 
