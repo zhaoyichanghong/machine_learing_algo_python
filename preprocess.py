@@ -120,7 +120,7 @@ def bagging(n_samples, n_bags):
     indexs = []
     indexs_oob = []
     for _ in range(n_bags):
-        indexs.append(np.random.choice(range(n_samples), n_samples))
-        indexs_oob.append(np.setdiff1d(range(n_samples), indexs[-1]))
+        indexs.append(np.random.choice(n_samples, n_samples))
+        indexs_oob.append(np.setdiff1d(n_samples, indexs[-1]))
 
     return indexs, indexs_oob

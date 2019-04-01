@@ -43,7 +43,10 @@
 
 ### [discrete_adaboost.py](discrete_adaboost.py)
     discrete adaboost algorithm
-    
+
+### [real_adaboost.py](real_adaboost.py)
+    real adaboost algorithm
+
 ### [naive_bayesian_for_text.py](naive_bayesian_for_text.py)
     naive bayesian algorithm for text classification
 

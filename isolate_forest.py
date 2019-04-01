@@ -29,7 +29,7 @@ class IsolateTree:
             self.__tree.update_node(parent.identifier, data=data)
             return
 
-        data.feature_split = np.random.choice(range(n_features), 1)
+        data.feature_split = np.random.choice(n_features, 1)
         data.threshold_split = (max(X[:, data.feature_split]) - min(X[:, data.feature_split])) * np.random.random() + min(X[:, data.feature_split])
 
         self.__tree.update_node(parent.identifier, data=data)
@@ -82,7 +82,7 @@ class IsolateForest:
         n_samples = X.shape[0]
 
         for _ in range(n_trees):
-            sub_items = np.random.choice(range(n_samples), n_subsamples, replace=False)
+            sub_items = np.random.choice(n_samples, n_subsamples, replace=False)
             
             tree = IsolateTree()
             tree.fit(X[sub_items])

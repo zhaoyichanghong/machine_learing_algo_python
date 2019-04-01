@@ -31,7 +31,7 @@ class KMeansPlus:
                 index = np.random.choice(n_samples, 1)
             else:
                 p = distances ** 2 / np.sum(distances ** 2)
-                index = np.random.choice(range(n_samples), p=p.ravel())
+                index = np.random.choice(n_samples, p=p.ravel())
 
             self.__centers[i] = data[index]
             data = np.delete(data, index, 0)
