@@ -47,6 +47,9 @@
 ### [real_adaboost.py](real_adaboost.py)
     real adaboost algorithm
 
+### [gentle_adaboost.py](gentle_adaboost.py)
+    gentle adaboost algorithm
+
 ### [naive_bayesian_for_text.py](naive_bayesian_for_text.py)
     naive bayesian algorithm for text classification
 

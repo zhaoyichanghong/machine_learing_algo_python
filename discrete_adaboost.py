@@ -25,8 +25,7 @@ class DiscreteAdaboost:
 
             eta = np.sum(w[np.flatnonzero(h != y)]) / np.sum(w)
             beta = np.sqrt((1 - eta) / (eta + 1e-8))
-            w[np.flatnonzero(h != y)] *= beta
-            w[np.flatnonzero(h == y)] /= beta
+            w *= beta ** (-y * h)
 
             self.__alpha[i] = np.log(beta)
             self.__estimators.append(model)
