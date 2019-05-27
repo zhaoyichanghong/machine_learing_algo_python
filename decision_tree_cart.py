@@ -1,6 +1,7 @@
 import numpy as np
 import treelib
 import scipy.stats
+import metrics
 
 class CART():
     class __data:
@@ -49,7 +50,7 @@ class CART():
         for j in range(len(x_sort) - 1):              
             threshold = (x_sort[j] + x_sort[j + 1]) / 2
 
-            less_items = np.flatnonzero(x <= threshold)
+            less_items = np.flatnonzero(x < threshold)
             greater_items = np.flatnonzero(x > threshold)
             score = self.__get_score(y[less_items], y[greater_items])
             if score > score_max:
@@ -67,6 +68,7 @@ class CART():
         data = self.__data()
         if self.__mode == 'classification':
             data.result = max(set(y), key=y.tolist().count)
+            data.n_errors = sum(y != data.result)
         else:
             data.result = np.mean(y, axis=0)
 
@@ -129,13 +131,54 @@ class CART():
         self.__create_tree(root, X, y)
         #self.__tree.show()
 
-    def prune_ccp(self):
-        self.__tree.show()                        
+    def prune_ccp(self, X, y):
+        trees = [treelib.Tree(tree=self.__tree, deep=True)]
+        print(f'tree node number {self.__tree.size()} before pruning')
+
+        while True:
+            tree = trees[-1]
+
+            costs = []
+            for node in tree.all_nodes():
+                n_leaves = len(tree.leaves(node.identifier))
+                if n_leaves > 1:
+                    leaves_error = sum([leaf.data.n_errors for leaf in tree.leaves(node.identifier)])
+                    cost = (node.data.n_errors - leaves_error) / (n_leaves - 1)
+                    costs.append([node, cost, n_leaves])
+
+            if not costs:
+                break
+
+            costs = np.array(costs)
+            costs = costs[costs[:, 1].argsort()]
+            min_costs = costs[np.flatnonzero(costs[:, 1] == costs[0, 1])]
+            min_costs = min_costs[min_costs[:, 2].argsort()]
+
+            sub_tree = treelib.Tree(tree=tree, deep=True)
+            sub_tree.remove_node(min_costs[-1][0].identifier)
+            if sub_tree.size() == 0:
+                break
+
+            trees.append(sub_tree)
+
+        accuracy_max = 0
+        for tree in trees:
+            tmp = self.__tree
+            self.__tree = tree
+            accuracy = metrics.accuracy(y, self.predict(X))
+
+            if accuracy >= accuracy_max:
+                accuracy_max = accuracy
+            else:
+                self.__tree = tmp
+
+        #self.__tree.show()
+        print(f'tree node number {self.__tree.size()} after pruning')
 
     def __query(self, x, node):
         if node.is_leaf():
             return node.data.result
-
+        
         for child in self.__tree.children(node.identifier):
             try:
                 feature = x[node.data.feature_split].astype(float)
@@ -162,4 +205,10 @@ class CART():
         y : shape (n_samples,)
             Predicted class label per sample
         '''
-        return np.apply_along_axis(self.__query, 1, X, self.__tree.get_node(self.__tree.root))
+        n_samples = X.shape[0]
+        h = np.zeros(n_samples)
+        
+        for i in range(n_samples):
+            h[i] = self.__query(X[i], self.__tree.get_node(self.__tree.root))
+
+        return h
