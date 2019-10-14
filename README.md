@@ -176,9 +176,10 @@
 ## [optimizer.py](optimizer.py)
     optimizer algorithm including following components
     gradient descent: momentum，nesterov, adagrad，rmsprop，adam
+
+## [weights_initializer.py](weights_initializer.py)
+    weights initialization algorithm
 # ---------------------------------------------------
-# weights_initializer.py
-    weights initialization algo
 # nnet.py
     neural network algorithm including following components
     layers: conv1d, conv2d, max pool, mean pool, flatten, dense, dropout, batch normalization, rnn, relu, selu, tanh
