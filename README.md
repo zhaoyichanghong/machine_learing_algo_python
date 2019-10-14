@@ -13,6 +13,11 @@
  
 # Supervised Learning
 
+## [neural_network.py](neural_network.py)
+    neural network algorithm including following components
+    layers: dense
+    loss: binary crossentropy, categorical crossentropy, mse
+
 ## Classification
 
 ### [pla.py](pla.py)
