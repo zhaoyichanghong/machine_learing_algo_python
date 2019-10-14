@@ -15,8 +15,8 @@
 
 ## [neural_network.py](neural_network.py)
     neural network algorithm including following components
-    layers: dense
-    loss: binary crossentropy, categorical crossentropy, mse
+    layers: dense, tanh, relu
+    loss: binary crossentropy, categorical crossentropy, mse, categorical_hinge
 
 ## Classification
 

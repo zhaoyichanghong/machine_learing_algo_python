@@ -49,6 +49,28 @@ class Dense:
         self.__W -= g_W
         self.__b -= g_b
 
+class Tanh:
+    def init(self, input_size=0):
+        self.output_size = input_size
+
+    def forward(self, X, mode):
+        self.__output = np.tanh(X)
+        return self.__output
+
+    def backward(self, residual):
+        return (1 - self.__output ** 2) * residual
+
+class Relu:
+    def init(self, input_size=0):
+        self.output_size = input_size
+        
+    def forward(self, X, mode):
+        self.__X = X
+        return np.maximum(self.__X, 0)
+
+    def backward(self, residual):
+        return (self.__X > 0) * residual
+
 class Sigmoid:
     def forward(self, X, mode):
         return scipy.special.expit(X)
@@ -75,10 +97,19 @@ class NeuralNetwork:
         self.__loss = loss
 
     def __get_residual(self, h, y):
+        if self.__loss == 'binary_crossentropy' or self.__loss == 'mse' or self.__loss == 'categorical_crossentropy':
             return h - y
+        elif self.__loss == 'categorical_hinge':
+            batch_size = y.shape[0]
+            correct_index = np.argmax(y, axis=1)
+            residual = np.zeros_like(y)
+            residual[h - h[range(batch_size), correct_index].reshape((-1, 1)) > 0] = 1
+            residual[range(batch_size), correct_index] -= np.sum(residual, axis=1)
+
+            return residual
            
     def __get_accuracy(self, h, y):
-        if self.__loss == 'categorical_crossentropy':
+        if self.__loss == 'categorical_crossentropy' or self.__loss == 'categorical_hinge':
             return metrics.accuracy(np.argmax(h, axis=1), np.argmax(y, axis=1))
         elif self.__loss == 'binary_crossentropy':
             return metrics.accuracy(np.around(h), y)
@@ -92,7 +123,11 @@ class NeuralNetwork:
             loss = np.mean((h - y) ** 2)
         elif self.__loss == 'categorical_crossentropy':
             loss = -np.mean(np.sum(y * np.log(h + eta), axis=1))
-        
+        elif self.__loss == 'categorical_hinge':
+            batch_size = y.shape[0]
+            correct_index = np.argmax(y, axis=1)
+            loss = np.mean(np.sum(np.maximum(0, h - h[range(batch_size), correct_index].reshape((-1, 1)) + 1), axis=1) - 1)
+
         return loss
 
     def __log(self, epoch, loss, elapse, accuracy):
@@ -183,7 +218,7 @@ class NeuralNetwork:
         y : shape (n_samples, n_classes)
             Predicted class label per sample.
         '''
-        if self.__loss == 'categorical_crossentropy':
+        if self.__loss == 'categorical_crossentropy' or self.__loss == 'categorical_hinge':
             return classes[np.argmax(self.score(X), axis=1)]
         elif self.__loss == 'binary_crossentropy':
             return np.around(self.score(X))
