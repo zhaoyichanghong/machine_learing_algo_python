@@ -90,7 +90,7 @@ class NeuralNetwork:
         '''
         Parameters
         ----------
-        loss : loss function including categorical_crossentropy, binary_crossentropy, mse
+        loss : loss function including categorical_crossentropy, binary_crossentropy, mse, categorical_hinge
         '''
         self.__debug = debug
         self.__layers = []
