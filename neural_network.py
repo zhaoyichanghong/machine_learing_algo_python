@@ -1,12 +1,100 @@
 import numpy as np
 import timeit
+from functools import reduce
 import matplotlib.pyplot as plt
-import scipy
+import scipy.special
 import metrics
 import regularizer
 import weights_initializer
 
 eta = 1e-8
+
+class Conv2d:
+    def __init__(self, filter_number, kernel_size, stride_size=1, input_size=0, optimizer=None, weights_initializer=weights_initializer.he_normal):
+        '''
+        Parameters
+        ----------
+        filter_number : filter number
+        kernel_size : kernel size
+        stride_size : stride size
+        input_size : input shape
+        optimizer : Optimize algorithm, see also optimizer.py
+        weights_initializer : weight initializer, see also weights_initializer.py
+        '''
+        self.__filter_number = filter_number
+        self.__input_size = input_size
+        self.__kernel_size = kernel_size
+        self.__stride_size = stride_size
+        self.__optimizer = optimizer
+        self.__weights_initializer = weights_initializer
+
+    def init(self, input_size=0):
+        if self.__input_size == 0:
+            self.__input_size = input_size
+
+        self.__input_channels, self.__input_h, self.__input_w = self.__input_size
+        self.__padding_size = self.__kernel_size // 2
+        self.__input_h += self.__padding_size * 2
+        self.__input_w += self.__padding_size * 2
+
+        self.__output_h = (self.__input_h - self.__kernel_size) // self.__stride_size + 1
+        self.__output_w = (self.__input_w - self.__kernel_size) // self.__stride_size + 1
+        self.__output_size = self.__output_h * self.__output_w
+
+        self.output_size = (self.__filter_number, self.__output_h, self.__output_w)
+
+        self.__W = self.__weights_initializer(self.__kernel_size ** 2 * self.__input_channels, self.__filter_number, (self.__filter_number, self.__input_channels, self.__kernel_size, self.__kernel_size))
+        self.__b = np.zeros((self.__filter_number))
+
+    def __img2col(self, img, input_channels):
+        col = np.zeros((self.__batch_size, self.__output_size, self.__kernel_size ** 2 * input_channels))
+        for h in range(0, self.__output_h):
+            for w in range(0, self.__output_w):
+                col[:, self.__output_w*h+w, :] = img[:, :, h*self.__stride_size:h*self.__stride_size+self.__kernel_size, w*self.__stride_size:w*self.__stride_size+self.__kernel_size].reshape(self.__batch_size, -1)
+        
+        return col
+
+    def forward(self, X, mode):
+        self.__batch_size = X.shape[0]
+        self.__input_shape = X.shape
+
+        X = np.pad(X[:, :], ((0, 0), (0, 0), (self.__padding_size, self.__padding_size), (self.__padding_size, self.__padding_size)), 'constant')
+
+        self.__col = self.__img2col(X, self.__input_channels)
+        output = self.__col.dot(self.__W.reshape(self.__filter_number, -1).T)
+
+        return np.transpose(output, axes=(0, 2, 1)).reshape((self.__batch_size, self.__filter_number, self.__output_h, self.__output_w)) + self.__b[None, :, None, None]
+
+    def optimize(self, residual):
+        g_W = (np.tensordot(residual.reshape(self.__batch_size, self.__filter_number, -1), self.__col, axes=[[0,2], [0, 1]]) / self.__batch_size).reshape(self.__W.shape)
+        g_b = np.mean(np.sum(residual, axis=(2, 3)), axis=0)
+        
+        g_W, g_b = self.__optimizer.optimize([g_W, g_b])
+        
+        self.__W -= g_W
+        self.__b -= g_b
+
+    def backward(self, residual):
+        residual = np.pad(residual[:, :], ((0, 0), (0, 0), (self.__padding_size, self.__padding_size), (self.__padding_size, self.__padding_size)), 'constant')
+
+        W = np.transpose(self.__W, axes=(1, 0, 2, 3))
+        W = np.rot90(W, k=2, axes=(2, 3))
+
+        col = self.__img2col(residual, self.__filter_number)
+        residual = col.dot(W.reshape(self.__input_channels, -1).T)
+
+        return np.transpose(residual, axes=(0, 2, 1)).reshape(self.__input_shape)
+
+class Flatten:
+    def init(self, input_size=0):
+        self.output_size = reduce(lambda i, j : i * j, input_size)
+
+    def forward(self, X, mode):
+        self.__input_shape = X.shape
+        return X.reshape(self.__input_shape[0], -1)
+
+    def backward(self, residual):
+        return residual.reshape(self.__input_shape)
 
 class Dense:
     def __init__(self, output_size, input_size=0, optimizer=None, regularizer=regularizer.Regularizer(0), weights_initializer=weights_initializer.he_normal):
