@@ -85,6 +85,33 @@ class Conv2d:
 
         return np.transpose(residual, axes=(0, 2, 1)).reshape(self.__input_shape)
 
+class MeanPool:
+    def __init__(self, pool_size):
+        '''
+        Parameters
+        ----------
+        pool_size : pool size
+        '''
+        self.__pool_size = pool_size
+
+    def init(self, input_size=0):
+        self.__input_channels, self.__input_h, self.__input_w = input_size
+        self.__output_h = (self.__input_h - self.__pool_size) // self.__pool_size + 1
+        self.__output_w = (self.__input_w - self.__pool_size) // self.__pool_size + 1
+        self.output_size = (self.__input_channels, self.__output_h, self.__output_w)
+
+    def forward(self, X, mode):
+        self.__batch_size = X.shape[0]
+        
+        H, W = self.__input_h // self.__pool_size, self.__input_w // self.__pool_size
+        return X[:, :, :H*self.__pool_size, :W*self.__pool_size].reshape(self.__batch_size, self.__input_channels, H, self.__pool_size, W, self.__pool_size).mean(axis=(3, 5))
+
+    def backward(self, residual):
+        residual /= self.__pool_size ** 2
+        residual = np.repeat(residual, repeats=self.__pool_size, axis=2)
+        residual = np.repeat(residual, repeats=self.__pool_size, axis=3)
+        return residual
+
 class Flatten:
     def init(self, input_size=0):
         self.output_size = reduce(lambda i, j : i * j, input_size)
