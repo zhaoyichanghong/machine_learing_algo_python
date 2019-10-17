@@ -85,6 +85,40 @@ class Conv2d:
 
         return np.transpose(residual, axes=(0, 2, 1)).reshape(self.__input_shape)
 
+class MaxPool:
+    def __init__(self, pool_size):
+        '''
+        Parameters
+        ----------
+        pool_size : pool size
+        '''
+        self.__pool_size = pool_size
+
+    def init(self, input_size=0):
+        self.__input_channels, self.__input_h, self.__input_w = input_size
+        self.__output_h = (self.__input_h - self.__pool_size) // self.__pool_size + 1
+        self.__output_w = (self.__input_w - self.__pool_size) // self.__pool_size + 1
+        self.output_size = (self.__input_channels, self.__output_h, self.__output_w)
+
+    def forward(self, X, mode):        
+        self.__batch_size = X.shape[0]
+
+        self.__output_index = np.zeros_like(X)
+        for h in range(0, self.__output_h):
+            for w in range(0, self.__output_w):
+                output_index = np.argmax(X[:, :, h*self.__pool_size:h*self.__pool_size+self.__pool_size, w*self.__pool_size:w*self.__pool_size+self.__pool_size].reshape((self.__batch_size, self.__input_channels, -1)), axis=2)
+                output_index_h, output_index_w = divmod(output_index, self.__pool_size)
+                for i in range(self.__batch_size):
+                    for j in range(self.__input_channels):
+                        self.__output_index[i, j, h*self.__pool_size+output_index_h[i, j], w*self.__pool_size+output_index_w[i, j]] = 1
+
+        return X.reshape(self.__batch_size, self.__input_channels, self.__output_h, self.__pool_size, self.__output_w, self.__pool_size).max(axis=(3,5))
+
+    def backward(self, residual):
+        residual = np.repeat(residual, repeats=self.__pool_size, axis=2)
+        residual = np.repeat(residual, repeats=self.__pool_size, axis=3)
+        return residual * self.__output_index
+
 class MeanPool:
     def __init__(self, pool_size):
         '''
