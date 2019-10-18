@@ -147,6 +147,59 @@ class MeanPool:
         residual = np.repeat(residual, repeats=self.__pool_size, axis=3)
         return residual
 
+class BatchNormalization:
+    def __init__(self, optimizer=None):
+        '''
+        Parameters
+        ----------
+        optimizer : Optimize algorithm, see also optimizer.py
+        '''
+        self.__optimizer = optimizer
+
+    def init(self, input_size=0):
+        self.output_size = input_size
+        self.__gamma = np.ones(self.output_size)
+        self.__beta = np.zeros(self.output_size)
+        self.__predict_mean = 0
+        self.__predict_std = 0
+
+    def forward(self, X, mode):
+        momentum = 0.999
+        
+        self.__X = X
+
+        if mode == 'fit':
+            self.__mean = np.mean(self.__X, axis=0)
+            self.__predict_mean = momentum * self.__predict_mean + (1 - momentum) * self.__mean
+
+            self.__std = np.std(self.__X, axis=0)
+            self.__predict_std = momentum * self.__predict_std + (1 - momentum) * self.__std
+
+            self.__X_hat = (self.__X - self.__mean) / (self.__std + eta)
+        elif mode == 'predict':
+            self.__X_hat = (self.__X - self.__predict_mean) / (self.__predict_std + eta)
+        
+        return self.__gamma * self.__X_hat + self.__beta
+
+    def backward(self, residual):
+        d_X_hat = residual * self.__gamma
+        
+        d_var =  np.sum(-d_X_hat * (self.__X - self.__mean) * ((self.__std + eta) ** -3) / 2, axis=0)
+
+        d_mean = np.sum(-d_X_hat / (self.__std + eta), axis=0) - 2 * d_var * np.mean(self.__X - self.__mean)
+
+        batch_size = self.__X.shape[0]
+        return d_X_hat / (self.__std + eta) + d_var * 2 * (self.__X - self.__mean) / batch_size + d_mean / batch_size
+
+    def optimize(self, residual):
+        g_gamma = np.mean(residual * self.__X_hat, axis=0)
+        g_beta = np.mean(residual, axis=0)
+
+        g_gamma, g_beta = self.__optimizer.optimize([g_gamma, g_beta])
+
+        self.__gamma -= g_gamma
+        self.__beta -= g_beta
+
 class Dropout:
     def __init__(self, p=0):
         '''

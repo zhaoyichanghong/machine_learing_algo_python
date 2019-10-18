@@ -15,7 +15,7 @@
 
 ## [neural_network.py](neural_network.py)
     neural network algorithm including following components
-    layers: conv2d, mean pool, max pool, drop out, flatten, dense, tanh, relu
+    layers: conv2d, mean pool, max pool, drop out, batch normalization, flatten, dense, tanh, relu
     loss: binary crossentropy, categorical crossentropy, mse, categorical_hinge
 
 ## Classification
