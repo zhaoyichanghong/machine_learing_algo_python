@@ -1,5 +1,6 @@
 import numpy as np
 import timeit
+import random
 from functools import reduce
 import matplotlib.pyplot as plt
 import scipy.special
@@ -145,6 +146,31 @@ class MeanPool:
         residual = np.repeat(residual, repeats=self.__pool_size, axis=2)
         residual = np.repeat(residual, repeats=self.__pool_size, axis=3)
         return residual
+
+class Dropout:
+    def __init__(self, p=0):
+        '''
+        Parameters
+        ----------
+        p : the probability of drop out
+        '''
+        self.__p = p
+
+    def init(self, input_size=0):
+        self.output_size = input_size
+    
+    def forward(self, X, mode):
+        if self.__p > 0 and mode == 'fit':
+            self.__dropout_index = random.sample(range(self.output_size), int(self.output_size * self.__p))
+            X[:, self.__dropout_index] = 0
+
+        return X / (1 - self.__p)
+
+    def backward(self, residual):
+        if self.__p > 0:
+            residual[:, self.__dropout_index] = 0
+
+        return residual / (1 - self.__p)
 
 class Flatten:
     def init(self, input_size=0):
