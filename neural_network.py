@@ -1,6 +1,7 @@
 import numpy as np
 import timeit
 import random
+import math
 from functools import reduce
 import matplotlib.pyplot as plt
 import scipy.special
@@ -9,6 +10,75 @@ import regularizer
 import weights_initializer
 
 eta = 1e-8
+
+class Conv1d:
+    def __init__(self, filter_number, kernel_size, stride_size=1, input_size=0, optimizer=None, weights_initializer=weights_initializer.he_normal):
+        '''
+        Parameters
+        ----------
+        filter_number : filter number
+        kernel_size : kernel size
+        stride_size : stride size
+        input_size : input shape
+        optimizer : Optimize algorithm, see also optimizer.py
+        weights_initializer : weight initializer, see also weights_initializer.py
+        '''
+        self.__filter_number = filter_number
+        self.__input_size = input_size
+        self.__kernel_size = kernel_size
+        self.__stride_size = stride_size
+        self.__optimizer = optimizer
+        self.__weights_initializer = weights_initializer
+
+    def init(self, input_size=0):
+        if self.__input_size == 0:
+            self.__input_size = input_size
+
+        self.__input_timesteps, self.__input_channels = self.__input_size
+
+        self.__padding_size = (math.ceil(self.__input_timesteps / self.__stride_size) - 1) * self.__stride_size + self.__kernel_size - self.__input_timesteps
+        self.__padding = self.__padding_size // 2
+        
+        self.__input_timesteps += self.__padding_size
+
+        self.__output_size = (self.__input_timesteps - self.__kernel_size) // self.__stride_size + 1
+
+        self.output_size = (self.__output_size, self.__filter_number)
+
+        self.__W = self.__weights_initializer(self.__kernel_size * self.__input_channels, self.__filter_number, (self.__filter_number, self.__input_channels, self.__kernel_size))
+        self.__b = np.zeros((self.__filter_number))
+
+    def __img2col(self, img, input_channels):
+        col = np.zeros((self.__batch_size, self.__output_size, self.__kernel_size * input_channels))
+        for h in range(0, self.__output_size):
+            col[:, h, :] = img[:, h*self.__stride_size:h*self.__stride_size+self.__kernel_size, :].reshape(self.__batch_size, -1, order='F')
+        
+        return col
+
+    def forward(self, X, mode):
+        self.__batch_size = X.shape[0]
+
+        X = np.pad(X[:], ((0, 0), (self.__padding, self.__padding), (0, 0)), 'constant')
+
+        self.__col = self.__img2col(X, self.__input_channels)
+        return self.__col.dot(self.__W.reshape(self.__filter_number, -1).T) + self.__b[None, None, :]
+
+    def optimize(self, residual):
+        g_W = (np.tensordot(residual.reshape(self.__batch_size, self.__filter_number, -1), self.__col, axes=[[0,2], [0, 1]]) / self.__batch_size).reshape(self.__W.shape)
+        g_b = np.mean(np.sum(residual, axis=(1, 2)), axis=0)
+        
+        g_W, g_b = self.__optimizer.optimize([g_W, g_b])
+        
+        self.__W -= g_W
+        self.__b -= g_b
+
+    def backward(self, residual):
+        residual = np.pad(residual[:], ((0, 0), (self.__padding, self.__padding), (0, 0)), 'constant')
+
+        W = self.__W[:, ::-1]
+
+        col = self.__img2col(residual, self.__filter_number)
+        return col.dot(W.reshape(self.__input_channels, -1).T)
 
 class Conv2d:
     def __init__(self, filter_number, kernel_size, stride_size=1, input_size=0, optimizer=None, weights_initializer=weights_initializer.he_normal):
