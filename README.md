@@ -184,8 +184,3 @@
 
 ## [weights_initializer.py](weights_initializer.py)
     weights initialization algorithm
-# ---------------------------------------------------
-# nnet.py
-    neural network algorithm including following components
-    layers: conv1d, conv2d, max pool, mean pool, flatten, dense, dropout, batch normalization, rnn, relu, selu, tanh
-    loss: binary crossentropy, categorical crossentropy, mse, categorical hinge
